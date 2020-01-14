@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Service;
+namespace spec\EcPhp\CasLib\Service;
 
-use drupol\psrcas\Service\Proxy;
+use EcPhp\CasLib\Service\Proxy;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
@@ -12,7 +12,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use spec\drupol\psrcas\Cas;
+use spec\EcPhp\CasLib\Cas;
 
 class ProxySpec extends ObjectBehavior
 {

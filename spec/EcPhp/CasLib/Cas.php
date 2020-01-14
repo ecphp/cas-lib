@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas;
+namespace spec\EcPhp\CasLib;
 
-use drupol\psrcas\Configuration\Properties as CasProperties;
+use EcPhp\CasLib\Configuration\Properties as CasProperties;
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use tests\drupol\psrcas\Exception\TestClientException;
+use tests\EcPhp\CasLib\Exception\TestClientException;
 
 class Cas extends ObjectBehavior
 {
@@ -165,7 +165,7 @@ EOF;
     }
 
     /**
-     * @return \drupol\psrcas\Configuration\Properties
+     * @return \EcPhp\CasLib\Configuration\Properties
      */
     public static function getTestProperties(): CasProperties
     {
@@ -222,7 +222,7 @@ EOF;
     }
 
     /**
-     * @return \drupol\psrcas\Configuration\Properties
+     * @return \EcPhp\CasLib\Configuration\Properties
      */
     public static function getTestPropertiesWithPgtUrl(): CasProperties
     {

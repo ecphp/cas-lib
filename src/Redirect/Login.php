@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Redirect;
+namespace EcPhp\CasLib\Redirect;
 
-use drupol\psrcas\Utils\Uri;
+use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 

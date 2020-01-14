@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Redirect;
+namespace spec\EcPhp\CasLib\Redirect;
 
-use drupol\psrcas\Redirect\Logout;
+use EcPhp\CasLib\Redirect\Logout;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use spec\drupol\psrcas\Cas;
+use spec\EcPhp\CasLib\Cas;
 
 class LogoutSpec extends ObjectBehavior
 {

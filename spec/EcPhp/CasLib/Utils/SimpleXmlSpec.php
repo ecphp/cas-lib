@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Utils;
+namespace spec\EcPhp\CasLib\Utils;
 
-use drupol\psrcas\Utils\SimpleXml;
+use EcPhp\CasLib\Utils\SimpleXml;
 use PhpSpec\ObjectBehavior;
 use SimpleXMLElement;
 

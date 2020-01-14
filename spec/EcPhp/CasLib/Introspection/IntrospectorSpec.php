@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Introspection;
+namespace spec\EcPhp\CasLib\Introspection;
 
-use drupol\psrcas\Introspection\Contract\AuthenticationFailure;
-use drupol\psrcas\Introspection\Contract\Proxy;
-use drupol\psrcas\Introspection\Contract\ServiceValidate;
-use drupol\psrcas\Introspection\Introspector;
+use EcPhp\CasLib\Introspection\Contract\AuthenticationFailure;
+use EcPhp\CasLib\Introspection\Contract\Proxy;
+use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
+use EcPhp\CasLib\Introspection\Introspector;
 use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;

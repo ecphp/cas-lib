@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Service;
+namespace EcPhp\CasLib\Service;
 
-use drupol\psrcas\Utils\Uri;
+use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\UriInterface;
 
 /**

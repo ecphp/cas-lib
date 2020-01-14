@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas;
+namespace EcPhp\CasLib;
 
-use drupol\psrcas\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Configuration\PropertiesInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -24,7 +24,7 @@ interface CasInterface
     /**
      * Get the CAS properties.
      *
-     * @return \drupol\psrcas\Configuration\PropertiesInterface
+     * @return \EcPhp\CasLib\Configuration\PropertiesInterface
      *   The properties.
      */
     public function getProperties(): PropertiesInterface;
@@ -145,7 +145,7 @@ interface CasInterface
      * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
      *   The server request.
      *
-     * @return \drupol\psrcas\CasInterface
+     * @return \EcPhp\CasLib\CasInterface
      *   The cas service.
      */
     public function withServerRequest(ServerRequestInterface $serverRequest): CasInterface;

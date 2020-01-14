@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas;
+namespace spec\EcPhp\CasLib;
 
-use drupol\psrcas\Cas;
-use drupol\psrcas\Configuration\Properties as CasProperties;
-use drupol\psrcas\Utils\SimpleXml;
+use EcPhp\CasLib\Cas;
+use EcPhp\CasLib\Configuration\Properties as CasProperties;
+use EcPhp\CasLib\Utils\SimpleXml;
 use Exception;
 use InvalidArgumentException;
 use Monolog\Handler\StreamHandler;
@@ -27,7 +27,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
-use spec\drupol\psrcas\Cas as CasSpecUtils;
+use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpClient\Psr18Client;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace tests\drupol\psrcas\Service;
+namespace tests\EcPhp\CasLib\Service;
 
-use drupol\psrcas\Service\Service;
-use drupol\psrcas\Utils\Uri;
+use EcPhp\CasLib\Service\Service;
+use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;

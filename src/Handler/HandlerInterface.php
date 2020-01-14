@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Handler;
+namespace EcPhp\CasLib\Handler;
 
 use Psr\Http\Message\ResponseInterface;
 

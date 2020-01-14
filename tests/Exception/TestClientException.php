@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace tests\drupol\psrcas\Exception;
+namespace tests\EcPhp\CasLib\Exception;
 
 use Exception;
 use Psr\Http\Client\ClientExceptionInterface;

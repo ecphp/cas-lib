@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Service;
+namespace EcPhp\CasLib\Service;
 
-use drupol\psrcas\Configuration\PropertiesInterface;
-use drupol\psrcas\Handler\Handler;
-use drupol\psrcas\Introspection\Contract\ServiceValidate;
-use drupol\psrcas\Introspection\Introspector;
+use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Handler\Handler;
+use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
+use EcPhp\CasLib\Introspection\Introspector;
 use InvalidArgumentException;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -46,7 +46,7 @@ abstract class Service extends Handler
      *
      * @param ServerRequestInterface $serverRequest
      * @param array[]|string[] $parameters
-     * @param \drupol\psrcas\Configuration\PropertiesInterface $properties
+     * @param \EcPhp\CasLib\Configuration\PropertiesInterface $properties
      * @param \Psr\Http\Client\ClientInterface $client
      * @param \Psr\Http\Message\UriFactoryInterface $uriFactory
      * @param ResponseFactoryInterface $responseFactory

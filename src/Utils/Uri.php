@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Utils;
+namespace EcPhp\CasLib\Utils;
 
 use Psr\Http\Message\UriInterface;
 

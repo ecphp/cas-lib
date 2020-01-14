@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Redirect;
+namespace EcPhp\CasLib\Redirect;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;

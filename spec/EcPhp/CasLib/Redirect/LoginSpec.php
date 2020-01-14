@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Redirect;
+namespace spec\EcPhp\CasLib\Redirect;
 
-use drupol\psrcas\Redirect\Login;
+use EcPhp\CasLib\Redirect\Login;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use Nyholm\Psr7Server\ServerRequestCreator;
@@ -13,7 +13,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use spec\drupol\psrcas\Cas;
+use spec\EcPhp\CasLib\Cas;
 
 class LoginSpec extends ObjectBehavior
 {

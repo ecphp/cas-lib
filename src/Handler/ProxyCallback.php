@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Handler;
+namespace EcPhp\CasLib\Handler;
 
-use drupol\psrcas\Utils\Uri;
+use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 

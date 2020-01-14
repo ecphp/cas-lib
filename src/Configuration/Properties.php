@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Configuration;
+namespace EcPhp\CasLib\Configuration;
 
 use function array_key_exists;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Handler;
+namespace spec\EcPhp\CasLib\Handler;
 
-use drupol\psrcas\Handler\ProxyCallback;
+use EcPhp\CasLib\Handler\ProxyCallback;
 use Exception;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
@@ -13,7 +13,7 @@ use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use spec\drupol\psrcas\Cas;
+use spec\EcPhp\CasLib\Cas;
 
 class ProxyCallbackSpec extends ObjectBehavior
 {

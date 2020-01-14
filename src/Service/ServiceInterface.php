@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Service;
+namespace EcPhp\CasLib\Service;
 
-use drupol\psrcas\Handler\HandlerInterface;
+use EcPhp\CasLib\Handler\HandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**

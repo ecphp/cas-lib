@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Configuration;
+namespace spec\EcPhp\CasLib\Configuration;
 
-use drupol\psrcas\Configuration\Properties;
+use EcPhp\CasLib\Configuration\Properties;
 use PhpSpec\ObjectBehavior;
-use spec\drupol\psrcas\Cas;
+use spec\EcPhp\CasLib\Cas;
 
 class PropertiesSpec extends ObjectBehavior
 {

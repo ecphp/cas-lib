@@ -1,15 +1,12 @@
-[![Latest Stable Version](https://img.shields.io/packagist/v/drupol/psrcas.svg?style=flat-square)](https://packagist.org/packages/drupol/psrcas)
- [![GitHub stars](https://img.shields.io/github/stars/drupol/psrcas.svg?style=flat-square)](https://packagist.org/packages/drupol/psrcas)
- [![Total Downloads](https://img.shields.io/packagist/dt/drupol/psrcas.svg?style=flat-square)](https://packagist.org/packages/drupol/psrcas)
- [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/drupol/psrcas/Continuous%20Integration?style=flat-square)](https://github.com/drupol/psrcas/actions)
- [![Scrutinizer code quality](https://img.shields.io/scrutinizer/quality/g/drupol/psrcas/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/drupol/psrcas/?branch=master)
- [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/drupol/psrcas/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/drupol/psrcas/?branch=master)
- [![Mutation testing badge](https://badge.stryker-mutator.io/github.com/drupol/psrcas/master)](https://stryker-mutator.github.io)
- [![Read the Docs](https://img.shields.io/readthedocs/psrcas?style=flat-square)](https://psrcas.readthedocs.io/)
- [![License](https://img.shields.io/packagist/l/drupol/psrcas.svg?style=flat-square)](https://packagist.org/packages/drupol/psrcas)
- [![Say Thanks!](https://img.shields.io/badge/Say-thanks-brightgreen.svg?style=flat-square)](https://saythanks.io/to/drupol)
- [![Donate!](https://img.shields.io/badge/Donate-Paypal-brightgreen.svg?style=flat-square)](https://paypal.me/drupol)
- 
-# PSR CAS
+[![Latest Stable Version](https://img.shields.io/packagist/v/ecphp/cas-lib.svg?style=flat-square)](https://packagist.org/packages/ecphp/cas-lib)
+ [![GitHub stars](https://img.shields.io/github/stars/ecphp/cas-lib.svg?style=flat-square)](https://packagist.org/packages/ecphp/cas-lib)
+ [![Total Downloads](https://img.shields.io/packagist/dt/ecphp/cas-lib.svg?style=flat-square)](https://packagist.org/packages/ecphp/cas-lib)
+ [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ecphp/cas-lib/Continuous%20Integration?style=flat-square)](https://github.com/ecphp/cas-lib/actions)
+ [![Scrutinizer code quality](https://img.shields.io/scrutinizer/quality/g/ecphp/cas-lib/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/ecphp/cas-lib/?branch=master)
+ [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/ecphp/cas-lib/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/ecphp/cas-lib/?branch=master)
+ [![Read the Docs](https://img.shields.io/readthedocs/ecphp-cas-lib?style=flat-square)](https://ecphp-cas-lib.readthedocs.io/)
+ [![License](https://img.shields.io/packagist/l/ecphp/cas-lib.svg?style=flat-square)](https://packagist.org/packages/ecphp/cas-lib)
 
-Read more on the dedicated documentation site: https://psrcas.readthedocs.io/
+# CAS Lib
+
+Read more on the dedicated documentation site: https://ecphp-cas-lib.readthedocs.io/

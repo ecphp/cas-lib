@@ -16,7 +16,7 @@ The test login is `casuser`, password is: `Mellon`
 Bare PHP
 --------
 
-To get you started with PSR CAS in a simple bare PHP project (*without
+To get you started with CAS Lib in a simple bare PHP project (*without
 using any framework*), you can check the following project: `drupol/psrcas-client-poc`_
 
 Test `the bare PHP demo application`_ now.
@@ -24,15 +24,15 @@ Test `the bare PHP demo application`_ now.
 Symfony
 -------
 
-The PSR CAS library can be used in a Symfony (4 or 5) project through the package `drupol/cas-bundle`_
+The CAS Lib library can be used in a Symfony (4 or 5) project through the package `ecphp/cas-bundle`_
 
 Test `the Symfony bundle demo application`_ now.
 
-See `the documentation of the PSR CAS Bundle`_ for more information.
+See `the documentation of the ecphp/cas-bundle`_ for more information.
 
 .. _Apereo: https://www.apereo.org/
-.. _drupol/cas-bundle: https://github.com/drupol/cas-bundle
-.. _the documentation of the PSR CAS Bundle: http://github.com/drupol/cas-bundle
+.. _ecphp/cas-bundle: https://github.com/ecphp/cas-bundle
+.. _the documentation of the ecphp/cas-bundle: http://github.com/ecphp/cas-bundle
 .. _the Symfony bundle demo application: https://cas-bundle-demo.herokuapp.com/
 .. _CAS server with Proxy authentication enabled: https://heroku-cas-server.herokuapp.com/cas/login
 .. _drupol/psrcas-client-poc: https://github.com/drupol/psrcas-client-poc/

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas;
+namespace EcPhp\CasLib;
 
-use drupol\psrcas\Handler\ProxyCallback;
-use drupol\psrcas\Redirect\Login;
-use drupol\psrcas\Redirect\Logout;
-use drupol\psrcas\Service\Proxy;
-use drupol\psrcas\Service\ProxyValidate;
-use drupol\psrcas\Service\ServiceValidate;
+use EcPhp\CasLib\Handler\ProxyCallback;
+use EcPhp\CasLib\Redirect\Login;
+use EcPhp\CasLib\Redirect\Logout;
+use EcPhp\CasLib\Service\Proxy;
+use EcPhp\CasLib\Service\ProxyValidate;
+use EcPhp\CasLib\Service\ServiceValidate;
 use Psr\Http\Message\ResponseInterface;
 
 /**

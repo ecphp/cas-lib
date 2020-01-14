@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Introspection;
+namespace EcPhp\CasLib\Introspection;
 
-use drupol\psrcas\Introspection\Contract\AuthenticationFailure as AuthenticationFailureInterface;
+use EcPhp\CasLib\Introspection\Contract\AuthenticationFailure as AuthenticationFailureInterface;
 
 /**
  * Class AuthenticationFailure.

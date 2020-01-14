@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace spec\tests\drupol\psrcas;
+namespace spec\tests\EcPhp\CasLib;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
-use spec\drupol\psrcas\Cas as CasSpecUtils;
+use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\HttpClient\Psr18Client;
 
 class CasSpec extends ObjectBehavior

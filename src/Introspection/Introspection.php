@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Introspection;
+namespace EcPhp\CasLib\Introspection;
 
 use Psr\Http\Message\ResponseInterface;
 

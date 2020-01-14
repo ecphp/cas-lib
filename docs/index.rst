@@ -1,12 +1,7 @@
-PSR CAS
+CAS Lib
 =======
 
-.. image:: /assets/img/psrcas-logo.png
-    :align: right
-    :width: 120px
-    :alt: PSR CAS Logo
-
-PSR CAS, a standard PHP library for `CAS authentication`_.
+CAS Lib, a standard PHP library for `CAS authentication`_.
 
 The Central Authentication Service (CAS) is an Open-Source single sign-on protocol for the web.
 Its purpose is to permit a user to access multiple applications while providing their credentials only once.
@@ -44,7 +39,7 @@ any PHP project, with any framework.
 .. toctree::
     :hidden:
 
-    PSR-CAS <self>
+    CAS Lib <self>
 
 .. toctree::
    :hidden:

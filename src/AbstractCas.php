@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas;
+namespace EcPhp\CasLib;
 
-use drupol\psrcas\Configuration\PropertiesInterface;
-use drupol\psrcas\Introspection\Introspector;
-use drupol\psrcas\Utils\Uri;
+use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Introspection\Introspector;
+use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -89,7 +89,7 @@ abstract class AbstractCas implements CasInterface
      * AbstractCas constructor.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
-     * @param \drupol\psrcas\Configuration\PropertiesInterface $properties
+     * @param \EcPhp\CasLib\Configuration\PropertiesInterface $properties
      * @param \Psr\Http\Client\ClientInterface $client
      * @param \Psr\Http\Message\UriFactoryInterface $uriFactory
      * @param \Psr\Http\Message\ResponseFactoryInterface $responseFactory

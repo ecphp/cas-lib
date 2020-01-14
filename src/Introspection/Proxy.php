@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Introspection;
+namespace EcPhp\CasLib\Introspection;
 
-use drupol\psrcas\Introspection\Contract\Proxy as ProxyInterface;
+use EcPhp\CasLib\Introspection\Contract\Proxy as ProxyInterface;
 
 /**
  * Class Proxy.

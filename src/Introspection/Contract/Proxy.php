@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Introspection\Contract;
+namespace EcPhp\CasLib\Introspection\Contract;
 
 /**
  * Interface Proxy.

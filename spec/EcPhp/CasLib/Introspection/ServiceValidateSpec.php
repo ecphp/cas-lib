@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Introspection;
+namespace spec\EcPhp\CasLib\Introspection;
 
-use drupol\psrcas\Introspection\Introspector;
+use EcPhp\CasLib\Introspection\Introspector;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;

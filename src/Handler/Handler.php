@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Handler;
+namespace EcPhp\CasLib\Handler;
 
-use drupol\psrcas\Configuration\PropertiesInterface;
-use drupol\psrcas\Utils\Uri;
+use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,7 +37,7 @@ abstract class Handler
     private $parameters;
 
     /**
-     * @var \drupol\psrcas\Configuration\PropertiesInterface
+     * @var \EcPhp\CasLib\Configuration\PropertiesInterface
      */
     private $properties;
 
@@ -66,7 +66,7 @@ abstract class Handler
      *
      * @param ServerRequestInterface $serverRequest
      * @param array[]|string[] $parameters
-     * @param \drupol\psrcas\Configuration\PropertiesInterface $properties
+     * @param \EcPhp\CasLib\Configuration\PropertiesInterface $properties
      * @param \Psr\Http\Message\UriFactoryInterface $uriFactory
      * @param ResponseFactoryInterface $responseFactory
      * @param \Psr\Http\Message\StreamFactoryInterface $streamFactory

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace tests\drupol\psrcas;
+namespace tests\EcPhp\CasLib;
 
-use drupol\psrcas\AbstractCas;
-use drupol\psrcas\Configuration\PropertiesInterface;
+use EcPhp\CasLib\AbstractCas;
+use EcPhp\CasLib\Configuration\PropertiesInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 class Cas extends AbstractCas
 {
     /**
-     * @var \drupol\psrcas\Cas
+     * @var \EcPhp\CasLib\Cas
      */
     private $cas;
 
@@ -46,7 +46,7 @@ class Cas extends AbstractCas
             $logger
         );
 
-        $this->cas = new \drupol\psrcas\Cas(
+        $this->cas = new \EcPhp\CasLib\Cas(
             $serverRequest,
             $properties,
             $client,

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Introspection;
+namespace EcPhp\CasLib\Introspection;
 
-use drupol\psrcas\Introspection\Contract\IntrospectionInterface;
-use drupol\psrcas\Introspection\Contract\IntrospectorInterface;
-use drupol\psrcas\Utils\SimpleXml;
+use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
+use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
+use EcPhp\CasLib\Utils\SimpleXml;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -20,7 +20,7 @@ final class Introspector implements IntrospectorInterface
     /**
      * @param \Psr\Http\Message\ResponseInterface $response
      *
-     * @return \drupol\psrcas\Introspection\Contract\IntrospectionInterface
+     * @return \EcPhp\CasLib\Introspection\Contract\IntrospectionInterface
      */
     public static function detect(ResponseInterface $response): IntrospectionInterface
     {

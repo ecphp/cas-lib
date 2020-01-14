@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Redirect;
+namespace EcPhp\CasLib\Redirect;
 
-use drupol\psrcas\Handler\Handler;
+use EcPhp\CasLib\Handler\Handler;
 use Psr\Http\Message\ResponseInterface;
 
 /**

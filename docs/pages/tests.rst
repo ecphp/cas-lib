@@ -50,8 +50,8 @@ will check your code
 
 .. _PSR-12: https://www.php-fig.org/psr/psr-12/
 .. _drupol/php-conventions: https://github.com/drupol/php-conventions
-.. _Travis CI: https://travis-ci.org/drupol/psrcas/builds
-.. _Github Actions: https://github.com/drupol/psrcas/actions
+.. _Travis CI: https://travis-ci.org/ecphp/cas-lib/builds
+.. _Github Actions: https://github.com/ecphp/cas-lib/actions
 .. _PHPSpec: http://www.phpspec.net/
 .. _PHPInfection: https://github.com/infection/infection
 .. _Grumphp: https://github.com/phpro/grumphp

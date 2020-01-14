@@ -16,9 +16,9 @@ PHP Extensions
 Packages
 --------
 
-In order to get the PSR CAS library running, you will require some dependencies.
+In order to get the CAS Lib library running, you will require some dependencies.
 
-To give a maximum freedom to the users using PSR CAS, each required dependencies is a well defined standardized PHP
+To give a maximum freedom to the users using CAS Lib, each required dependencies is a well defined standardized PHP
 class.
 
 +------------------+-----------+---------------------------------+------------------------+
@@ -37,7 +37,7 @@ class.
 
 You are free to use any package you want, as long as they are implementing the proper requirement.
 
-PSR CAS only returns standardized HTTP responses, you will need to emit the response back to the client.
+CAS Lib only returns standardized HTTP responses, you will need to emit the response back to the client.
 
 You may use custom code for that, but you can also use any of the following packages for this
 

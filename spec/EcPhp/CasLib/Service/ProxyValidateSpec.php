@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace spec\drupol\psrcas\Service;
+namespace spec\EcPhp\CasLib\Service;
 
-use drupol\psrcas\Service\ProxyValidate;
+use EcPhp\CasLib\Service\ProxyValidate;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -15,8 +15,8 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
-use spec\drupol\psrcas\Cas;
-use spec\drupol\psrcas\Cas as CasSpecUtils;
+use spec\EcPhp\CasLib\Cas;
+use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\HttpClient\Psr18Client;
 
 class ProxyValidateSpec extends ObjectBehavior

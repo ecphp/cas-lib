@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace drupol\psrcas\Service;
+namespace EcPhp\CasLib\Service;
 
-use drupol\psrcas\Introspection\Introspector;
+use EcPhp\CasLib\Introspection\Introspector;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -29,7 +29,7 @@ final class Proxy extends Service implements ServiceInterface
             return null;
         }
 
-        if (false === ($introspect instanceof \drupol\psrcas\Introspection\Contract\Proxy)) {
+        if (false === ($introspect instanceof \EcPhp\CasLib\Introspection\Contract\Proxy)) {
             return null;
         }
 
