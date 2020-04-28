@@ -17,6 +17,26 @@ use spec\EcPhp\CasLib\Cas;
 
 class LoginSpec extends ObjectBehavior
 {
+    public function it_can_deal_with_array_parameters(CacheItemPoolInterface $cache, LoggerInterface $logger)
+    {
+        $psr17Factory = new Psr17Factory();
+        $serverRequest = new ServerRequest('GET', 'http://app');
+        $parameters = [
+            'custom' => range(1, 5),
+        ];
+
+        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+
+        $this
+            ->handle()
+            ->shouldBeAnInstanceOf(ResponseInterface::class);
+
+        $this
+            ->handle()
+            ->getHeaderLine('Location')
+            ->shouldReturn('http://local/cas/login?custom%5B0%5D=1&custom%5B1%5D=2&custom%5B2%5D=3&custom%5B3%5D=4&custom%5B4%5D=5&service=http%3A%2F%2Fapp');
+    }
+
     public function it_can_deal_with_renew_and_gateway_parameters(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
