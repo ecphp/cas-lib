@@ -96,7 +96,7 @@ abstract class Handler
     /**
      * @param \Psr\Http\Message\UriInterface $from
      * @param string $name
-     * @param string[]|UriInterface[] $query
+     * @param mixed[]|string[]|UriInterface[] $query
      *
      * @return \Psr\Http\Message\UriInterface
      */
@@ -129,7 +129,11 @@ abstract class Handler
         // Filter out empty $query parameters
         $query = array_filter(
             $query,
-            static function (string $item): bool {
+            static function ($item): bool {
+                if ([] === $item) {
+                    return false;
+                }
+
                 return '' !== $item;
             }
         );
