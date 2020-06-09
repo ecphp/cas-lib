@@ -165,11 +165,9 @@ abstract class AbstractCas implements CasInterface
 
         $parameters += ['ticket' => $ticket];
 
-        if (true === $this->proxyMode()) {
-            return $this->requestProxyValidate($parameters, $response);
-        }
-
-        return $this->requestServiceValidate($parameters, $response);
+        return true === $this->proxyMode() ?
+            $this->requestProxyValidate($parameters, $response) :
+            $this->requestServiceValidate($parameters, $response);
     }
 
     /**
