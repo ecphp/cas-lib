@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Utils;
 
+use Generator;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -30,11 +31,7 @@ final class Uri
      */
     public static function getParams(UriInterface $uri): array
     {
-        $params = [];
-
-        parse_str($uri->getQuery(), $params);
-
-        return $params;
+        return iterator_to_array(self::parseStr($uri->getQuery()));
     }
 
     /**
@@ -45,7 +42,7 @@ final class Uri
      */
     public static function hasParams(UriInterface $uri, string ...$keys): bool
     {
-        return array_diff_key(array_flip($keys), Uri::getParams($uri)) === [];
+        return array_diff_key(array_flip($keys), self::getParams($uri)) === [];
     }
 
     /**
@@ -62,14 +59,14 @@ final class Uri
     public static function removeParams(UriInterface $uri, string ...$keys): UriInterface
     {
         foreach ($keys as $key) {
-            if (false === Uri::hasParams($uri, $key)) {
+            if (false === self::hasParams($uri, $key)) {
                 continue;
             }
 
             $uri = $uri->withQuery(
                 http_build_query(
                     array_diff_key(
-                        Uri::getParams($uri),
+                        self::getParams($uri),
                         array_flip($keys)
                     )
                 )
@@ -93,7 +90,7 @@ final class Uri
         string $value,
         bool $force = true
     ): UriInterface {
-        $params = Uri::getParams($uri) + [$key => $value];
+        $params = self::getParams($uri) + [$key => $value];
 
         if (true === $force) {
             $params[$key] = $value;
@@ -115,9 +112,42 @@ final class Uri
         bool $force = true
     ): UriInterface {
         foreach ($params as $key => $value) {
-            $uri = Uri::withParam($uri, $key, $value, $force);
+            $uri = self::withParam($uri, $key, $value, $force);
         }
 
         return $uri;
+    }
+
+    /**
+     * Custom parse_str() function that doesn't alter the parameters key value.
+     *
+     * @see: https://github.com/ecphp/cas-lib/issues/5.
+     *
+     * @param string $queryString
+     *
+     * @return Generator<string, string>
+     */
+    private static function parseStr(string $queryString): Generator
+    {
+        $encodedQueryString = preg_replace_callback(
+            '/(^|(?<=&))[^=[&]+/',
+            static function (array $key): string {
+                return bin2hex(urldecode(current($key)));
+            },
+            $queryString
+        );
+
+        if (null === $encodedQueryString) {
+            return yield from [];
+        }
+
+        parse_str(
+            $encodedQueryString,
+            $parameters
+        );
+
+        foreach ($parameters as $key => $value) {
+            yield (string) hex2bin((string) $key) => $value;
+        }
     }
 }

@@ -11,6 +11,13 @@ class UriSpec extends ObjectBehavior
 {
     public function it_can_check_if_some_query_parameters_exists()
     {
+        $url = 'http://host/path';
+
+        $uri = new \Nyholm\Psr7\Uri($url);
+
+        $this::hasParams($uri, 'param1')
+            ->shouldReturn(false);
+
         $url = 'http://host/path?param1=param1&param2=param2#fragment';
 
         $uri = new \Nyholm\Psr7\Uri($url);
@@ -29,6 +36,19 @@ class UriSpec extends ObjectBehavior
 
         $this::hasParams($uri, 'param1', 'param2', 'param3')
             ->shouldReturn(false);
+    }
+
+    public function it_can_check_uri_with_parameters_containing_dots()
+    {
+        $url = 'http://host/path?param.withdot=foo';
+
+        $uri = new \Nyholm\Psr7\Uri($url);
+
+        $this::hasParams($uri, 'param.withdot')
+            ->shouldReturn(true);
+
+        $this::getParam($uri, 'param.withdot')
+            ->shouldReturn('foo');
     }
 
     public function it_can_create_a_new_uri_with_a_new_param()
