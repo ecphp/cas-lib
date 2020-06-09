@@ -163,6 +163,22 @@ class UriSpec extends ObjectBehavior
         $this::removeParams($uri, 'param3', 'param2', 'param1')
             ->__toString()
             ->shouldReturn('http://host/path#fragment');
+
+        $url = 'http://host/path?param1=param1&param2=param2&param3=param3#fragment';
+
+        $uri = new \Nyholm\Psr7\Uri($url);
+
+        $this::removeParams($uri, 'param1', 'param2', 'param4')
+            ->__toString()
+            ->shouldReturn('http://host/path?param3=param3#fragment');
+
+        $url = 'http://host/path?param1=param1&param2=param2&param3=param3#fragment';
+
+        $uri = new \Nyholm\Psr7\Uri($url);
+
+        $this::removeParams($uri)
+            ->__toString()
+            ->shouldReturn($url);
     }
 
     public function it_can_set_multiple_params_at_the_same_time()

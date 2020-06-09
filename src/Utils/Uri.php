@@ -58,12 +58,8 @@ final class Uri
      */
     public static function removeParams(UriInterface $uri, string ...$keys): UriInterface
     {
-        foreach ($keys as $key) {
-            if (false === self::hasParams($uri, $key)) {
-                continue;
-            }
-
-            $uri = $uri->withQuery(
+        return $uri
+            ->withQuery(
                 http_build_query(
                     array_diff_key(
                         self::getParams($uri),
@@ -71,9 +67,6 @@ final class Uri
                     )
                 )
             );
-        }
-
-        return $uri;
     }
 
     /**
