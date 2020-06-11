@@ -123,9 +123,9 @@ abstract class AbstractCas implements CasInterface
     /**
      * {@inheritdoc}
      */
-    public function authenticate(): ?array
+    public function authenticate(array $parameters = []): ?array
     {
-        if (null === $response = $this->requestTicketValidation()) {
+        if (null === $response = $this->requestTicketValidation($parameters)) {
             $this
                 ->getLogger()
                 ->error('Unable to authenticate the request.');
@@ -152,10 +152,6 @@ abstract class AbstractCas implements CasInterface
         array $parameters = [],
         ?ResponseInterface $response = null
     ): ?ResponseInterface {
-        if (false === $this->supportAuthentication()) {
-            return null;
-        }
-
         /** @var string $ticket */
         $ticket = Uri::getParam(
             $this->getServerRequest()->getUri(),
@@ -164,6 +160,10 @@ abstract class AbstractCas implements CasInterface
         );
 
         $parameters += ['ticket' => $ticket];
+
+        if ('' === $parameters['ticket']) {
+            return null;
+        }
 
         return true === $this->proxyMode() ?
             $this->requestProxyValidate($parameters, $response) :

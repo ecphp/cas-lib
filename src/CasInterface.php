@@ -16,10 +16,13 @@ interface CasInterface
     /**
      * Authenticate the request.
      *
+     * @param array[] $parameters
+     *   The parameters related to the service. Can also contain a preset 'token'.
+     *
      * @return array[]|null
      *   The user response if authenticated, null otherwise.
      */
-    public function authenticate(): ?array;
+    public function authenticate(array $parameters = []): ?array;
 
     /**
      * Get the CAS properties.
