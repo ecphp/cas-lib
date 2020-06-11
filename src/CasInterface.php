@@ -16,7 +16,7 @@ interface CasInterface
     /**
      * Authenticate the request.
      *
-     * @param array[] $parameters
+     * @param array[]|string[] $parameters
      *   The parameters related to the service.
      *
      * @return array[]|null
