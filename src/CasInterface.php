@@ -17,7 +17,7 @@ interface CasInterface
      * Authenticate the request.
      *
      * @param array[] $parameters
-     *   The parameters related to the service. Can also contain a preset 'token'.
+     *   The parameters related to the service.
      *
      * @return array[]|null
      *   The user response if authenticated, null otherwise.
@@ -137,10 +137,13 @@ interface CasInterface
     /**
      * Check if the request needs to be authenticated.
      *
+     * @param array[]|string[] $parameters
+     *   The parameters related to the service.
+     *
      * @return bool
      *   True if it can run the authentication, false otherwise.
      */
-    public function supportAuthentication(): bool;
+    public function supportAuthentication($parameters = []): bool;
 
     /**
      * Update the server request in use.
