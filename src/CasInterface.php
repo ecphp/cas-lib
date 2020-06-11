@@ -143,7 +143,7 @@ interface CasInterface
      * @return bool
      *   True if it can run the authentication, false otherwise.
      */
-    public function supportAuthentication($parameters = []): bool;
+    public function supportAuthentication(array $parameters = []): bool;
 
     /**
      * Update the server request in use.

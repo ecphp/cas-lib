@@ -175,7 +175,7 @@ abstract class AbstractCas implements CasInterface
     /**
      * {@inheritdoc}
      */
-    public function supportAuthentication($parameters = []): bool
+    public function supportAuthentication(array $parameters = []): bool
     {
         return array_key_exists('ticket', $parameters) || Uri::hasParams($this->getServerRequest()->getUri(), 'ticket');
     }
