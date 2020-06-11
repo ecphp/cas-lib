@@ -17,6 +17,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
 
+use function array_key_exists;
+
 /**
  * Class AbstractCas.
  */
@@ -123,9 +125,9 @@ abstract class AbstractCas implements CasInterface
     /**
      * {@inheritdoc}
      */
-    public function authenticate(): ?array
+    public function authenticate(array $parameters = []): ?array
     {
-        if (null === $response = $this->requestTicketValidation()) {
+        if (null === $response = $this->requestTicketValidation($parameters)) {
             $this
                 ->getLogger()
                 ->error('Unable to authenticate the request.');
@@ -152,7 +154,7 @@ abstract class AbstractCas implements CasInterface
         array $parameters = [],
         ?ResponseInterface $response = null
     ): ?ResponseInterface {
-        if (false === $this->supportAuthentication()) {
+        if (false === $this->supportAuthentication($parameters)) {
             return null;
         }
 
@@ -173,9 +175,9 @@ abstract class AbstractCas implements CasInterface
     /**
      * {@inheritdoc}
      */
-    public function supportAuthentication(): bool
+    public function supportAuthentication(array $parameters = []): bool
     {
-        return Uri::hasParams($this->getServerRequest()->getUri(), 'ticket');
+        return array_key_exists('ticket', $parameters) || Uri::hasParams($this->getServerRequest()->getUri(), 'ticket');
     }
 
     /**

@@ -16,10 +16,13 @@ interface CasInterface
     /**
      * Authenticate the request.
      *
+     * @param array[]|string[] $parameters
+     *   The parameters related to the service.
+     *
      * @return array[]|null
      *   The user response if authenticated, null otherwise.
      */
-    public function authenticate(): ?array;
+    public function authenticate(array $parameters = []): ?array;
 
     /**
      * Get the CAS properties.
@@ -134,10 +137,13 @@ interface CasInterface
     /**
      * Check if the request needs to be authenticated.
      *
+     * @param array[]|string[] $parameters
+     *   The parameters related to the service.
+     *
      * @return bool
      *   True if it can run the authentication, false otherwise.
      */
-    public function supportAuthentication(): bool;
+    public function supportAuthentication(array $parameters = []): bool;
 
     /**
      * Update the server request in use.
