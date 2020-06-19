@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Utils;
 
-use Generator;
+use League\Uri\Parser\QueryString;
 use Psr\Http\Message\UriInterface;
+
+use const PHP_QUERY_RFC1738;
 
 /**
  * Class Uri.
@@ -31,7 +33,7 @@ final class Uri
      */
     public static function getParams(UriInterface $uri): array
     {
-        return iterator_to_array(self::parseStr($uri->getQuery()));
+        return QueryString::extract($uri->getQuery(), '&', PHP_QUERY_RFC1738);
     }
 
     /**
@@ -109,38 +111,5 @@ final class Uri
         }
 
         return $uri;
-    }
-
-    /**
-     * Custom parse_str() function that doesn't alter the parameters key value.
-     *
-     * @see: https://github.com/ecphp/cas-lib/issues/5.
-     *
-     * @param string $queryString
-     *
-     * @return Generator<string, string>
-     */
-    private static function parseStr(string $queryString): Generator
-    {
-        $encodedQueryString = preg_replace_callback(
-            '/(^|(?<=&))[^=[&]+/',
-            static function (array $key): string {
-                return bin2hex(urldecode(current($key)));
-            },
-            $queryString
-        );
-
-        if (null === $encodedQueryString) {
-            return yield from [];
-        }
-
-        parse_str(
-            $encodedQueryString,
-            $parameters
-        );
-
-        foreach ($parameters as $key => $value) {
-            yield (string) hex2bin((string) $key) => $value;
-        }
     }
 }
