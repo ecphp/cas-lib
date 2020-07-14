@@ -7,6 +7,7 @@ namespace spec\EcPhp\CasLib;
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
 use EcPhp\CasLib\Introspection\Introspector;
+use EcPhp\CasLib\Introspection\ServiceValidate;
 use EcPhp\CasLib\Utils\SimpleXml;
 use Exception;
 use InvalidArgumentException;
@@ -490,6 +491,55 @@ class CasSpec extends ObjectBehavior
             ->withServerRequest($request)
             ->supportAuthentication()
             ->shouldReturn(true);
+    }
+
+    public function it_can_detect_the_type_of_a_response(CacheItemPoolInterface $cache, LoggerInterface $logger)
+    {
+        $body = <<< 'EOF'
+<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+ <cas:authenticationSuccess>
+  <cas:user>username</cas:user>
+ </cas:authenticationSuccess>
+</cas:serviceResponse>
+EOF;
+
+        $headers = [
+            'Content-Type' => 'application/xml',
+        ];
+
+        $response = new Response(
+            200,
+            $headers,
+            $body
+        );
+
+        $this
+            ->detect(
+                $response
+            )
+            ->shouldReturnAnInstanceOf(ServiceValidate::class);
+
+        $body = <<< 'EOF'
+<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+ <cas:authenticationSuccess>
+  <cas:user>username</cas:user>
+ </cas:authenticationSuccess>
+</cas:serviceResponse>
+EOF;
+
+        $headers = [
+            'Content-Type' => 'application/foo',
+        ];
+
+        $response = new Response(
+            200,
+            $headers,
+            $body
+        );
+
+        $this
+            ->shouldThrow(InvalidArgumentException::class)
+            ->during('detect', [$response]);
     }
 
     public function it_can_detect_when_gateway_and_renew_are_set_together()

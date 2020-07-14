@@ -12,9 +12,6 @@ use Psr\Http\Message\ResponseInterface;
 
 use const JSON_ERROR_NONE;
 
-/**
- * Class Introspector.
- */
 final class Introspector implements IntrospectorInterface
 {
     public function detect(ResponseInterface $response): IntrospectionInterface

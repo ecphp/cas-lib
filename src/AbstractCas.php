@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
@@ -130,6 +131,11 @@ abstract class AbstractCas implements CasInterface
         }
 
         return $this->getIntrospector()->detect($response)->getParsedResponse();
+    }
+
+    public function detect(ResponseInterface $response): IntrospectionInterface
+    {
+        return $this->getIntrospector()->detect($response);
     }
 
     /**
