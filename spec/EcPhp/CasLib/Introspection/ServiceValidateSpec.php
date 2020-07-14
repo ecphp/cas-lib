@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Introspection;
 
+use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
@@ -124,5 +125,26 @@ EOF;
         $this
             ->getResponse()
             ->shouldReturn($response);
+    }
+
+    public function it_can_use_the_withParsedResponse_wither_method()
+    {
+        $psr17Factory = new Psr17Factory();
+        $body = 'body';
+
+        $response = (new Response(200))
+            ->withHeader('Content-Type', 'application/xml')
+            ->withBody($psr17Factory->createStream($body));
+
+        $this
+            ->beConstructedWith([], 'XML', $response);
+
+        $this
+            ->withParsedResponse(['foo'])
+            ->shouldNotReturn($this);
+
+        $this
+            ->withParsedResponse(['foo'])
+            ->shouldReturnAnInstanceOf(IntrospectionInterface::class);
     }
 }
