@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
-use EcPhp\CasLib\Introspection\Introspector;
+use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
@@ -37,6 +37,11 @@ abstract class AbstractCas implements CasInterface
      * @var \Psr\Http\Client\ClientInterface
      */
     private $client;
+
+    /**
+     * @var \EcPhp\CasLib\Introspection\Contract\IntrospectorInterface
+     */
+    private $introspector;
 
     /**
      * The logger.
@@ -87,9 +92,6 @@ abstract class AbstractCas implements CasInterface
      */
     private $uriFactory;
 
-    /**
-     * AbstractCas constructor.
-     */
     public function __construct(
         ServerRequestInterface $serverRequest,
         PropertiesInterface $properties,
@@ -99,7 +101,8 @@ abstract class AbstractCas implements CasInterface
         RequestFactoryInterface $requestFactory,
         StreamFactoryInterface $streamFactory,
         CacheItemPoolInterface $cache,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        IntrospectorInterface $introspector
     ) {
         $this->serverRequest = $serverRequest;
         $this->properties = $properties;
@@ -110,6 +113,7 @@ abstract class AbstractCas implements CasInterface
         $this->streamFactory = $streamFactory;
         $this->cache = $cache;
         $this->logger = $logger;
+        $this->introspector = $introspector;
     }
 
     /**
@@ -125,8 +129,7 @@ abstract class AbstractCas implements CasInterface
             return null;
         }
 
-        return Introspector::detect($response)
-            ->getParsedResponse();
+        return $this->getIntrospector()->detect($response)->getParsedResponse();
     }
 
     /**
@@ -181,89 +184,46 @@ abstract class AbstractCas implements CasInterface
         return $clone;
     }
 
-    /**
-     * Get the cache.
-     *
-     * @return \Psr\Cache\CacheItemPoolInterface
-     *   The cache.
-     */
     protected function getCache(): CacheItemPoolInterface
     {
         return $this->cache;
     }
 
-    /**
-     * Get the HTTP client.
-     *
-     * @return \Psr\Http\Client\ClientInterface
-     *   The HTTP client.
-     */
     protected function getHttpClient(): ClientInterface
     {
         return $this->client;
     }
 
-    /**
-     * Get the logger.
-     *
-     * @return \Psr\Log\LoggerInterface
-     *   The logger.
-     */
+    protected function getIntrospector(): IntrospectorInterface
+    {
+        return $this->introspector;
+    }
+
     protected function getLogger(): LoggerInterface
     {
         return $this->logger;
     }
 
-    /**
-     * Get the request factory.
-     *
-     * @return \Psr\Http\Message\RequestFactoryInterface
-     *   The request factory.
-     */
     protected function getRequestFactory(): RequestFactoryInterface
     {
         return $this->requestFactory;
     }
 
-    /**
-     * Get the response factory.
-     *
-     * @return \Psr\Http\Message\ResponseFactoryInterface
-     *   The response factory.
-     */
     protected function getResponseFactory(): ResponseFactoryInterface
     {
         return $this->responseFactory;
     }
 
-    /**
-     * Get the server request.
-     *
-     * @return \Psr\Http\Message\ServerRequestInterface
-     *   The server request.
-     */
     protected function getServerRequest(): ServerRequestInterface
     {
         return $this->serverRequest;
     }
 
-    /**
-     * Get the stream factory.
-     *
-     * @return \Psr\Http\Message\StreamFactoryInterface
-     *   The stream factory.
-     */
     protected function getStreamFactory(): StreamFactoryInterface
     {
         return $this->streamFactory;
     }
 
-    /**
-     * Get the URI factory.
-     *
-     * @return \Psr\Http\Message\UriFactoryInterface
-     *   The URI factory.
-     */
     protected function getUriFactory(): UriFactoryInterface
     {
         return $this->uriFactory;

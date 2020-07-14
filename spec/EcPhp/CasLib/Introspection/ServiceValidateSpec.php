@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Introspection;
 
-use EcPhp\CasLib\Introspection\Introspector;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
@@ -32,22 +31,30 @@ EOF;
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
+        $credentials = [
+            'user' => 'user',
+            'proxyGrantingTicket' => 'proxyGrantingTicket',
+            'proxies' => [
+                'proxy' => [
+                    'http://proxy1',
+                    'http://proxy2',
+                ],
+            ],
+        ];
+
+        $parsed = [
+            'serviceResponse' => [
+                'authenticationSuccess' => $credentials,
+            ],
+        ];
+
         $this
-            ->beConstructedWith(Introspector::parse($response), 'XML', $response);
+            ->beConstructedWith($parsed, 'XML', $response);
 
         $this
             ->getCredentials()
             ->shouldReturn(
-                [
-                    'user' => 'user',
-                    'proxyGrantingTicket' => 'proxyGrantingTicket',
-                    'proxies' => [
-                        'proxy' => [
-                            'http://proxy1',
-                            'http://proxy2',
-                        ],
-                    ],
-                ]
+                $credentials
             );
 
         $this
@@ -85,17 +92,26 @@ EOF;
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
+        $credentials = [
+            'user' => 'user',
+            'proxyGrantingTicket' => 'proxyGrantingTicket',
+        ];
+
+        $parsed = [
+            'serviceResponse' => [
+                'authenticationSuccess' => [
+                    'user' => 'user',
+                    'proxyGrantingTicket' => 'proxyGrantingTicket',
+                ],
+            ],
+        ];
+
         $this
-            ->beConstructedWith(Introspector::parse($response), 'XML', $response);
+            ->beConstructedWith($parsed, 'XML', $response);
 
         $this
             ->getCredentials()
-            ->shouldReturn(
-                [
-                    'user' => 'user',
-                    'proxyGrantingTicket' => 'proxyGrantingTicket',
-                ]
-            );
+            ->shouldReturn($credentials);
 
         $this
             ->getFormat()

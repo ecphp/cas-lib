@@ -6,10 +6,12 @@ namespace EcPhp\CasLib\Introspection\Contract;
 
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Interface IntrospectorInterface.
- */
 interface IntrospectorInterface
 {
-    public static function detect(ResponseInterface $response): IntrospectionInterface;
+    public function detect(ResponseInterface $response): IntrospectionInterface;
+
+    /**
+     * @return array<string, string|array<mixed>
+     */
+    public function parse(ResponseInterface $response, string $format = 'XML'): array;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tests\EcPhp\CasLib\Service;
 
+use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Service\Service;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
@@ -28,6 +29,11 @@ class ProxyValidate extends Service
     public function getClient(): ClientInterface
     {
         return parent::getClient();
+    }
+
+    public function getIntrospector(): IntrospectorInterface
+    {
+        return parent::getIntrospector();
     }
 
     public function getLogger(): LoggerInterface

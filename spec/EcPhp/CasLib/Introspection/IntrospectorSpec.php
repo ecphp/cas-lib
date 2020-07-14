@@ -34,7 +34,7 @@ EOF;
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this::detect($response)
+        $this->detect($response)
             ->shouldBeAnInstanceOf(Proxy::class);
     }
 
@@ -55,7 +55,7 @@ EOF;
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this::detect($response)
+        $this->detect($response)
             ->shouldBeAnInstanceOf(ServiceValidate::class);
 
         $body = <<< 'EOF'
@@ -72,7 +72,7 @@ EOF;
             ->withHeader('Content-Type', 'application/json')
             ->withBody($psr17Factory->createStream($body));
 
-        $this::detect($response)
+        $this->detect($response)
             ->shouldBeAnInstanceOf(ServiceValidate::class);
     }
 
@@ -96,7 +96,7 @@ EOF;
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this::detect($response)
+        $this->detect($response)
             ->shouldBeAnInstanceOf(ServiceValidate::class);
     }
 
@@ -145,7 +145,7 @@ EOF;
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this::detect($response)
+        $this->detect($response)
             ->shouldBeAnInstanceOf(AuthenticationFailure::class);
     }
 
