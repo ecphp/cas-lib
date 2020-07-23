@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Service;
 
+use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Service\Proxy;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -16,7 +17,7 @@ use spec\EcPhp\CasLib\Cas;
 
 class ProxySpec extends ObjectBehavior
 {
-    public function it_can_detect_a_wrong_proxy_response(ServerRequestInterface $serverRequest, ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_can_detect_a_wrong_proxy_response()
     {
         $body = <<< 'EOF'
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
@@ -46,7 +47,7 @@ EOF;
             ->shouldBeNull();
     }
 
-    public function it_is_initializable(ServerRequestInterface $serverRequest, ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_is_initializable()
     {
         $this->shouldHaveType(Proxy::class);
     }
@@ -55,6 +56,6 @@ EOF;
     {
         $psr17Factory = new Psr17Factory();
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
     }
 }

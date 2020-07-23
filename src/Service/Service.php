@@ -6,8 +6,8 @@ namespace EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
 use EcPhp\CasLib\Handler\Handler;
+use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
-use EcPhp\CasLib\Introspection\Introspector;
 use InvalidArgumentException;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -26,9 +26,6 @@ use function array_key_exists;
 
 use const JSON_ERROR_NONE;
 
-/**
- * Class Service.
- */
 abstract class Service extends Handler
 {
     /**
@@ -37,15 +34,15 @@ abstract class Service extends Handler
     private $client;
 
     /**
+     * @var \EcPhp\CasLib\Introspection\Contract\IntrospectorInterface
+     */
+    private $introspector;
+
+    /**
      * @var \Psr\Http\Message\RequestFactoryInterface
      */
     private $requestFactory;
 
-    /**
-     * Service constructor.
-     *
-     * @param array[]|string[] $parameters
-     */
     public function __construct(
         ServerRequestInterface $serverRequest,
         array $parameters,
@@ -56,7 +53,8 @@ abstract class Service extends Handler
         RequestFactoryInterface $requestFactory,
         StreamFactoryInterface $streamFactory,
         CacheItemPoolInterface $cache,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        IntrospectorInterface $introspector
     ) {
         parent::__construct(
             $serverRequest,
@@ -71,6 +69,7 @@ abstract class Service extends Handler
 
         $this->client = $client;
         $this->requestFactory = $requestFactory;
+        $this->introspector = $introspector;
     }
 
     /**
@@ -79,7 +78,7 @@ abstract class Service extends Handler
     public function getCredentials(ResponseInterface $response): ?ResponseInterface
     {
         try {
-            $introspect = Introspector::detect($response);
+            $introspect = $this->getIntrospector()->detect($response);
         } catch (InvalidArgumentException $exception) {
             $this
                 ->getLogger()
@@ -159,9 +158,11 @@ abstract class Service extends Handler
         return $this->client;
     }
 
-    /**
-     * Get the request.
-     */
+    protected function getIntrospector(): IntrospectorInterface
+    {
+        return $this->introspector;
+    }
+
     protected function getRequest(): RequestInterface
     {
         return $this->getRequestFactory()->createRequest('GET', $this->getUri());
@@ -188,7 +189,7 @@ abstract class Service extends Handler
         $format = $this->getProtocolProperties()['default_parameters']['format'] ?? 'XML';
 
         try {
-            $array = Introspector::parse($response, $format);
+            $array = $this->getIntrospector()->parse($response, $format);
         } catch (InvalidArgumentException $exception) {
             $this
                 ->getLogger()

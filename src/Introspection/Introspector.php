@@ -12,12 +12,9 @@ use Psr\Http\Message\ResponseInterface;
 
 use const JSON_ERROR_NONE;
 
-/**
- * Class Introspector.
- */
 final class Introspector implements IntrospectorInterface
 {
-    public static function detect(ResponseInterface $response): IntrospectionInterface
+    public function detect(ResponseInterface $response): IntrospectionInterface
     {
         $format = null;
 
@@ -45,7 +42,7 @@ final class Introspector implements IntrospectorInterface
         }
 
         try {
-            $data = self::parse($response, $format);
+            $data = $this->parse($response, $format);
         } catch (InvalidArgumentException $exception) {
             throw new InvalidArgumentException($exception->getMessage());
         }
@@ -70,7 +67,7 @@ final class Introspector implements IntrospectorInterface
      *
      * @return mixed[]
      */
-    public static function parse(ResponseInterface $response, string $format = 'XML'): array
+    public function parse(ResponseInterface $response, string $format = 'XML'): array
     {
         if ('XML' === $format) {
             $xml = SimpleXml::fromString((string) $response->getBody());

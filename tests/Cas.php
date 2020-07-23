@@ -6,6 +6,7 @@ namespace tests\EcPhp\CasLib;
 
 use EcPhp\CasLib\AbstractCas;
 use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -32,7 +33,8 @@ class Cas extends AbstractCas
         RequestFactoryInterface $requestFactory,
         StreamFactoryInterface $streamFactory,
         CacheItemPoolInterface $cache,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        IntrospectorInterface $introspector
     ) {
         parent::__construct(
             $serverRequest,
@@ -43,7 +45,8 @@ class Cas extends AbstractCas
             $requestFactory,
             $streamFactory,
             $cache,
-            $logger
+            $logger,
+            $introspector
         );
 
         $this->cas = new \EcPhp\CasLib\Cas(
@@ -55,7 +58,8 @@ class Cas extends AbstractCas
             $requestFactory,
             $streamFactory,
             $cache,
-            $logger
+            $logger,
+            $introspector
         );
     }
 

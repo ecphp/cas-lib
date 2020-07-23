@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\tests\EcPhp\CasLib;
 
+use EcPhp\CasLib\Introspection\Introspector;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PhpSpec\ObjectBehavior;
@@ -28,7 +29,7 @@ class CasSpec extends ObjectBehavior
         );
         $serverRequest = $creator->fromGlobals();
 
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $this
             ->proxyMode()
@@ -49,7 +50,7 @@ class CasSpec extends ObjectBehavior
         );
         $serverRequest = $creator->fromGlobals();
 
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $this
             ->proxyMode()

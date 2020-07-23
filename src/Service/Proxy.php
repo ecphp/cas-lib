@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
-use EcPhp\CasLib\Introspection\Introspector;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -20,7 +19,7 @@ final class Proxy extends Service implements ServiceInterface
     public function getCredentials(ResponseInterface $response): ?ResponseInterface
     {
         try {
-            $introspect = Introspector::detect($response);
+            $introspect = $this->getIntrospector()->detect($response);
         } catch (InvalidArgumentException $exception) {
             $this
                 ->getLogger()

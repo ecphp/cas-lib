@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Service;
 
+use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Service\ProxyValidate;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -61,7 +62,7 @@ class ProxyValidateSpec extends ObjectBehavior
             ->getItem('pgtIou')
             ->willReturn($cacheItem);
 
-        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ST-ticket-pgt'], Cas::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ST-ticket-pgt'], Cas::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $response = $this->handle();
 
@@ -84,7 +85,7 @@ class ProxyValidateSpec extends ObjectBehavior
         $serverRequest = new ServerRequest('GET', 'http://from');
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
-        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ticket'], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ticket'], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $response = $this->handle();
 
@@ -109,6 +110,6 @@ class ProxyValidateSpec extends ObjectBehavior
     {
         $psr17Factory = new Psr17Factory();
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
     }
 }

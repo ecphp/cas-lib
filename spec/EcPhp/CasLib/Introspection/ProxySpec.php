@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Introspection;
 
-use EcPhp\CasLib\Introspection\Introspector;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
@@ -30,8 +29,16 @@ EOF;
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
+        $parsed = [
+            'serviceResponse' => [
+                'proxySuccess' => [
+                    'proxyTicket' => 'PT-214-A3OoEPNr4Q9kNNuYzmfN8azU31aDUsuW8nk380k7wDExT5PFJpxR1TrNI3q3VGzyDdi0DpZ1LKb8IhPKZKQvavW-8hnfexYjmLCx7qWNsLib1W-DCzzoLVTosAUFzP3XDn5dNzoNtxIXV9KSztF9fYhwHvU0',
+                ],
+            ],
+        ];
+
         $this
-            ->beConstructedWith(Introspector::parse($response), 'XML', $response);
+            ->beConstructedWith($parsed, 'XML', $response);
 
         $this
             ->getProxyTicket()

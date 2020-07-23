@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Introspection;
 
+use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class Introspection
@@ -19,7 +20,7 @@ abstract class Introspection
     private $parsedResponse;
 
     /**
-     * @var \Psr\Http\Message\ResponseInterface
+     * @var \Psr\Hstaticttp\Message\ResponseInterface
      */
     private $response;
 
@@ -40,9 +41,6 @@ abstract class Introspection
         return $this->format;
     }
 
-    /**
-     * @return array[]
-     */
     public function getParsedResponse(): array
     {
         return $this->parsedResponse;
@@ -51,5 +49,13 @@ abstract class Introspection
     public function getResponse(): ResponseInterface
     {
         return $this->response;
+    }
+
+    public function withParsedResponse(array $parsedResponse): IntrospectionInterface
+    {
+        $clone = clone $this;
+        $clone->parsedResponse = $parsedResponse;
+
+        return $clone;
     }
 }

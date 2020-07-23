@@ -12,9 +12,6 @@ use EcPhp\CasLib\Service\ProxyValidate;
 use EcPhp\CasLib\Service\ServiceValidate;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class Cas.
- */
 final class Cas extends AbstractCas
 {
     /**
@@ -91,7 +88,8 @@ final class Cas extends AbstractCas
             $this->getRequestFactory(),
             $this->getStreamFactory(),
             $this->getCache(),
-            $this->getLogger()
+            $this->getLogger(),
+            $this->getIntrospector()
         );
 
         if (null === $response) {
@@ -132,7 +130,8 @@ final class Cas extends AbstractCas
             $this->getRequestFactory(),
             $this->getStreamFactory(),
             $this->getCache(),
-            $this->getLogger()
+            $this->getLogger(),
+            $this->getIntrospector()
         );
 
         if (null === $response) {
@@ -173,7 +172,8 @@ final class Cas extends AbstractCas
             $this->getRequestFactory(),
             $this->getStreamFactory(),
             $this->getCache(),
-            $this->getLogger()
+            $this->getLogger(),
+            $this->getIntrospector()
         );
 
         if (null === $response) {

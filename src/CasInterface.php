@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -23,6 +24,8 @@ interface CasInterface
      *   The user response if authenticated, null otherwise.
      */
     public function authenticate(array $parameters = []): ?array;
+
+    public function detect(ResponseInterface $response): IntrospectionInterface;
 
     /**
      * Get the CAS properties.
