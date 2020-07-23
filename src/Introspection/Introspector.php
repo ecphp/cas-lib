@@ -17,11 +17,6 @@ use const JSON_ERROR_NONE;
  */
 final class Introspector implements IntrospectorInterface
 {
-    /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @return \EcPhp\CasLib\Introspection\Contract\IntrospectionInterface
-     */
     public static function detect(ResponseInterface $response): IntrospectionInterface
     {
         $format = null;
@@ -71,9 +66,6 @@ final class Introspector implements IntrospectorInterface
     }
 
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param string $format
-     *
      * @throws InvalidArgumentException
      *
      * @return mixed[]

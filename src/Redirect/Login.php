@@ -86,8 +86,6 @@ final class Login extends Redirect implements RedirectInterface
 
     /**
      * @param string[] $parameters
-     *
-     * @return \Psr\Http\Message\UriInterface
      */
     private function getUri(array $parameters = []): UriInterface
     {

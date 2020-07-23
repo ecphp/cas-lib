@@ -12,10 +12,5 @@ use Psr\Http\Message\ResponseInterface;
  */
 interface ServiceInterface extends HandlerInterface
 {
-    /**
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     */
     public function getCredentials(ResponseInterface $response): ?ResponseInterface;
 }

@@ -64,14 +64,7 @@ abstract class Handler
     /**
      * Handler constructor.
      *
-     * @param ServerRequestInterface $serverRequest
      * @param array[]|string[] $parameters
-     * @param \EcPhp\CasLib\Configuration\PropertiesInterface $properties
-     * @param \Psr\Http\Message\UriFactoryInterface $uriFactory
-     * @param ResponseFactoryInterface $responseFactory
-     * @param \Psr\Http\Message\StreamFactoryInterface $streamFactory
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
-     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         ServerRequestInterface $serverRequest,
@@ -94,11 +87,7 @@ abstract class Handler
     }
 
     /**
-     * @param \Psr\Http\Message\UriInterface $from
-     * @param string $name
      * @param mixed[]|string[]|UriInterface[] $query
-     *
-     * @return \Psr\Http\Message\UriInterface
      */
     protected function buildUri(UriInterface $from, string $name, array $query = []): UriInterface
     {
@@ -179,17 +168,11 @@ abstract class Handler
         return $parameters;
     }
 
-    /**
-     * @return \Psr\Cache\CacheItemPoolInterface
-     */
     protected function getCache(): CacheItemPoolInterface
     {
         return $this->cache;
     }
 
-    /**
-     * @return \Psr\Log\LoggerInterface
-     */
     protected function getLogger(): LoggerInterface
     {
         return $this->logger;
@@ -203,9 +186,6 @@ abstract class Handler
         return $this->parameters + ($this->getProtocolProperties()['default_parameters'] ?? []);
     }
 
-    /**
-     * @return PropertiesInterface
-     */
     protected function getProperties(): PropertiesInterface
     {
         return $this->properties;
@@ -221,33 +201,21 @@ abstract class Handler
         return [];
     }
 
-    /**
-     * @return \Psr\Http\Message\ResponseFactoryInterface
-     */
     protected function getResponseFactory(): ResponseFactoryInterface
     {
         return $this->responseFactory;
     }
 
-    /**
-     * @return \Psr\Http\Message\ServerRequestInterface
-     */
     protected function getServerRequest(): ServerRequestInterface
     {
         return $this->serverRequest;
     }
 
-    /**
-     * @return \Psr\Http\Message\StreamFactoryInterface
-     */
     protected function getStreamFactory(): StreamFactoryInterface
     {
         return $this->streamFactory;
     }
 
-    /**
-     * @return \Psr\Http\Message\UriFactoryInterface
-     */
     protected function getUriFactory(): UriFactoryInterface
     {
         return $this->uriFactory;

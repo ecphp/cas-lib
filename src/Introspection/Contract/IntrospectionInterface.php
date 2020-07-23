@@ -11,9 +11,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 interface IntrospectionInterface
 {
-    /**
-     * @return string
-     */
     public function getFormat(): string;
 
     /**
@@ -21,8 +18,5 @@ interface IntrospectionInterface
      */
     public function getParsedResponse(): array;
 
-    /**
-     * @return \Psr\Http\Message\ResponseInterface
-     */
     public function getResponse(): ResponseInterface;
 }

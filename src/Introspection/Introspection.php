@@ -27,8 +27,6 @@ abstract class Introspection
      * Introspection constructor.
      *
      * @param array[] $parsedResponse
-     * @param string $format
-     * @param \Psr\Http\Message\ResponseInterface $response
      */
     public function __construct(array $parsedResponse, string $format, ResponseInterface $response)
     {
@@ -37,9 +35,6 @@ abstract class Introspection
         $this->format = $format;
     }
 
-    /**
-     * @return string
-     */
     public function getFormat(): string
     {
         return $this->format;
@@ -53,9 +48,6 @@ abstract class Introspection
         return $this->parsedResponse;
     }
 
-    /**
-     * @return \Psr\Http\Message\ResponseInterface
-     */
     public function getResponse(): ResponseInterface
     {
         return $this->response;

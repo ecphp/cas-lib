@@ -12,11 +12,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 abstract class Redirect extends Handler
 {
-    /**
-     * @param string $url
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
     protected function createRedirectResponse(string $url): ResponseInterface
     {
         $this

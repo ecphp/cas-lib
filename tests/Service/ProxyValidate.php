@@ -92,8 +92,6 @@ class ProxyValidate extends Service
 
     /**
      * Get the URI.
-     *
-     * @return \Psr\Http\Message\UriInterface
      */
     protected function getUri(): UriInterface
     {

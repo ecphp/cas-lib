@@ -9,8 +9,5 @@ namespace EcPhp\CasLib\Introspection\Contract;
  */
 interface Proxy extends IntrospectionInterface
 {
-    /**
-     * @return string
-     */
     public function getProxyTicket(): string;
 }

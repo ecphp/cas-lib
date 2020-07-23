@@ -14,11 +14,6 @@ use const LIBXML_NOCDATA;
  */
 final class SimpleXml
 {
-    /**
-     * @param string $data
-     *
-     * @return SimpleXMLElement|null
-     */
     public static function fromString(string $data): ?SimpleXMLElement
     {
         libxml_use_internal_errors(true);
@@ -40,8 +35,6 @@ final class SimpleXml
     }
 
     /**
-     * @param SimpleXMLElement $xml
-     *
      * @return array[]|null[]|string[]
      */
     public static function toArray(SimpleXMLElement $xml): array
@@ -50,8 +43,6 @@ final class SimpleXml
     }
 
     /**
-     * @param SimpleXMLElement $element
-     *
      * @return array[]
      */
     private static function toArrayRecursive(SimpleXMLElement $element): ?array

@@ -89,16 +89,6 @@ abstract class AbstractCas implements CasInterface
 
     /**
      * AbstractCas constructor.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
-     * @param \EcPhp\CasLib\Configuration\PropertiesInterface $properties
-     * @param \Psr\Http\Client\ClientInterface $client
-     * @param \Psr\Http\Message\UriFactoryInterface $uriFactory
-     * @param \Psr\Http\Message\ResponseFactoryInterface $responseFactory
-     * @param RequestFactoryInterface $requestFactory
-     * @param StreamFactoryInterface $streamFactory
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
-     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         ServerRequestInterface $serverRequest,
@@ -279,9 +269,6 @@ abstract class AbstractCas implements CasInterface
         return $this->uriFactory;
     }
 
-    /**
-     * @return bool
-     */
     protected function proxyMode(): bool
     {
         return isset($this->getProperties()['protocol']['serviceValidate']['default_parameters']['pgtUrl']);

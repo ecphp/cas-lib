@@ -44,16 +44,7 @@ abstract class Service extends Handler
     /**
      * Service constructor.
      *
-     * @param ServerRequestInterface $serverRequest
      * @param array[]|string[] $parameters
-     * @param \EcPhp\CasLib\Configuration\PropertiesInterface $properties
-     * @param \Psr\Http\Client\ClientInterface $client
-     * @param \Psr\Http\Message\UriFactoryInterface $uriFactory
-     * @param ResponseFactoryInterface $responseFactory
-     * @param \Psr\Http\Message\RequestFactoryInterface $requestFactory
-     * @param \Psr\Http\Message\StreamFactoryInterface $streamFactory
-     * @param \Psr\Cache\CacheItemPoolInterface $cache
-     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         ServerRequestInterface $serverRequest,
@@ -163,9 +154,6 @@ abstract class Service extends Handler
         return null === $response ? $response : $this->normalize($response);
     }
 
-    /**
-     * @return \Psr\Http\Client\ClientInterface
-     */
     protected function getClient(): ClientInterface
     {
         return $this->client;
@@ -173,17 +161,12 @@ abstract class Service extends Handler
 
     /**
      * Get the request.
-     *
-     * @return \Psr\Http\Message\RequestInterface
      */
     protected function getRequest(): RequestInterface
     {
         return $this->getRequestFactory()->createRequest('GET', $this->getUri());
     }
 
-    /**
-     * @return \Psr\Http\Message\RequestFactoryInterface
-     */
     protected function getRequestFactory(): RequestFactoryInterface
     {
         return $this->requestFactory;
@@ -191,15 +174,11 @@ abstract class Service extends Handler
 
     /**
      * Get the URI.
-     *
-     * @return \Psr\Http\Message\UriInterface
      */
     abstract protected function getUri(): UriInterface;
 
     /**
      * Parse the response format.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
      *
      * @return array[]|string[]
      *   The parsed response.
@@ -256,10 +235,6 @@ abstract class Service extends Handler
 
     /**
      * Normalize a response.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @return \Psr\Http\Message\ResponseInterface
      */
     private function normalize(ResponseInterface $response): ResponseInterface
     {
