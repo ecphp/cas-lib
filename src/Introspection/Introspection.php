@@ -20,7 +20,7 @@ abstract class Introspection
     private $parsedResponse;
 
     /**
-     * @var \Psr\Hstaticttp\Message\ResponseInterface
+     * @var \Psr\Http\Message\ResponseInterface
      */
     private $response;
 
