@@ -8,11 +8,8 @@ use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
 use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Introspection\ServiceValidate;
-use EcPhp\CasLib\Utils\SimpleXml;
 use Exception;
 use InvalidArgumentException;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -1358,19 +1355,19 @@ EOF;
 
     public function it_can_validate_any_type_of_ticket()
     {
-        $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>username</cas:user>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+        $body = [
+            'serviceResponse' => [
+                'authenticationSuccess' => [
+                    'user' => 'username',
+                ],
+            ],
+        ];
 
         $request = new ServerRequest('GET', 'http://from?ticket=ST-TICKET');
         $response = new Response(
             200,
             ['Content-Type' => 'application/json'],
-            json_encode(SimpleXml::toArray(SimpleXml::fromString($body)))
+            json_encode($body)
         );
 
         $this
@@ -1378,20 +1375,20 @@ EOF;
             ->requestTicketValidation([], $response)
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
-        $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>username</cas:user>
-  <cas:proxyGrantingTicket>pgtIou</cas:proxyGrantingTicket>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+        $body = [
+            'serviceResponse' => [
+                'authenticationSuccess' => [
+                    'user' => 'username',
+                    'proxyGrantingTicket' => 'pgtIou',
+                ],
+            ],
+        ];
 
         $request = new ServerRequest('GET', 'http://from?ticket=PT-TICKET');
         $response = new Response(
             200,
             ['Content-Type' => 'application/json'],
-            json_encode(SimpleXml::toArray(SimpleXml::fromString($body)))
+            json_encode($body)
         );
 
         $this
@@ -1399,19 +1396,19 @@ EOF;
             ->requestTicketValidation([], $response)
             ->shouldBeNull();
 
-        $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>username</cas:user>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+        $body = [
+            'serviceResponse' => [
+                'authenticationSuccess' => [
+                    'user' => 'username',
+                ],
+            ],
+        ];
 
         $request = new ServerRequest('GET', 'http://from');
         $response = new Response(
             500,
             ['Content-Type' => 'application/json'],
-            json_encode(SimpleXml::toArray(SimpleXml::fromString($body)))
+            json_encode($body)
         );
 
         $this
