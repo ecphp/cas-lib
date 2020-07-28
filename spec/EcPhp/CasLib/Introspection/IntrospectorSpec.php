@@ -6,6 +6,7 @@ namespace spec\EcPhp\CasLib\Introspection;
 
 use EcPhp\CasLib\Introspection\Contract\AuthenticationFailure;
 use EcPhp\CasLib\Introspection\Contract\Proxy;
+use EcPhp\CasLib\Introspection\Contract\ProxyFailure;
 use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
 use EcPhp\CasLib\Introspection\Introspector;
 use InvalidArgumentException;
@@ -15,6 +16,26 @@ use PhpSpec\ObjectBehavior;
 
 class IntrospectorSpec extends ObjectBehavior
 {
+    public function it_can_detect_a_proxy_failure_response()
+    {
+        $psr17Factory = new Psr17Factory();
+
+        $body = <<< 'EOF'
+<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+ <cas:proxyFailure>
+    unrecognized pgt: 'PGT-123'
+ </cas:proxyFailure>
+</cas:serviceResponse>
+EOF;
+
+        $response = (new Response(200))
+            ->withHeader('Content-Type', 'application/xml')
+            ->withBody($psr17Factory->createStream($body));
+
+        $this->detect($response)
+            ->shouldImplement(ProxyFailure::class);
+    }
+
     public function it_can_detect_a_proxy_response()
     {
         $psr17Factory = new Psr17Factory();
