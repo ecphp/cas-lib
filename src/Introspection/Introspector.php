@@ -51,6 +51,10 @@ final class Introspector implements IntrospectorInterface
             return new AuthenticationFailure($data, $format, $response);
         }
 
+        if (isset($data['serviceResponse']['proxyFailure'])) {
+            return new ProxyFailure($data, $format, $response);
+        }
+
         if (isset($data['serviceResponse']['authenticationSuccess']['user'])) {
             return new ServiceValidate($data, $format, $response);
         }
