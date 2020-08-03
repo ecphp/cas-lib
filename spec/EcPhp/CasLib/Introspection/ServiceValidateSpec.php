@@ -16,16 +16,7 @@ class ServiceValidateSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>user</cas:user>
-  <cas:proxyGrantingTicket>proxyGrantingTicket</cas:proxyGrantingTicket>
-  <cas:proxies>
-    <cas:proxy>http://proxy1</cas:proxy>
-    <cas:proxy>http://proxy2</cas:proxy>
-  </cas:proxies>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
+Useless stuff here.
 EOF;
 
         $response = (new Response(200))
@@ -39,6 +30,17 @@ EOF;
                 'proxy' => [
                     'http://proxy1',
                     'http://proxy2',
+                ],
+            ],
+            'extendedAttributes' => [
+                'extendedAttribute' => [
+                    'attributeValue' => [
+                        0 => 'rex',
+                        1 => 'snoopy',
+                    ],
+                    '@attributes' => [
+                        'name' => 'http://stork.eu/motherInLawDogName',
+                    ],
                 ],
             ],
         ];
@@ -74,6 +76,10 @@ EOF;
         $this
             ->getResponse()
             ->shouldReturn($response);
+
+        $this
+            ->getParsedResponse()
+            ->shouldReturn($parsed);
     }
 
     public function it_can_detect_a_service_validate_response()
