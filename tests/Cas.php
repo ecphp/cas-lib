@@ -4,20 +4,13 @@ declare(strict_types=1);
 
 namespace tests\EcPhp\CasLib;
 
-use EcPhp\CasLib\AbstractCas;
+use EcPhp\CasLib\CasInterface;
 use EcPhp\CasLib\Configuration\PropertiesInterface;
-use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
+use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
-use Psr\Log\LoggerInterface;
 
-class Cas extends AbstractCas
+class Cas implements CasInterface
 {
     /**
      * @var \EcPhp\CasLib\Cas
@@ -25,42 +18,25 @@ class Cas extends AbstractCas
     private $cas;
 
     public function __construct(
-        ServerRequestInterface $serverRequest,
-        PropertiesInterface $properties,
-        ClientInterface $client,
-        UriFactoryInterface $uriFactory,
-        ResponseFactoryInterface $responseFactory,
-        RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory,
-        CacheItemPoolInterface $cache,
-        LoggerInterface $logger,
-        IntrospectorInterface $introspector
+        CasInterface $cas
     ) {
-        parent::__construct(
-            $serverRequest,
-            $properties,
-            $client,
-            $uriFactory,
-            $responseFactory,
-            $requestFactory,
-            $streamFactory,
-            $cache,
-            $logger,
-            $introspector
-        );
+        $this->cas = $cas;
+    }
 
-        $this->cas = new \EcPhp\CasLib\Cas(
-            $serverRequest,
-            $properties,
-            $client,
-            $uriFactory,
-            $responseFactory,
-            $requestFactory,
-            $streamFactory,
-            $cache,
-            $logger,
-            $introspector
-        );
+    public function authenticate(array $parameters = []): ?array
+    {
+        return $this->cas->authenticate($parameters);
+    }
+
+    public function detect(
+        ResponseInterface $response
+    ): IntrospectionInterface {
+        return $this->cas->detect($response);
+    }
+
+    public function getProperties(): PropertiesInterface
+    {
+        return $this->cas->getProperties();
     }
 
     public function handleProxyCallback(
@@ -78,11 +54,6 @@ class Cas extends AbstractCas
     public function logout(array $parameters = []): ?ResponseInterface
     {
         return $this->cas->logout($parameters);
-    }
-
-    public function proxyMode(): bool
-    {
-        return parent::proxyMode();
     }
 
     public function requestProxyTicket(
@@ -104,5 +75,26 @@ class Cas extends AbstractCas
         ?ResponseInterface $response = null
     ): ?ResponseInterface {
         return $this->cas->requestServiceValidate($parameters, $response);
+    }
+
+    public function requestTicketValidation(
+        array $parameters = [],
+        ?ResponseInterface $response = null
+    ): ?ResponseInterface {
+        return $this->cas->requestTicketValidation($parameters, $response);
+    }
+
+    public function supportAuthentication(array $parameters = []): bool
+    {
+        return $this->cas->supportAuthentication($parameters);
+    }
+
+    public function withServerRequest(
+        ServerRequestInterface $serverRequest
+    ): CasInterface {
+        $clone = clone $this;
+        $clone->cas = $clone->cas->withServerRequest($serverRequest);
+
+        return $clone;
     }
 }
