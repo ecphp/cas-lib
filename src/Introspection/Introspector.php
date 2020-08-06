@@ -87,9 +87,6 @@ final class Introspector implements IntrospectorInterface
         }
 
         if ('XML' === $format) {
-            libxml_disable_entity_loader(true);
-            libxml_use_internal_errors(true);
-
             try {
                 $dom = new DOMDocument();
 
