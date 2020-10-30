@@ -35,7 +35,7 @@
     "phpstan/phpstan-strict-rules": "^0.12",
     "symfony/cache": "^4.3.9 || ^4.4.2",
     "symfony/http-client": "^4.4.2",
-    "vimeo/psalm": "^3.12"
+    "vimeo/psalm": "^3.12 || ^4.0"
   },
   "autoload": {
     "psr-4": {
