@@ -27,7 +27,7 @@
     "drupol/php-conventions": "^1.7.2 || ^1.8.6",
     "friends-of-phpspec/phpspec-code-coverage": "^4.3.2",
     "infection/infection": "^0.12.2 || ^0.13.6 || ^0.14.4 || ^0.15.3",
-    "monolog/monolog": "^1.0",
+    "monolog/monolog": "^1.0 || ^2.0",
     "nyholm/psr7": "^1.2.1",
     "nyholm/psr7-server": "^0.4.1 || ^1.0.0",
     "phpspec/phpspec": "^5.1.2 || ^6.2.1",
