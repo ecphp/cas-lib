@@ -19,6 +19,7 @@ use EcPhp\CasLib\Service\Proxy;
 use EcPhp\CasLib\Service\ProxyValidate;
 use EcPhp\CasLib\Service\ServiceValidate;
 use EcPhp\CasLib\Utils\Uri;
+use Exception;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -79,13 +80,7 @@ final class Cas implements CasInterface
 
     public function authenticate(array $parameters = []): ?array
     {
-        if (null === $response = $this->requestTicketValidation($parameters)) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the request.');
-
-            return null;
-        }
+        $response = $this->requestTicketValidation($parameters);
 
         return $this->getIntrospector()->detect($response)->getParsedResponse();
     }
@@ -162,19 +157,8 @@ final class Cas implements CasInterface
             $this->getIntrospector()
         );
 
-        if (null === $response) {
-            $response = $proxyRequestService->handle($this->getServerRequest());
-        }
-
-        $credentials = $proxyRequestService->getCredentials($response);
-
-        if (null === $credentials) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the user.');
-        }
-
-        return $credentials;
+        return $proxyRequestService
+            ->getCredentials($response ?? $proxyRequestService->handle($this->getServerRequest()));
     }
 
     public function requestProxyValidate(
@@ -194,19 +178,8 @@ final class Cas implements CasInterface
             $this->getIntrospector()
         );
 
-        if (null === $response) {
-            $response = $proxyValidateService->handle($this->getServerRequest());
-        }
-
-        $credentials = $proxyValidateService->getCredentials($response);
-
-        if (null === $credentials) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the user.');
-        }
-
-        return $credentials;
+        return $proxyValidateService
+            ->getCredentials($response ?? $proxyValidateService->handle($this->getServerRequest()));
     }
 
     public function requestServiceValidate(
@@ -226,27 +199,16 @@ final class Cas implements CasInterface
             $this->getIntrospector()
         );
 
-        if (null === $response) {
-            $response = $serviceValidateService->handle($this->getServerRequest());
-        }
-
-        $credentials = $serviceValidateService->getCredentials($response);
-
-        if (null === $credentials) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the user.');
-        }
-
-        return $credentials;
+        return $serviceValidateService
+            ->getCredentials($response ?? $serviceValidateService->handle($this->getServerRequest()));
     }
 
     public function requestTicketValidation(
         array $parameters = [],
         ?ResponseInterface $response = null
-    ): ?ResponseInterface {
+    ): ResponseInterface {
         if (false === $this->supportAuthentication($parameters)) {
-            return null;
+            throw new Exception('The request does not support authentication.');
         }
 
         /** @var string $ticket */

@@ -12,11 +12,9 @@ namespace EcPhp\CasLib\Service;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 
 final class ServiceValidate extends Service implements ServiceInterface
 {
-
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
@@ -38,13 +36,12 @@ final class ServiceValidate extends Service implements ServiceInterface
                                 $request->getUri(),
                                 'serviceValidate',
                                 $this->formatProtocolParameters($parameters)
-                           )
+                            )
                     )
             );
 
         return $this->normalize($response, $parameters['format'] ?? 'XML');
     }
-
 
     protected function getProtocolProperties(): array
     {

@@ -13,18 +13,15 @@ use EcPhp\CasLib\Configuration\PropertiesInterface;
 use EcPhp\CasLib\Handler\Handler;
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
+use Exception;
 use InvalidArgumentException;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
-use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
@@ -77,27 +74,10 @@ abstract class Service extends Handler
 
     public function getCredentials(ResponseInterface $response): ?ResponseInterface
     {
-        try {
-            $introspect = $this->getIntrospector()->detect($response);
-        } catch (InvalidArgumentException $exception) {
-            $this
-                ->getLogger()
-                ->error($exception->getMessage());
-
-            return null;
-        }
+        $introspect = $this->getIntrospector()->detect($response);
 
         if (false === ($introspect instanceof ServiceValidate)) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Service validation failed.',
-                    [
-                        'response' => (string) $response->getBody(),
-                    ]
-                );
-
-            return null;
+            throw new Exception('Service validation failed');
         }
 
         $parsedResponse = $introspect->getParsedResponse();
@@ -117,13 +97,13 @@ abstract class Service extends Handler
         $parsedResponse = $this->updateParsedResponseWithPgt($parsedResponse);
 
         if (null === $parsedResponse) {
-            return null;
+            throw new Exception('Unable to update response with PGT.');
         }
 
         $body = json_encode($parsedResponse);
 
         if (false === $body) {
-            return null;
+            throw new Exception('Unable to encode response.');
         }
 
         $this
@@ -148,60 +128,6 @@ abstract class Service extends Handler
     protected function getRequestFactory(): RequestFactoryInterface
     {
         return $this->requestFactory;
-    }
-
-    /**
-     * Parse the response format.
-     *
-     * @return array[]|string[]
-     *   The parsed response.
-     */
-    protected function parse(ResponseInterface $response, string $format): array
-    {
-        try {
-            $array = $this->getIntrospector()->parse($response, $format);
-        } catch (InvalidArgumentException $exception) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Unable to parse the response with the specified format {format}.',
-                    [
-                        'format' => $format,
-                        'response' => (string) $response->getBody(),
-                    ]
-                );
-
-            $array = [];
-        }
-
-        return $array;
-    }
-
-    /**
-     * @param array[] $response
-     *
-     * @return array[]|null
-     */
-    protected function updateParsedResponseWithPgt(array $response): ?array
-    {
-        $pgt = $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
-
-        $hasPgtIou = $this->getCache()->hasItem($pgt);
-
-        if (false === $hasPgtIou) {
-            $this
-                ->getLogger()
-                ->error('CAS validation failed: pgtIou not found in the cache.', ['pgtIou' => $pgt]);
-
-            return null;
-        }
-
-        $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'] = $this
-            ->getCache()
-            ->getItem($pgt)
-            ->get();
-
-        return $response;
     }
 
     /**
@@ -246,5 +172,50 @@ abstract class Service extends Handler
         return $response
             ->withBody($this->getStreamFactory()->createStream($body))
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Parse the response format.
+     *
+     * @return array[]|string[]
+     *   The parsed response.
+     */
+    protected function parse(ResponseInterface $response, string $format): array
+    {
+        try {
+            $array = $this->getIntrospector()->parse($response, $format);
+        } catch (InvalidArgumentException $exception) {
+            $this
+                ->getLogger()
+                ->error(
+                    'Unable to parse the response with the specified format {format}.',
+                    [
+                        'format' => $format,
+                        'response' => (string) $response->getBody(),
+                    ]
+                );
+
+            $array = [];
+        }
+
+        return $array;
+    }
+
+    protected function updateParsedResponseWithPgt(array $response): array
+    {
+        $pgt = $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
+
+        $hasPgtIou = $this->getCache()->hasItem($pgt);
+
+        if (false === $hasPgtIou) {
+            throw new Exception('CAS validation failed: pgtIou not found in the cache.');
+        }
+
+        $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'] = $this
+            ->getCache()
+            ->getItem($pgt)
+            ->get();
+
+        return $response;
     }
 }

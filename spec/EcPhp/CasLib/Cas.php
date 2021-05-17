@@ -21,7 +21,11 @@ class Cas extends ObjectBehavior
     {
         $callback = static function ($method, $url, $options) {
             $body = '';
-            $info = [];
+            $info = [
+                'response_headers' => [
+                    'Content-Type' => 'application/xml',
+                ],
+            ];
 
             switch ($url) {
                 case 'http://local/cas/serviceValidate?service=service&ticket=ticket':
@@ -39,6 +43,7 @@ class Cas extends ObjectBehavior
 
                 break;
 
+                case 'http://local/cas/serviceValidate?ticket=Not-Authenticated&service=http%3A%2F%2Ffrom':
                 case 'http://local/cas/serviceValidate?service=service&ticket=ticket-failure':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
@@ -81,6 +86,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
+                case 'http://local/cas/proxyValidate?ticket=ST-ticket-pgt-pgtiou-not-found&service=http%3A%2F%2Ffrom':
                 case 'http://local/cas/serviceValidate?ticket=ST-ticket-pgt-pgtiou-not-found&service=http%3A%2F%2Ffrom':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
@@ -93,6 +99,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
+                case 'http://local/cas/proxyValidate?ticket=ST-ticket&service=http%3A%2F%2Ffrom-proxy-validate':
                 case 'http://local/cas/proxyValidate?ticket=ST-ticket-pgt-pgtiou-pgtid-null&service=http%3A%2F%2Ffrom':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">

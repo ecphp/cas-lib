@@ -10,13 +10,23 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Utils\Uri;
-use InvalidArgumentException;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 
 final class Proxy extends Service implements ServiceInterface
 {
+    public function getCredentials(ResponseInterface $response): ?ResponseInterface
+    {
+        $introspect = $this->getIntrospector()->detect($response);
+
+        if (false === ($introspect instanceof \EcPhp\CasLib\Introspection\Contract\Proxy)) {
+            throw new Exception('Unable to get credentials from Proxy.');
+        }
+
+        return $response;
+    }
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
@@ -43,25 +53,6 @@ final class Proxy extends Service implements ServiceInterface
             );
 
         return $this->normalize($response, $parameters['format'] ?? 'XML');
-    }
-
-    public function getCredentials(ResponseInterface $response): ?ResponseInterface
-    {
-        try {
-            $introspect = $this->getIntrospector()->detect($response);
-        } catch (InvalidArgumentException $exception) {
-            $this
-                ->getLogger()
-                ->error($exception->getMessage());
-
-            return null;
-        }
-
-        if (false === ($introspect instanceof \EcPhp\CasLib\Introspection\Contract\Proxy)) {
-            return null;
-        }
-
-        return $response;
     }
 
     protected function getProtocolProperties(): array

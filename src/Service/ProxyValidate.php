@@ -12,7 +12,6 @@ namespace EcPhp\CasLib\Service;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 
 final class ProxyValidate extends Service implements ServiceInterface
 {

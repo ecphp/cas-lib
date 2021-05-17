@@ -35,7 +35,7 @@ final class Introspector implements IntrospectorInterface
         }
 
         if (true === $response->hasHeader('Content-Type')) {
-            $header = mb_substr($response->getHeaderLine('Content-Type'), 0, 16);
+            $header = substr($response->getHeaderLine('Content-Type'), 0, 16);
 
             switch ($header) {
                 case 'application/json':
