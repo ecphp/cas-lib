@@ -1,29 +1,35 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Redirect;
 
 use EcPhp\CasLib\Utils\Uri;
+use Exception;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 use function array_key_exists;
 
-/**
- * Class Login.
- */
-final class Login extends Redirect implements RedirectInterface
+final class Login extends Redirect implements RequestHandlerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(): ?ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $parameters = $this->formatProtocolParameters($this->getParameters());
-        $validatedParameters = $this->validate($parameters);
+        $defaultParameters = $this->getParameters() +
+            [
+                'service' => (string) $request->getUri(),
+            ];
 
-        if (null === $validatedParameters) {
+        $parameters = $this->formatProtocolParameters($defaultParameters);
+
+        if (null === $validatedParameters = $this->validate($request, $parameters)) {
             $this
                 ->getLogger()
                 ->debug(
@@ -34,15 +40,18 @@ final class Login extends Redirect implements RedirectInterface
                     ]
                 );
 
-            return null;
+            throw new Exception('Login parameters are invalid, not redirecting to login page.');
         }
 
-        return $this->createRedirectResponse((string) $this->getUri($validatedParameters));
+        return $this->createRedirectResponse(
+            (string) $this->buildUri(
+                $request->getUri(),
+                'login',
+                $validatedParameters
+            )
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function formatProtocolParameters(array $parameters): array
     {
         $parameters = parent::formatProtocolParameters($parameters);
@@ -70,30 +79,9 @@ final class Login extends Redirect implements RedirectInterface
         return $parameters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getProtocolProperties(): array
     {
-        $protocolProperties = $this->getProperties()['protocol']['login'] ?? [];
-
-        $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
-        ];
-
-        return $protocolProperties;
-    }
-
-    /**
-     * @param string[] $parameters
-     */
-    private function getUri(array $parameters = []): UriInterface
-    {
-        return $this->buildUri(
-            $this->getServerRequest()->getUri(),
-            'login',
-            $parameters
-        );
+        return $this->getProperties()['protocol']['login'] ?? [];
     }
 
     /**
@@ -101,9 +89,9 @@ final class Login extends Redirect implements RedirectInterface
      *
      * @return string[]|null
      */
-    private function validate(array $parameters): ?array
+    private function validate(RequestInterface $request, array $parameters): ?array
     {
-        $uri = $this->getServerRequest()->getUri();
+        $uri = $request->getUri();
 
         $renew = $parameters['renew'] ?? false;
         $gateway = $parameters['gateway'] ?? false;

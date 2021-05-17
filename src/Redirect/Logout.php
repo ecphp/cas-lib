@@ -1,41 +1,33 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Redirect;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Class Logout.
- */
-final class Logout extends Redirect implements RedirectInterface
+final class Logout extends Redirect implements RequestHandlerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(): ?ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return $this->createRedirectResponse((string) $this->getUri());
+        return $this->createRedirectResponse(
+            (string) $this->buildUri(
+                $request->getUri(),
+                'logout',
+                $this->formatProtocolParameters($this->getParameters())
+            )
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getProtocolProperties(): array
     {
         return $this->getProperties()['protocol']['logout'] ?? [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    private function getUri(): UriInterface
-    {
-        $serverRequest = $this->getServerRequest()->getUri();
-        $parameters = $this->formatProtocolParameters($this->getParameters());
-
-        return $this->buildUri($serverRequest, 'logout', $parameters);
     }
 }

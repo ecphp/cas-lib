@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Introspection;
@@ -16,8 +21,8 @@ class ServiceValidateSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-Useless stuff here.
-EOF;
+            Useless stuff here.
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')
@@ -87,13 +92,13 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>user</cas:user>
-  <cas:proxyGrantingTicket>proxyGrantingTicket</cas:proxyGrantingTicket>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationSuccess>
+              <cas:user>user</cas:user>
+              <cas:proxyGrantingTicket>proxyGrantingTicket</cas:proxyGrantingTicket>
+             </cas:authenticationSuccess>
+            </cas:serviceResponse>
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')

@@ -1,41 +1,51 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Utils\Uri;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class ProxyValidate.
- */
 final class ProxyValidate extends Service implements ServiceInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function getProtocolProperties(): array
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $protocolProperties = $this->getProperties()['protocol']['proxyValidate'] ?? [];
+        $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
 
-        $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
-            'ticket' => Uri::getParam($this->getServerRequest()->getUri(), 'ticket'),
+        $parameters += [
+            'service' => (string) $request->getUri(),
+            'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
 
-        return $protocolProperties;
+        $response = $this
+            ->getClient()
+            ->sendRequest(
+                $this
+                    ->getRequestFactory()
+                    ->createRequest(
+                        'GET',
+                        $this
+                            ->buildUri(
+                                $request->getUri(),
+                                'proxyValidate',
+                                $this->formatProtocolParameters($parameters)
+                            )
+                    )
+            );
+
+        return $this->normalize($response, $parameters['format'] ?? 'XML');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getUri(): UriInterface
+    protected function getProtocolProperties(): array
     {
-        return $this->buildUri(
-            $this->getServerRequest()->getUri(),
-            'proxyValidate',
-            $this->formatProtocolParameters($this->getParameters())
-        );
+        return $this->getProperties()['protocol']['proxyValidate'] ?? [];
     }
 }

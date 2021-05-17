@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib;
@@ -28,73 +33,25 @@ use function array_key_exists;
 
 final class Cas implements CasInterface
 {
-    /**
-     * The cache.
-     *
-     * @var \Psr\Cache\CacheItemPoolInterface
-     */
-    private $cache;
+    private CacheItemPoolInterface $cache;
 
-    /**
-     * The HTTP client.
-     *
-     * @var \Psr\Http\Client\ClientInterface
-     */
-    private $client;
+    private ClientInterface $client;
 
-    /**
-     * @var \EcPhp\CasLib\Introspection\Contract\IntrospectorInterface
-     */
-    private $introspector;
+    private IntrospectorInterface $introspector;
 
-    /**
-     * The logger.
-     *
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * The CAS properties.
-     *
-     * @var PropertiesInterface
-     */
-    private $properties;
+    private PropertiesInterface $properties;
 
-    /**
-     * The request factory.
-     *
-     * @var \Psr\Http\Message\RequestFactoryInterface
-     */
-    private $requestFactory;
+    private RequestFactoryInterface $requestFactory;
 
-    /**
-     * The response factory.
-     *
-     * @var \Psr\Http\Message\ResponseFactoryInterface
-     */
-    private $responseFactory;
+    private ResponseFactoryInterface $responseFactory;
 
-    /**
-     * The server request.
-     *
-     * @var \Psr\Http\Message\ServerRequestInterface
-     */
-    private $serverRequest;
+    private ServerRequestInterface $serverRequest;
 
-    /**
-     * The stream factory.
-     *
-     * @var \Psr\Http\Message\StreamFactoryInterface
-     */
-    private $streamFactory;
+    private StreamFactoryInterface $streamFactory;
 
-    /**
-     * The URI factory.
-     *
-     * @var \Psr\Http\Message\UriFactoryInterface
-     */
-    private $uriFactory;
+    private UriFactoryInterface $uriFactory;
 
     public function __construct(
         ServerRequestInterface $serverRequest,
@@ -120,9 +77,6 @@ final class Cas implements CasInterface
         $this->introspector = $introspector;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function authenticate(array $parameters = []): ?array
     {
         if (null === $response = $this->requestTicketValidation($parameters)) {
@@ -141,23 +95,16 @@ final class Cas implements CasInterface
         return $this->getIntrospector()->detect($response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProperties(): PropertiesInterface
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handleProxyCallback(
         array $parameters = [],
         ?ResponseInterface $response = null
     ): ?ResponseInterface {
         $proxyCallback = new ProxyCallback(
-            $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
             $this->getUriFactory(),
@@ -167,16 +114,12 @@ final class Cas implements CasInterface
             $this->getLogger()
         );
 
-        return $response ?? $proxyCallback->handle();
+        return $response ?? $proxyCallback->handle($this->getServerRequest());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function login(array $parameters = []): ?ResponseInterface
     {
         $login = new Login(
-            $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
             $this->getUriFactory(),
@@ -186,16 +129,12 @@ final class Cas implements CasInterface
             $this->getLogger()
         );
 
-        return $login->handle();
+        return $login->handle($this->getServerRequest());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function logout(array $parameters = []): ?ResponseInterface
     {
         $logout = new Logout(
-            $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
             $this->getUriFactory(),
@@ -205,16 +144,12 @@ final class Cas implements CasInterface
             $this->getLogger()
         );
 
-        return $logout->handle();
+        return $logout->handle($this->getServerRequest());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestProxyTicket(array $parameters = [], ?ResponseInterface $response = null): ?ResponseInterface
     {
         $proxyRequestService = new Proxy(
-            $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
@@ -228,13 +163,7 @@ final class Cas implements CasInterface
         );
 
         if (null === $response) {
-            if (null === $response = $proxyRequestService->handle()) {
-                $this
-                    ->getLogger()
-                    ->error('Error during the proxy ticket request.');
-
-                return null;
-            }
+            $response = $proxyRequestService->handle($this->getServerRequest());
         }
 
         $credentials = $proxyRequestService->getCredentials($response);
@@ -248,15 +177,11 @@ final class Cas implements CasInterface
         return $credentials;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestProxyValidate(
         array $parameters = [],
         ?ResponseInterface $response = null
     ): ?ResponseInterface {
         $proxyValidateService = new ProxyValidate(
-            $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
@@ -270,13 +195,7 @@ final class Cas implements CasInterface
         );
 
         if (null === $response) {
-            if (null === $response = $proxyValidateService->handle()) {
-                $this
-                    ->getLogger()
-                    ->error('Error during the proxy validate request.');
-
-                return null;
-            }
+            $response = $proxyValidateService->handle($this->getServerRequest());
         }
 
         $credentials = $proxyValidateService->getCredentials($response);
@@ -290,15 +209,11 @@ final class Cas implements CasInterface
         return $credentials;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestServiceValidate(
         array $parameters = [],
         ?ResponseInterface $response = null
     ): ?ResponseInterface {
         $serviceValidateService = new ServiceValidate(
-            $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
@@ -312,13 +227,7 @@ final class Cas implements CasInterface
         );
 
         if (null === $response) {
-            if (null === $response = $serviceValidateService->handle()) {
-                $this
-                    ->getLogger()
-                    ->error('Error during the service validate request.');
-
-                return null;
-            }
+            $response = $serviceValidateService->handle($this->getServerRequest());
         }
 
         $credentials = $serviceValidateService->getCredentials($response);
@@ -332,9 +241,6 @@ final class Cas implements CasInterface
         return $credentials;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestTicketValidation(
         array $parameters = [],
         ?ResponseInterface $response = null
@@ -357,17 +263,11 @@ final class Cas implements CasInterface
             $this->requestServiceValidate($parameters, $response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportAuthentication(array $parameters = []): bool
     {
         return array_key_exists('ticket', $parameters) || Uri::hasParams($this->getServerRequest()->getUri(), 'ticket');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function withServerRequest(ServerRequestInterface $serverRequest): CasInterface
     {
         $clone = clone $this;

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib;
@@ -401,8 +406,8 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith($request, CasSpecUtils::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $this
-            ->requestProxyValidate()
-            ->shouldBeNull();
+            ->shouldThrow(Exception::class)
+            ->during('requestProxyValidate');
 
         $logger
             ->error('Error during the proxy validate request.')
@@ -493,12 +498,12 @@ class CasSpec extends ObjectBehavior
     public function it_can_detect_the_type_of_a_response(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>username</cas:user>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationSuccess>
+              <cas:user>username</cas:user>
+             </cas:authenticationSuccess>
+            </cas:serviceResponse>
+            EOF;
 
         $headers = [
             'Content-Type' => 'application/xml',
@@ -517,12 +522,12 @@ EOF;
             ->shouldReturnAnInstanceOf(ServiceValidate::class);
 
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>username</cas:user>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationSuccess>
+              <cas:user>username</cas:user>
+             </cas:authenticationSuccess>
+            </cas:serviceResponse>
+            EOF;
 
         $headers = [
             'Content-Type' => 'application/foo',

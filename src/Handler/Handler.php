@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
@@ -8,7 +13,6 @@ use EcPhp\CasLib\Configuration\PropertiesInterface;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
@@ -16,9 +20,6 @@ use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
 
-/**
- * Class Handler.
- */
 abstract class Handler
 {
     /**
@@ -47,11 +48,6 @@ abstract class Handler
     private $responseFactory;
 
     /**
-     * @var \Psr\Http\Message\ServerRequestInterface
-     */
-    private $serverRequest;
-
-    /**
      * @var \Psr\Http\Message\StreamFactoryInterface
      */
     private $streamFactory;
@@ -67,7 +63,6 @@ abstract class Handler
      * @param array[]|string[] $parameters
      */
     public function __construct(
-        ServerRequestInterface $serverRequest,
         array $parameters,
         PropertiesInterface $properties,
         UriFactoryInterface $uriFactory,
@@ -76,7 +71,6 @@ abstract class Handler
         CacheItemPoolInterface $cache,
         LoggerInterface $logger
     ) {
-        $this->serverRequest = $serverRequest;
         $this->parameters = $parameters;
         $this->properties = $properties;
         $this->uriFactory = $uriFactory;
@@ -183,7 +177,7 @@ abstract class Handler
      */
     protected function getParameters(): array
     {
-        return $this->parameters + ($this->getProtocolProperties()['default_parameters'] ?? []);
+        return $this->parameters;
     }
 
     protected function getProperties(): PropertiesInterface
@@ -204,11 +198,6 @@ abstract class Handler
     protected function getResponseFactory(): ResponseFactoryInterface
     {
         return $this->responseFactory;
-    }
-
-    protected function getServerRequest(): ServerRequestInterface
-    {
-        return $this->serverRequest;
     }
 
     protected function getStreamFactory(): StreamFactoryInterface

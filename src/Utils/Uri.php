@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Utils;
@@ -9,9 +14,6 @@ use Psr\Http\Message\UriInterface;
 
 use const PHP_QUERY_RFC1738;
 
-/**
- * Class Uri.
- */
 final class Uri
 {
     public static function getParam(UriInterface $uri, string $param, ?string $default = null): ?string

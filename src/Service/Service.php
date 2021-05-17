@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
@@ -44,7 +49,6 @@ abstract class Service extends Handler
     private $requestFactory;
 
     public function __construct(
-        ServerRequestInterface $serverRequest,
         array $parameters,
         PropertiesInterface $properties,
         ClientInterface $client,
@@ -57,7 +61,6 @@ abstract class Service extends Handler
         IntrospectorInterface $introspector
     ) {
         parent::__construct(
-            $serverRequest,
             $parameters,
             $properties,
             $uriFactory,
@@ -72,9 +75,6 @@ abstract class Service extends Handler
         $this->introspector = $introspector;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCredentials(ResponseInterface $response): ?ResponseInterface
     {
         try {
@@ -135,24 +135,6 @@ abstract class Service extends Handler
             ->withHeader('Content-Type', 'application/json');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(): ?ResponseInterface
-    {
-        try {
-            $response = $this->getClient()->sendRequest($this->getRequest());
-        } catch (ClientExceptionInterface $exception) {
-            $this
-                ->getLogger()
-                ->error($exception->getMessage());
-
-            $response = null;
-        }
-
-        return null === $response ? $response : $this->normalize($response);
-    }
-
     protected function getClient(): ClientInterface
     {
         return $this->client;
@@ -163,20 +145,10 @@ abstract class Service extends Handler
         return $this->introspector;
     }
 
-    protected function getRequest(): RequestInterface
-    {
-        return $this->getRequestFactory()->createRequest('GET', $this->getUri());
-    }
-
     protected function getRequestFactory(): RequestFactoryInterface
     {
         return $this->requestFactory;
     }
-
-    /**
-     * Get the URI.
-     */
-    abstract protected function getUri(): UriInterface;
 
     /**
      * Parse the response format.
@@ -184,10 +156,8 @@ abstract class Service extends Handler
      * @return array[]|string[]
      *   The parsed response.
      */
-    protected function parse(ResponseInterface $response): array
+    protected function parse(ResponseInterface $response, string $format): array
     {
-        $format = $this->getProtocolProperties()['default_parameters']['format'] ?? 'XML';
-
         try {
             $array = $this->getIntrospector()->parse($response, $format);
         } catch (InvalidArgumentException $exception) {
@@ -237,9 +207,9 @@ abstract class Service extends Handler
     /**
      * Normalize a response.
      */
-    private function normalize(ResponseInterface $response): ResponseInterface
+    protected function normalize(ResponseInterface $response, string $format): ResponseInterface
     {
-        $body = $this->parse($response);
+        $body = $this->parse($response, $format);
 
         if ([] === $body) {
             $this

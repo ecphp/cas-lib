@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Introspection;
@@ -21,12 +26,12 @@ class IntrospectorSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:proxyFailure>
-    unrecognized pgt: 'PGT-123'
- </cas:proxyFailure>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:proxyFailure>
+                unrecognized pgt: 'PGT-123'
+             </cas:proxyFailure>
+            </cas:serviceResponse>
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')
@@ -41,15 +46,15 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-<?xml version="1.0" encoding="utf-8"?>
-<cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas"
-                     server="ECAS MOCKUP version 4.6.0.20924 - 09/02/2016 - 14:37"
-                     date="2019-10-18T12:17:53.069+02:00" version="4.5">
-	<cas:proxySuccess>
-		<cas:proxyTicket>PT-214-A3OoEPNr4Q9kNNuYzmfN8azU31aDUsuW8nk380k7wDExT5PFJpxR1TrNI3q3VGzyDdi0DpZ1LKb8IhPKZKQvavW-8hnfexYjmLCx7qWNsLib1W-DCzzoLVTosAUFzP3XDn5dNzoNtxIXV9KSztF9fYhwHvU0</cas:proxyTicket>
-	</cas:proxySuccess>
-</cas:serviceResponse>
-EOF;
+            <?xml version="1.0" encoding="utf-8"?>
+            <cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas"
+                                 server="ECAS MOCKUP version 4.6.0.20924 - 09/02/2016 - 14:37"
+                                 date="2019-10-18T12:17:53.069+02:00" version="4.5">
+            	<cas:proxySuccess>
+            		<cas:proxyTicket>PT-214-A3OoEPNr4Q9kNNuYzmfN8azU31aDUsuW8nk380k7wDExT5PFJpxR1TrNI3q3VGzyDdi0DpZ1LKb8IhPKZKQvavW-8hnfexYjmLCx7qWNsLib1W-DCzzoLVTosAUFzP3XDn5dNzoNtxIXV9KSztF9fYhwHvU0</cas:proxyTicket>
+            	</cas:proxySuccess>
+            </cas:serviceResponse>
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')
@@ -64,13 +69,13 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>username</cas:user>
-  <cas:proxyGrantingTicket>false</cas:proxyGrantingTicket>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationSuccess>
+              <cas:user>username</cas:user>
+              <cas:proxyGrantingTicket>false</cas:proxyGrantingTicket>
+             </cas:authenticationSuccess>
+            </cas:serviceResponse>
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')
@@ -80,14 +85,14 @@ EOF;
             ->shouldBeAnInstanceOf(ServiceValidate::class);
 
         $body = <<< 'EOF'
-{
-    "serviceResponse": {
-        "authenticationSuccess": {
-            "user": "username"
-        }
-    }
-}
-EOF;
+            {
+                "serviceResponse": {
+                    "authenticationSuccess": {
+                        "user": "username"
+                    }
+                }
+            }
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/json')
@@ -102,16 +107,16 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>user</cas:user>
-  <cas:proxyGrantingTicket>proxyGrantingTicket</cas:proxyGrantingTicket>
-  <cas:proxies>
-    <cas:proxy>https://ecasclient/proxyCallback.php</cas:proxy>
-  </cas:proxies>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationSuccess>
+              <cas:user>user</cas:user>
+              <cas:proxyGrantingTicket>proxyGrantingTicket</cas:proxyGrantingTicket>
+              <cas:proxies>
+                <cas:proxy>https://ecasclient/proxyCallback.php</cas:proxy>
+              </cas:proxies>
+             </cas:authenticationSuccess>
+            </cas:serviceResponse>
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')
@@ -126,8 +131,8 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-FOO
-EOF;
+            FOO
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/json')
@@ -138,8 +143,8 @@ EOF;
             ->during('detect', [$response]);
 
         $body = <<< 'EOF'
-FOO
-EOF;
+            FOO
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')
@@ -155,12 +160,12 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<<'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationFailure code="INVALID_TICKET">
-    Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
-  </cas:authenticationFailure>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationFailure code="INVALID_TICKET">
+                Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
+              </cas:authenticationFailure>
+            </cas:serviceResponse>
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/xml')
@@ -175,14 +180,14 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-{
-    "foo": {
-        "bar": {
-            "user": "username"
-        }
-    }
-}
-EOF;
+            {
+                "foo": {
+                    "bar": {
+                        "user": "username"
+                    }
+                }
+            }
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/json')
@@ -198,8 +203,8 @@ EOF;
         $psr17Factory = new Psr17Factory();
 
         $body = <<< 'EOF'
-FOO
-EOF;
+            FOO
+            EOF;
 
         $response = (new Response(200))
             ->withHeader('Content-Type', 'application/json')

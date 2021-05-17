@@ -1,14 +1,16 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Configuration;
 
 use function array_key_exists;
 
-/**
- * Class Properties.
- */
 final class Properties implements PropertiesInterface
 {
     /**
@@ -30,9 +32,6 @@ final class Properties implements PropertiesInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function all(): array
     {
         return $this->properties;
