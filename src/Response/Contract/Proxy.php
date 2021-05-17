@@ -7,9 +7,11 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection\Contract;
+namespace EcPhp\CasLib\Response\Contract;
 
-interface Proxy extends IntrospectionInterface
+interface Proxy extends CasResponseInterface
 {
     public function getProxyTicket(): string;
+
+    public function withPgtIou(): Proxy;
 }

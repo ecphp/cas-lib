@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection\Contract;
+namespace EcPhp\CasLib\Response\Contract;
 
-interface ServiceValidate extends IntrospectionInterface
+interface ProxyServiceValidate extends CasResponseInterface
 {
     public function getCredentials(): array;
 

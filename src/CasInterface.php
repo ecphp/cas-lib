@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
-use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -27,8 +26,6 @@ interface CasInterface
      */
     public function authenticate(array $parameters = []): ?array;
 
-    public function detect(ResponseInterface $response): IntrospectionInterface;
-
     /**
      * Get the CAS properties.
      *
@@ -42,16 +39,11 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
-     *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function handleProxyCallback(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface;
+    public function handleProxyCallback(array $parameters = []): ResponseInterface;
 
     /**
      * If not authenticated, redirect to CAS login.
@@ -59,10 +51,10 @@ interface CasInterface
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function login(array $parameters = []): ?ResponseInterface;
+    public function login(array $parameters = []): ResponseInterface;
 
     /**
      * Redirect to CAS logout.
@@ -70,74 +62,54 @@ interface CasInterface
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function logout(array $parameters = []): ?ResponseInterface;
+    public function logout(array $parameters = []): ResponseInterface;
 
     /**
      * Request a proxy ticket.
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
-     *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestProxyTicket(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface;
+    public function requestProxyTicket(array $parameters = []): ResponseInterface;
 
     /**
      * Request a proxy validation.
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
-     *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestProxyValidate(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface;
+    public function requestProxyValidate(array $parameters = []): ResponseInterface;
 
     /**
      * Request a service validation.
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
-     *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestServiceValidate(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface;
+    public function requestServiceValidate(array $parameters = []): ResponseInterface;
 
     /**
      * Request a ticket validation.
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
-     *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestTicketValidation(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface;
+    public function requestTicketValidation(array $parameters = []): ResponseInterface;
 
     /**
      * Check if the request needs to be authenticated.

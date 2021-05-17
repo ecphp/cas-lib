@@ -11,8 +11,6 @@ namespace spec\EcPhp\CasLib;
 
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
-use EcPhp\CasLib\Introspection\Introspector;
-use EcPhp\CasLib\Introspection\ServiceValidate;
 use Exception;
 use InvalidArgumentException;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -55,9 +53,10 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_authenticate()
     {
-        $request = new ServerRequest('GET', 'http://from?ticket=Not-Authenticated');
+        $uri = 'http://from?ticket=Not-Authenticated';
+
         $this
-            ->withServerRequest($request)
+            ->withServerRequest(new ServerRequest('GET', 'http://from?ticket=Not-Authenticated'))
             ->shouldThrow(Exception::class)
             ->during('authenticate');
 
@@ -76,7 +75,7 @@ class CasSpec extends ObjectBehavior
             ->during('authenticate');
     }
 
-    public function it_can_authenticate_a_request(ServerRequestInterface $serverRequest, ClientInterface $client, UriFactoryInterface $uriFactory, RequestFactoryInterface $requestFactory, ResponseFactoryInterface $responseFactory, StreamFactoryInterface $streamFactory, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_can_authenticate_a_request(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
@@ -92,13 +91,11 @@ class CasSpec extends ObjectBehavior
             ->getItem('pgtIou')
             ->willReturn($cacheItem);
 
-        //$logger = new Logger('psrcas', [new StreamHandler('php://stderr')]);
-
         $uri = new Uri('http://from?ticket=ST-ticket');
         $request = (new ServerRequest('GET', $uri))
             ->withQueryParams(['ticket' => 'ST-ticket']);
 
-        $this->beConstructedWith($request, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($request, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $this
             ->authenticate()
@@ -199,7 +196,7 @@ class CasSpec extends ObjectBehavior
         $request = (new ServerRequest('GET', $uri))
             ->withQueryParams(['ticket' => 'ST-ticket']);
 
-        $this->beConstructedWith($request, CasSpecUtils::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($request, CasSpecUtils::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $this
             ->authenticate()
@@ -291,7 +288,7 @@ class CasSpec extends ObjectBehavior
             $psr17Factory  // StreamFactory
         );
         $serverRequest = $creator->fromGlobals();
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $request = new ServerRequest('GET', 'http://foo');
 
@@ -322,7 +319,7 @@ class CasSpec extends ObjectBehavior
         $request = (new ServerRequest('GET', $uri))
             ->withQueryParams(['ticket' => 'BAD-ticket']);
 
-        $this->beConstructedWith($request, CasSpecUtils::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($request, CasSpecUtils::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $this
             ->shouldThrow(Exception::class)
@@ -349,7 +346,7 @@ class CasSpec extends ObjectBehavior
         $request = (new ServerRequest('GET', $uri))
             ->withQueryParams(['ticket' => 'BAD-ticket']);
 
-        $this->beConstructedWith($request, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($request, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $this
             ->shouldThrow(Exception::class)
@@ -376,7 +373,7 @@ class CasSpec extends ObjectBehavior
         $request = (new ServerRequest('GET', $uri))
             ->withQueryParams(['ticket' => 'ST-ticket']);
 
-        $this->beConstructedWith($request, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($request, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $response = $this
             ->getWrappedObject()
@@ -503,7 +500,7 @@ class CasSpec extends ObjectBehavior
         );
         $serverRequest = $creator->fromGlobals();
 
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $parameters = [
             'service' => 'service',
@@ -824,7 +821,7 @@ class CasSpec extends ObjectBehavior
             $psr17Factory  // StreamFactory
         );
         $serverRequest = $creator->fromGlobals();
-        $this->beConstructedWith($serverRequest, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $url = 'http://from';
 
@@ -845,7 +842,7 @@ class CasSpec extends ObjectBehavior
             $psr17Factory  // StreamFactory
         );
         $serverRequest = $creator->fromGlobals();
-        $this->beConstructedWith($serverRequest, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $url = 'http://from';
 
@@ -886,7 +883,7 @@ class CasSpec extends ObjectBehavior
             $psr17Factory  // StreamFactory
         );
         $serverRequest = $creator->fromGlobals();
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $request = new ServerRequest('GET', 'http://local/cas/serviceValidate?service=service&ticket=ticket&format=JSON');
 
@@ -938,7 +935,7 @@ class CasSpec extends ObjectBehavior
 
         //$logger = new Logger('psrcas', [new StreamHandler('php://stderr')]);
 
-        $this->beConstructedWith($serverRequest, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $url = 'http://from';
 
@@ -1021,7 +1018,7 @@ class CasSpec extends ObjectBehavior
 
         //$logger = new Logger('psrcas', [new StreamHandler('php://stderr')]);
 
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $request = new ServerRequest('GET', 'http://local/cas/proxyValidate?service=service&ticket=ticket');
 
@@ -1120,7 +1117,7 @@ class CasSpec extends ObjectBehavior
             $psr17Factory, // UploadedFileFactory
             $psr17Factory  // StreamFactory
         );
-        $this->beConstructedWith($creator->fromGlobals(), $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($creator->fromGlobals(), $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $from = 'http://local/';
 
@@ -1271,7 +1268,7 @@ class CasSpec extends ObjectBehavior
         );
         $serverRequest = $creator->fromGlobals();
 
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $request = new ServerRequest('POST', 'foo');
 
@@ -1298,7 +1295,7 @@ class CasSpec extends ObjectBehavior
             $psr17Factory, // UploadedFileFactory
             $psr17Factory  // StreamFactory
         );
-        $this->beConstructedWith($creator->fromGlobals(), CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($creator->fromGlobals(), CasSpecUtils::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $from = 'http://from/';
 
@@ -1390,6 +1387,6 @@ class CasSpec extends ObjectBehavior
             ->getItem('pgtIouWithPgtIdNull')
             ->willReturn($cacheItemPgtIdNull);
 
-        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, $properties, $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
     }
 }

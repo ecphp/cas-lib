@@ -9,26 +9,16 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
+use EcPhp\CasLib\Response\Proxy as ResponseProxy;
 use EcPhp\CasLib\Utils\Uri;
-use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class Proxy extends Service implements ServiceInterface
 {
-    public function getCredentials(ResponseInterface $response): ?ResponseInterface
-    {
-        $introspect = $this->getIntrospector()->detect($response);
-
-        if (false === ($introspect instanceof \EcPhp\CasLib\Introspection\Contract\Proxy)) {
-            throw new Exception('Unable to get credentials from Proxy.');
-        }
-
-        return $response;
-    }
-
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $format = $parameters['format'] ?? 'XML';
         $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
 
         $parameters += [
@@ -36,23 +26,29 @@ final class Proxy extends Service implements ServiceInterface
             'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
 
-        $response = $this
-            ->getClient()
-            ->sendRequest(
-                $this
-                    ->getRequestFactory()
-                    ->createRequest(
-                        'GET',
-                        $this
-                            ->buildUri(
-                                $request->getUri(),
-                                'proxy',
-                                $this->formatProtocolParameters($parameters)
-                            )
-                    )
-            );
+        $response = new ResponseProxy(
+            $this
+                ->getClient()
+                ->sendRequest(
+                    $this
+                        ->getRequestFactory()
+                        ->createRequest(
+                            'GET',
+                            $this
+                                ->buildUri(
+                                    $request->getUri(),
+                                    'proxy',
+                                    $this->formatProtocolParameters($parameters)
+                                )
+                        )
+                ),
+            $format,
+            $this->getCache(),
+            $this->getStreamFactory(),
+            $this->getLogger()
+        );
 
-        return $this->normalize($response, $parameters['format'] ?? 'XML');
+        return $response->withPgtIou()->normalize();
     }
 
     protected function getProtocolProperties(): array

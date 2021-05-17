@@ -9,10 +9,8 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 interface ServiceInterface extends RequestHandlerInterface
 {
-    public function getCredentials(ResponseInterface $response): ?ResponseInterface;
 }

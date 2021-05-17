@@ -7,9 +7,8 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection\Contract;
+namespace EcPhp\CasLib\Response\Contract;
 
-interface ProxyFailure extends IntrospectionInterface
+interface AuthenticationFailure extends CasResponseInterface
 {
-    public function getMessage(): string;
 }
