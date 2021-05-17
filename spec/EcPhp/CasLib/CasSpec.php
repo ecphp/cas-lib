@@ -75,7 +75,7 @@ class CasSpec extends ObjectBehavior
             ->during('authenticate');
     }
 
-    public function it_can_authenticate_a_request(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_can_authenticate_a_request_in_service_mode(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
@@ -144,36 +144,6 @@ class CasSpec extends ObjectBehavior
             ->withServerRequest($request)
             ->shouldThrow(Exception::class)
             ->during('authenticate');
-
-        $uri = new Uri('http://from?ticket=ST-ticket-pgt');
-        $request = (new ServerRequest('GET', $uri))
-            ->withQueryParams(['ticket' => 'ST-ticket-pgt']);
-
-        $this
-            ->withServerRequest($request)
-            ->authenticate()
-            ->shouldBeArray();
-
-        $uri = new Uri('http://from?ticket=ST-ticket-pgt-pgtiou-not-found');
-        $request = (new ServerRequest('GET', $uri))
-            ->withQueryParams(['ticket' => 'ST-ticket-pgt-pgtiou-not-found']);
-
-        $this
-            ->withServerRequest($request)
-            ->shouldThrow(Exception::class)
-            ->during('authenticate');
-
-        // TODO: Make this example working with ProxyValidation
-        /*
-        $uri = new Uri('http://from?ticket=ST-ticket-pgt-pgtiou-pgtid-null');
-        $request = (new ServerRequest('GET', $uri))
-            ->withQueryParams(['ticket' => 'ST-ticket-pgt-pgtiou-pgtid-null']);
-
-        $this
-            ->withServerRequest($request)
-            ->authenticate()
-            ->shouldBeNull();
-         */
     }
 
     public function it_can_authenticate_a_request_in_proxy_mode(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
@@ -263,6 +233,36 @@ class CasSpec extends ObjectBehavior
             ->withServerRequest($request)
             ->shouldThrow(Exception::class)
             ->during('authenticate');
+
+        $uri = new Uri('http://from?ticket=ST-ticket-pgt');
+        $request = (new ServerRequest('GET', $uri))
+            ->withQueryParams(['ticket' => 'ST-ticket-pgt']);
+
+        $this
+            ->withServerRequest($request)
+            ->authenticate()
+            ->shouldBeArray();
+
+        $uri = new Uri('http://from?ticket=ST-ticket-pgt-pgtiou-not-found');
+        $request = (new ServerRequest('GET', $uri))
+            ->withQueryParams(['ticket' => 'ST-ticket-pgt-pgtiou-not-found']);
+
+        $this
+            ->withServerRequest($request)
+            ->shouldThrow(Exception::class)
+            ->during('authenticate');
+
+        // TODO: Make this example working with ProxyValidation
+        /*
+        $uri = new Uri('http://from?ticket=ST-ticket-pgt-pgtiou-pgtid-null');
+        $request = (new ServerRequest('GET', $uri))
+            ->withQueryParams(['ticket' => 'ST-ticket-pgt-pgtiou-pgtid-null']);
+
+        $this
+            ->withServerRequest($request)
+            ->authenticate()
+            ->shouldBeNull();
+         */
     }
 
     public function it_can_be_constructed_without_base_url(LoggerInterface $logger, CacheItemPoolInterface $cache)

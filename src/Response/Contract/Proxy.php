@@ -12,6 +12,4 @@ namespace EcPhp\CasLib\Response\Contract;
 interface Proxy extends CasResponseInterface
 {
     public function getProxyTicket(): string;
-
-    public function withPgtIou(): Proxy;
 }

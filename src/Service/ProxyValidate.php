@@ -44,11 +44,12 @@ final class ProxyValidate extends Service implements ServiceInterface
                         )
                 ),
             $format,
+            $this->getCache(),
             $this->getStreamFactory(),
             $this->getLogger()
         );
 
-        return $this->normalize();
+        return $response->withPgtIou()->normalize();
     }
 
     protected function getProtocolProperties(): array
