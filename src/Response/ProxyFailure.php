@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Response;
 
 use EcPhp\CasLib\Response\Contract\ProxyFailure as ProxyFailureInterface;
-use Psr\Http\Message\StreamInterface;
 
 final class ProxyFailure extends CasResponse implements ProxyFailureInterface
 {

@@ -15,6 +15,7 @@ use EcPhp\CasLib\Response\Contract\CasResponseInterface;
 use Exception;
 use InvalidArgumentException;
 use LSS\XML2Array;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
@@ -34,14 +35,63 @@ abstract class CasResponse implements CasResponseInterface
 
     protected ResponseInterface $response;
 
+    protected CacheItemPoolInterface $cache;
+
     protected StreamFactoryInterface $streamFactory;
 
-    public function __construct(ResponseInterface $response, string $format, StreamFactoryInterface $streamFactory, LoggerInterface $logger)
+    public function __construct(ResponseInterface $response, string $format, CacheItemPoolInterface $cache, StreamFactoryInterface $streamFactory, LoggerInterface $logger)
     {
         $this->response = $response;
         $this->format = $format;
+        $this->cache = $cache;
         $this->streamFactory = $streamFactory;
         $this->logger = $logger;
+    }
+
+    public function getCache(): CacheItemPoolInterface
+    {
+        return $this->cache;
+    }
+
+    public function withPgtIou(): CasResponseInterface
+    {
+        $parsedResponse = $this->parse();
+
+        if (false === array_key_exists('serviceResponse', $parsedResponse)) {
+            return $this;
+        }
+
+        if (false === array_key_exists('authenticationSuccess', $parsedResponse['serviceResponse'])) {
+            return $this;
+        }
+
+        $proxyGrantingTicket = array_key_exists(
+            'proxyGrantingTicket',
+            $parsedResponse['serviceResponse']['authenticationSuccess']
+        );
+
+        if (false === $proxyGrantingTicket) {
+            return $this;
+        }
+
+        $pgt = $parsedResponse['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
+
+        if (false === $this->getCache()->hasItem($pgt)) {
+            throw new Exception('CAS validation failed: pgtIou not found in the cache.');
+        }
+
+        return $this
+            ->withBody(
+                $this
+                    ->getStreamFactory()
+                    ->createStream(
+                        str_replace(
+                            $pgt,
+                            $this->getCache()->getItem($pgt)->get(),
+                            (string) $this->getBody()
+                        )
+                    )
+            );
     }
 
     public function getInnerResponse(): ResponseInterface

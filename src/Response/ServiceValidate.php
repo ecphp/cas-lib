@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Response;
 
 use EcPhp\CasLib\Response\Contract\ServiceValidate as ServiceValidateInterface;
-use Psr\Http\Message\StreamInterface;
 
 final class ServiceValidate extends CasResponse implements ServiceValidateInterface
 {

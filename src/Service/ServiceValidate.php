@@ -44,6 +44,7 @@ final class ServiceValidate extends Service implements ServiceInterface
                         )
                 ),
             $format,
+            $this->getCache(),
             $this->getStreamFactory(),
             $this->getLogger()
         );
