@@ -17,4 +17,9 @@ final class Proxy extends CasResponse implements ProxyInterface
     {
         return $this->parse()['serviceResponse']['proxySuccess']['proxyTicket'];
     }
+
+    public function isFailure(): bool
+    {
+        return isset($this->parse()['serviceResponse']['proxyFailure']);
+    }
 }

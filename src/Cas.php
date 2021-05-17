@@ -144,7 +144,15 @@ final class Cas implements CasInterface
             $this->getLogger()
         );
 
-        return $proxyRequestService->handle($this->getServerRequest())->getCredentials();
+        $response = $proxyRequestService->handle($this->getServerRequest());
+
+        if (true === $response->isFailure()) {
+            // TODO: Proper exception message.
+            throw new Exception('Failure');
+        }
+
+        return $response;
+
     }
 
     public function requestProxyValidate(array $parameters = []): ProxyServiceValidate
