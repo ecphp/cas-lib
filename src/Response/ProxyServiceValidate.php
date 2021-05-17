@@ -47,7 +47,18 @@ final class ProxyServiceValidate extends CasResponse implements ProxyServiceVali
 
     public function withPgtIou(): ProxyServiceValidateInterface
     {
-        $pgt = $this->parse()['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
+        $parsedResponse = $this->parse();
+
+        $proxyGrantingTicket = array_key_exists(
+            'proxyGrantingTicket',
+            $parsedResponse['serviceResponse']['authenticationSuccess']
+        );
+
+        if (false === $proxyGrantingTicket) {
+            return $this;
+        }
+
+        $pgt = $parsedResponse['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
 
         if (false === $this->getCache()->hasItem($pgt)) {
             throw new Exception('CAS validation failed: pgtIou not found in the cache.');

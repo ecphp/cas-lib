@@ -43,12 +43,11 @@ final class Proxy extends Service implements ServiceInterface
                         )
                 ),
             $format,
-            $this->getCache(),
             $this->getStreamFactory(),
             $this->getLogger()
         );
 
-        return $response->withPgtIou()->normalize();
+        return $response->normalize();
     }
 
     protected function getProtocolProperties(): array

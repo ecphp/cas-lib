@@ -27,8 +27,6 @@ class Cas extends ObjectBehavior
                 ],
             ];
 
-            var_dump($url);
-
             switch ($url) {
                 case 'http://local/cas/serviceValidate?service=service&ticket=ticket':
                 case 'http://local/cas/serviceValidate?ticket=ST-ticket&service=http%3A%2F%2Ffrom':
