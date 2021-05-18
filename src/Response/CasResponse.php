@@ -21,6 +21,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
+use function array_key_exists;
+
 use const JSON_ERROR_NONE;
 use const LIBXML_NOBLANKS;
 use const LIBXML_NOCDATA;
@@ -29,13 +31,13 @@ use const LIBXML_NSCLEAN;
 
 abstract class CasResponse implements CasResponseInterface
 {
+    protected CacheItemPoolInterface $cache;
+
     protected string $format;
 
     protected LoggerInterface $logger;
 
     protected ResponseInterface $response;
-
-    protected CacheItemPoolInterface $cache;
 
     protected StreamFactoryInterface $streamFactory;
 
@@ -48,50 +50,34 @@ abstract class CasResponse implements CasResponseInterface
         $this->logger = $logger;
     }
 
+    public function getBody()
+    {
+        return $this->response->getBody();
+    }
+
     public function getCache(): CacheItemPoolInterface
     {
         return $this->cache;
     }
 
-    public function withPgtIou(): CasResponseInterface
+    public function getFormat(): string
     {
-        $parsedResponse = $this->parse();
+        return $this->format;
+    }
 
-        if (false === array_key_exists('serviceResponse', $parsedResponse)) {
-            return $this;
-        }
+    public function getHeader($name)
+    {
+        return $this->response->getHeader($name);
+    }
 
-        if (false === array_key_exists('authenticationSuccess', $parsedResponse['serviceResponse'])) {
-            return $this;
-        }
+    public function getHeaderLine($name)
+    {
+        return $this->response->getHeaderLine($name);
+    }
 
-        $proxyGrantingTicket = array_key_exists(
-            'proxyGrantingTicket',
-            $parsedResponse['serviceResponse']['authenticationSuccess']
-        );
-
-        if (false === $proxyGrantingTicket) {
-            return $this;
-        }
-
-        $pgt = $parsedResponse['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
-
-        if (false === $this->getCache()->hasItem($pgt)) {
-            throw new Exception('CAS validation failed: pgtIou not found in the cache.');
-        }
-
-        return $this
-            ->withBody(
-                $this
-                    ->getStreamFactory()
-                    ->createStream(
-                        str_replace(
-                            $pgt,
-                            $this->getCache()->getItem($pgt)->get(),
-                            (string) $this->getBody()
-                        )
-                    )
-            );
+    public function getHeaders()
+    {
+        return $this->response->getHeaders();
     }
 
     public function getInnerResponse(): ResponseInterface
@@ -104,9 +90,29 @@ abstract class CasResponse implements CasResponseInterface
         return $this->logger;
     }
 
+    public function getProtocolVersion()
+    {
+        return $this->response->getProtocolVersion();
+    }
+
+    public function getReasonPhrase()
+    {
+        return $this->response->getReasonPhrase();
+    }
+
+    public function getStatusCode()
+    {
+        return $this->response->getStatusCode();
+    }
+
     public function getStreamFactory(): StreamFactoryInterface
     {
         return $this->streamFactory;
+    }
+
+    public function hasHeader($name)
+    {
+        return $this->response->hasHeader($name);
     }
 
     public function normalize(): ResponseInterface
@@ -193,68 +199,6 @@ abstract class CasResponse implements CasResponseInterface
         throw new InvalidArgumentException('Unsupported format.');
     }
 
-    public function withFormat(string $format): CasResponseInterface
-    {
-        $clone = clone $this;
-        $clone->format = $format;
-
-        return $clone;
-    }
-
-    private function removeDomNamespace(DOMDocument $doc, string $namespace): void
-    {
-        $query = sprintf('//*[namespace::%s and not(../namespace::%s)]', $namespace, $namespace);
-
-        foreach ((new DOMXPath($doc))->query($query) as $node) {
-            $node->removeAttributeNS($node->lookupNamespaceURI($namespace), $namespace);
-        }
-    }
-
-    public function getBody()
-    {
-        return $this->response->getBody();
-    }
-
-    public function getFormat(): string
-    {
-        return $this->format;
-    }
-
-    public function getHeader($name)
-    {
-        return $this->response->getHeader($name);
-    }
-
-    public function getHeaderLine($name)
-    {
-        return $this->response->getHeaderLine($name);
-    }
-
-    public function getHeaders()
-    {
-        return $this->response->getHeaders();
-    }
-
-    public function getProtocolVersion()
-    {
-        return $this->response->getProtocolVersion();
-    }
-
-    public function getReasonPhrase()
-    {
-        return $this->response->getReasonPhrase();
-    }
-
-    public function getStatusCode()
-    {
-        return $this->response->getStatusCode();
-    }
-
-    public function hasHeader($name)
-    {
-        return $this->response->hasHeader($name);
-    }
-
     public function withAddedHeader($name, $value)
     {
         $clone = clone $this;
@@ -267,6 +211,14 @@ abstract class CasResponse implements CasResponseInterface
     {
         $clone = clone $this;
         $clone->response = $this->response->withBody($body);
+
+        return $clone;
+    }
+
+    public function withFormat(string $format): CasResponseInterface
+    {
+        $clone = clone $this;
+        $clone->format = $format;
 
         return $clone;
     }
@@ -287,6 +239,47 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
+    public function withPgtIou(): CasResponseInterface
+    {
+        $parsedResponse = $this->parse();
+
+        if (false === array_key_exists('serviceResponse', $parsedResponse)) {
+            return $this;
+        }
+
+        if (false === array_key_exists('authenticationSuccess', $parsedResponse['serviceResponse'])) {
+            return $this;
+        }
+
+        $proxyGrantingTicket = array_key_exists(
+            'proxyGrantingTicket',
+            $parsedResponse['serviceResponse']['authenticationSuccess']
+        );
+
+        if (false === $proxyGrantingTicket) {
+            throw new Exception('No PGT found in the response.');
+        }
+
+        $pgt = $parsedResponse['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
+
+        if (false === $this->getCache()->hasItem($pgt)) {
+            throw new Exception('CAS validation failed: pgtIou not found in the cache.');
+        }
+
+        return $this
+            ->withBody(
+                $this
+                    ->getStreamFactory()
+                    ->createStream(
+                        str_replace(
+                            $pgt,
+                            $this->getCache()->getItem($pgt)->get(),
+                            (string) $this->getBody()
+                        )
+                    )
+            );
+    }
+
     public function withProtocolVersion($version)
     {
         $clone = clone $this;
@@ -301,5 +294,14 @@ abstract class CasResponse implements CasResponseInterface
         $clone->response = $this->response->withStatus($code, $reasonPhrase);
 
         return $clone;
+    }
+
+    private function removeDomNamespace(DOMDocument $doc, string $namespace): void
+    {
+        $query = sprintf('//*[namespace::%s and not(../namespace::%s)]', $namespace, $namespace);
+
+        foreach ((new DOMXPath($doc))->query($query) as $node) {
+            $node->removeAttributeNS($node->lookupNamespaceURI($namespace), $namespace);
+        }
     }
 }

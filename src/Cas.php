@@ -152,7 +152,6 @@ final class Cas implements CasInterface
         }
 
         return $response;
-
     }
 
     public function requestProxyValidate(array $parameters = []): ProxyServiceValidate
@@ -169,7 +168,14 @@ final class Cas implements CasInterface
             $this->getLogger()
         );
 
-        return $proxyValidateService->handle($this->getServerRequest());
+        $response = $proxyValidateService->handle($this->getServerRequest());
+
+        if (true === $response->isFailure()) {
+            // TODO: Proper exception message.
+            throw new Exception('Failure');
+        }
+
+        return $response;
     }
 
     public function requestServiceValidate(array $parameters = []): ResponseServiceValidate
@@ -186,7 +192,14 @@ final class Cas implements CasInterface
             $this->getLogger()
         );
 
-        return $serviceValidateService->handle($this->getServerRequest());
+        $response = $serviceValidateService->handle($this->getServerRequest());
+
+        if (true === $response->isFailure()) {
+            // TODO: Proper exception message.
+            throw new Exception('Failure');
+        }
+
+        return $response;
     }
 
     public function requestTicketValidation(array $parameters = []): CasResponseInterface

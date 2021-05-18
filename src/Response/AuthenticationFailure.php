@@ -13,5 +13,4 @@ use EcPhp\CasLib\Response\Contract\AuthenticationFailure as AuthenticationFailur
 
 final class AuthenticationFailure extends CasResponse implements AuthenticationFailureInterface
 {
-
 }

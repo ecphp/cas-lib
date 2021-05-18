@@ -18,14 +18,14 @@ final class ServiceValidate extends Service implements ServiceInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $format = $parameters['format'] ?? 'XML';
-
         $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
 
         $parameters += [
             'service' => (string) $request->getUri(),
             'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
+
+        $format = $parameters['format'] ?? 'XML';
 
         $response = new ResponseServiceValidate(
             $this
@@ -36,11 +36,11 @@ final class ServiceValidate extends Service implements ServiceInterface
                         ->createRequest(
                             'GET',
                             $this
-                            ->buildUri(
-                                $request->getUri(),
-                                'serviceValidate',
-                                $this->formatProtocolParameters($parameters)
-                            )
+                                ->buildUri(
+                                    $request->getUri(),
+                                    'serviceValidate',
+                                    $this->formatProtocolParameters($parameters)
+                                )
                         )
                 ),
             $format,

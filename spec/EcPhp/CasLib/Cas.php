@@ -27,8 +27,6 @@ class Cas extends ObjectBehavior
                 ],
             ];
 
-            var_dump($url);
-
             switch ($url) {
                 case 'http://local/cas/serviceValidate?service=service&ticket=ticket':
                 case 'http://local/cas/serviceValidate?ticket=ST-ticket&service=http%3A%2F%2Ffrom':
@@ -76,6 +74,9 @@ class Cas extends ObjectBehavior
 
                     break;
 
+                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Ffrom%3Fservice%3Dservice%26renew%3Dtrue&ticket=ticket&renew=true':
+                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Ffrom%3Fservice%3Dservice&ticket=ticket-with-pgt':
+                case 'http://local/cas/proxyValidate?ticket=PT-ticket-with-pgt&service=http%3A%2F%2Ffrom':
                 case 'http://local/cas/serviceValidate?ticket=ST-ticket-pgt&service=http%3A%2F%2Ffrom':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
@@ -142,6 +143,12 @@ class Cas extends ObjectBehavior
                             }
                         }
                         EOF;
+
+                    $info = [
+                        'response_headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                    ];
 
                     break;
 

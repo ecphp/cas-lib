@@ -26,4 +26,9 @@ final class ServiceValidate extends CasResponse implements ServiceValidateInterf
             $this->parse()['serviceResponse']['authenticationSuccess']['proxies'] :
             [];
     }
+
+    public function isFailure(): bool
+    {
+        return isset($this->parse()['serviceResponse']['authenticationFailure']);
+    }
 }

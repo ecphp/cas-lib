@@ -27,4 +27,8 @@ final class ProxyServiceValidate extends CasResponse implements ProxyServiceVali
             [];
     }
 
+    public function isFailure(): bool
+    {
+        return isset($this->parse()['serviceResponse']['authenticationFailure']);
+    }
 }
