@@ -9,17 +9,14 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
-use EcPhp\CasLib\Response\ProxyServiceValidate;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class ProxyValidate extends Service implements ServiceInterface
+final class ProxyServiceValidate extends Service implements ServiceInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $format = $parameters['format'] ?? 'XML';
-
         $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
 
         $parameters += [
@@ -27,11 +24,10 @@ final class ProxyValidate extends Service implements ServiceInterface
             'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
 
-        $response = new ProxyServiceValidate(
-            $this
-                ->getClient()
-                ->sendRequest(
-                    $this
+        return $this
+            ->getClient()
+            ->sendRequest(
+                $this
                         ->getRequestFactory()
                         ->createRequest(
                             'GET',
@@ -42,18 +38,6 @@ final class ProxyValidate extends Service implements ServiceInterface
                                     $this->formatProtocolParameters($parameters)
                                 )
                         )
-                ),
-            $format,
-            $this->getCache(),
-            $this->getStreamFactory(),
-            $this->getLogger()
-        );
-
-        return $response->withPgtIou()->normalize();
-    }
-
-    protected function getProtocolProperties(): array
-    {
-        return $this->getProperties()['protocol']['proxyValidate'] ?? [];
+            );
     }
 }

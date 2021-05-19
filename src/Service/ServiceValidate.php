@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
-use EcPhp\CasLib\Response\ServiceValidate as ResponseServiceValidate;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,35 +24,20 @@ final class ServiceValidate extends Service implements ServiceInterface
             'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
 
-        $format = $parameters['format'] ?? 'XML';
-
-        $response = new ResponseServiceValidate(
-            $this
-                ->getClient()
-                ->sendRequest(
-                    $this
-                        ->getRequestFactory()
-                        ->createRequest(
-                            'GET',
-                            $this
-                                ->buildUri(
-                                    $request->getUri(),
-                                    'serviceValidate',
-                                    $this->formatProtocolParameters($parameters)
-                                )
-                        )
-                ),
-            $format,
-            $this->getCache(),
-            $this->getStreamFactory(),
-            $this->getLogger()
-        );
-
-        return $response->normalize();
-    }
-
-    protected function getProtocolProperties(): array
-    {
-        return $this->getProperties()['protocol']['serviceValidate'] ?? [];
+        return $this
+            ->getClient()
+            ->sendRequest(
+                $this
+                    ->getRequestFactory()
+                    ->createRequest(
+                        'GET',
+                        $this
+                            ->buildUri(
+                                $request->getUri(),
+                                'serviceValidate',
+                                $this->formatProtocolParameters($parameters)
+                            )
+                    )
+            );
     }
 }

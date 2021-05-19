@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Redirect;
+namespace spec\EcPhp\CasLib\Middleware;
 
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
-use EcPhp\CasLib\Redirect\Login;
+use EcPhp\CasLib\Middleware\Login;
 use Exception;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;

@@ -35,6 +35,28 @@ interface CasInterface
     public function getProperties(): PropertiesInterface;
 
     /**
+     * If not authenticated, redirect to CAS login.
+     *
+     * @param array[]|string[] $parameters
+     *   The parameters related to the service.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   An HTTP response or null.
+     */
+    public function handleLogin(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
+
+    /**
+     * Redirect to CAS logout.
+     *
+     * @param array[]|string[] $parameters
+     *   The parameters related to the service.
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     *   An HTTP response or null.
+     */
+    public function handleLogout(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
+
+    /**
      * Handle the request made on the proxy callback URL.
      *
      * @param array[]|string[] $parameters
@@ -46,28 +68,6 @@ interface CasInterface
     public function handleProxyCallback(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
-     * If not authenticated, redirect to CAS login.
-     *
-     * @param array[]|string[] $parameters
-     *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     *   An HTTP response or null.
-     */
-    public function login(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
-
-    /**
-     * Redirect to CAS logout.
-     *
-     * @param array[]|string[] $parameters
-     *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     *   An HTTP response or null.
-     */
-    public function logout(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
-
-    /**
      * Request a proxy ticket.
      *
      * @param array[]|string[] $parameters
@@ -77,28 +77,6 @@ interface CasInterface
      *   An HTTP response or null.
      */
     public function requestProxyTicket(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
-
-    /**
-     * Request a proxy validation.
-     *
-     * @param array[]|string[] $parameters
-     *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     *   An HTTP response or null.
-     */
-    public function requestProxyValidate(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
-
-    /**
-     * Request a service validation.
-     *
-     * @param array[]|string[] $parameters
-     *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     *   An HTTP response or null.
-     */
-    public function requestServiceValidate(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * Request a ticket validation.

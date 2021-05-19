@@ -15,11 +15,11 @@ final class Proxy extends CasResponse implements ProxyInterface
 {
     public function getProxyTicket(): string
     {
-        return $this->parse()['serviceResponse']['proxySuccess']['proxyTicket'];
+        return $this->toArray()['serviceResponse']['proxySuccess']['proxyTicket'];
     }
 
     public function isFailure(): bool
     {
-        return isset($this->parse()['serviceResponse']['proxyFailure']);
+        return isset($this->toArray()['serviceResponse']['proxyFailure']);
     }
 }

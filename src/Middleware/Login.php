@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Redirect;
+namespace EcPhp\CasLib\Middleware;
 
 use EcPhp\CasLib\Utils\Uri;
 use Exception;

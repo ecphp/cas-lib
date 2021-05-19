@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Redirect;
+namespace spec\EcPhp\CasLib\Middleware;
 
-use EcPhp\CasLib\Redirect\Logout;
+use EcPhp\CasLib\Middleware\Logout;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PhpSpec\ObjectBehavior;

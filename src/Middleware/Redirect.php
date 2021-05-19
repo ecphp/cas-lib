@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Redirect;
+namespace EcPhp\CasLib\Middleware;
 
 use EcPhp\CasLib\Handler\Handler;
 use Psr\Http\Message\ResponseInterface;

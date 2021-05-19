@@ -15,20 +15,19 @@ final class ServiceValidate extends CasResponse implements ServiceValidateInterf
 {
     public function getCredentials(): array
     {
-        return $this->parse()['serviceResponse']['authenticationSuccess'];
+        return $this->toArray()['serviceResponse']['authenticationSuccess'];
     }
 
     public function getProxies(): array
     {
-        $hasProxy = isset($this->parse()['serviceResponse']['authenticationSuccess']['proxies']);
+        $toArray = $this->toArray();
+        $toArray['serviceResponse']['authenticationSuccess'] += ['proxies' => []];
 
-        return true === $hasProxy ?
-            $this->parse()['serviceResponse']['authenticationSuccess']['proxies'] :
-            [];
+        return $toArray['serviceResponse']['authenticationSuccess']['proxies'];
     }
 
     public function isFailure(): bool
     {
-        return isset($this->parse()['serviceResponse']['authenticationFailure']);
+        return isset($this->toArray()['serviceResponse']['authenticationFailure']);
     }
 }

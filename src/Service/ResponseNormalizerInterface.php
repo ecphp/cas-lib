@@ -7,13 +7,11 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Response\Contract;
+namespace EcPhp\CasLib\Service;
 
 use Psr\Http\Message\ResponseInterface;
 
-interface CasResponseInterface extends ResponseInterface
+interface ResponseNormalizerInterface
 {
-    public function getFormat(): string;
-
-    public function normalize(): self;
+    public function normalize(ResponseInterface $response): ResponseInterface;
 }

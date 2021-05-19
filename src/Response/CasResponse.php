@@ -12,9 +12,8 @@ namespace EcPhp\CasLib\Response;
 use DOMDocument;
 use DOMXPath;
 use EcPhp\CasLib\Response\Contract\CasResponseInterface;
+use EcPhp\CasLib\Service\ResponseNormalizerInterface;
 use Exception;
-use InvalidArgumentException;
-use LSS\XML2Array;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -22,12 +21,6 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
-
-use const JSON_ERROR_NONE;
-use const LIBXML_NOBLANKS;
-use const LIBXML_NOCDATA;
-use const LIBXML_NONET;
-use const LIBXML_NSCLEAN;
 
 abstract class CasResponse implements CasResponseInterface
 {
@@ -41,13 +34,16 @@ abstract class CasResponse implements CasResponseInterface
 
     protected StreamFactoryInterface $streamFactory;
 
-    public function __construct(ResponseInterface $response, string $format, CacheItemPoolInterface $cache, StreamFactoryInterface $streamFactory, LoggerInterface $logger)
+    private ResponseNormalizerInterface $responseNormalizer;
+
+    public function __construct(ResponseInterface $response, string $format, ResponseNormalizerInterface $responseNormalizer, CacheItemPoolInterface $cache, StreamFactoryInterface $streamFactory, LoggerInterface $logger)
     {
         $this->response = $response;
         $this->format = $format;
         $this->cache = $cache;
         $this->streamFactory = $streamFactory;
         $this->logger = $logger;
+        $this->responseNormalizer = $responseNormalizer;
     }
 
     public function getBody()
@@ -115,88 +111,14 @@ abstract class CasResponse implements CasResponseInterface
         return $this->response->hasHeader($name);
     }
 
-    public function normalize(): ResponseInterface
+    public function normalize(): self
     {
-        $body = $this->parse();
-
-        if ([] === $body) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Unable to parse the response during the normalization process.',
-                    [
-                        'body' => (string) $this->getBody(),
-                    ]
-                );
-
-            return $this;
-        }
-
-        $body = json_encode($body);
-
-        if (false === $body || JSON_ERROR_NONE !== json_last_error()) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Unable to encode the response in JSON during the normalization process.',
-                    [
-                        'body' => (string) $this->getBody(),
-                    ]
-                );
-
-            return $this;
-        }
-
-        $this
-            ->getLogger()
-            ->debug('Response normalization succeeded.', ['body' => $body]);
-
-        return $this
-            ->withBody($this->getStreamFactory()->createStream($body))
-            ->withHeader('Content-Type', 'application/json')
-            ->withFormat('JSON');
+        return $this->responseNormalizer->normalize($this);
     }
 
-    public function parse(): array
+    public function toArray(): array
     {
-        $format = $this->getFormat();
-        $body = (string) $this->getBody();
-
-        if ('' === $body) {
-            throw new InvalidArgumentException('Empty response body');
-        }
-
-        if ('XML' === $format) {
-            try {
-                $dom = new DOMDocument();
-
-                $dom
-                    ->loadXML(
-                        $body,
-                        LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_NOBLANKS | LIBXML_NONET
-                    );
-
-                $this->removeDomNamespace($dom, 'cas');
-
-                $data = XML2Array::createArray($dom);
-            } catch (Exception $e) {
-                throw new InvalidArgumentException('Unable to parse the response using XML format.', 0, $e);
-            }
-
-            return $data;
-        }
-
-        if ('JSON' === $format) {
-            $json = json_decode($body, true);
-
-            if (null === $json || JSON_ERROR_NONE !== json_last_error()) {
-                throw new InvalidArgumentException('Unable to parse the response using JSON format.');
-            }
-
-            return $json;
-        }
-
-        throw new InvalidArgumentException('Unsupported format.');
+        return json_decode((string) $this->normalize()->getBody(), true);
     }
 
     public function withAddedHeader($name, $value)
@@ -239,9 +161,9 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withPgtIou(): CasResponseInterface
+    public function withPgtIou(): self
     {
-        $parsedResponse = $this->parse();
+        $parsedResponse = $this->toArray();
 
         if (false === array_key_exists('serviceResponse', $parsedResponse)) {
             return $this;

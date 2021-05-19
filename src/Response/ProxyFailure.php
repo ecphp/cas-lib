@@ -15,6 +15,6 @@ final class ProxyFailure extends CasResponse implements ProxyFailureInterface
 {
     public function getMessage(): string
     {
-        return $this->parse()['serviceResponse']['proxyFailure'];
+        return $this->toArray()['serviceResponse']['proxyFailure'];
     }
 }
