@@ -24,8 +24,9 @@ class ProxySpec extends ObjectBehavior
 {
     public function it_can_detect_a_wrong_proxy_response()
     {
+        $request = new ServerRequest('GET', 'http://from');
         $this
-            ->handle(new ServerRequest('GET', 'http://from'))
+            ->handle($request)
             ->shouldThrow(Exception::class)
             ->during('getCredentials');
     }

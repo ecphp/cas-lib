@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Response\Contract;
 
-interface ProxyServiceValidate extends CasResponseInterface
+interface ProxyServiceValidate extends ServiceValidate
 {
     public function getCredentials(): array;
 

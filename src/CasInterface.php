@@ -24,7 +24,7 @@ interface CasInterface
      * @return array[]|null
      *   The user response if authenticated, null otherwise.
      */
-    public function authenticate(array $parameters = []): ?array;
+    public function authenticate(ServerRequestInterface $serverRequest, array $parameters = []): ?array;
 
     /**
      * Get the CAS properties.
@@ -43,7 +43,7 @@ interface CasInterface
      * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function handleProxyCallback(array $parameters = []): ResponseInterface;
+    public function handleProxyCallback(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * If not authenticated, redirect to CAS login.
@@ -54,7 +54,7 @@ interface CasInterface
      * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function login(array $parameters = []): ResponseInterface;
+    public function login(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * Redirect to CAS logout.
@@ -65,7 +65,7 @@ interface CasInterface
      * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function logout(array $parameters = []): ResponseInterface;
+    public function logout(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * Request a proxy ticket.
@@ -76,7 +76,7 @@ interface CasInterface
      * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestProxyTicket(array $parameters = []): ResponseInterface;
+    public function requestProxyTicket(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * Request a proxy validation.
@@ -87,7 +87,7 @@ interface CasInterface
      * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestProxyValidate(array $parameters = []): ResponseInterface;
+    public function requestProxyValidate(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * Request a service validation.
@@ -98,7 +98,7 @@ interface CasInterface
      * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestServiceValidate(array $parameters = []): ResponseInterface;
+    public function requestServiceValidate(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * Request a ticket validation.
@@ -109,7 +109,7 @@ interface CasInterface
      * @return \Psr\Http\Message\ResponseInterface
      *   An HTTP response or null.
      */
-    public function requestTicketValidation(array $parameters = []): ResponseInterface;
+    public function requestTicketValidation(ServerRequestInterface $serverRequest, array $parameters = []): ResponseInterface;
 
     /**
      * Check if the request needs to be authenticated.
@@ -120,16 +120,5 @@ interface CasInterface
      * @return bool
      *   True if it can run the authentication, false otherwise.
      */
-    public function supportAuthentication(array $parameters = []): bool;
-
-    /**
-     * Update the server request in use.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
-     *   The server request.
-     *
-     * @return \EcPhp\CasLib\CasInterface
-     *   The cas service.
-     */
-    public function withServerRequest(ServerRequestInterface $serverRequest): CasInterface;
+    public function supportAuthentication(ServerRequestInterface $serverRequest, array $parameters = []): bool;
 }
