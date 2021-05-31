@@ -1,15 +1,17 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Redirect;
+namespace EcPhp\CasLib\Middleware;
 
 use EcPhp\CasLib\Handler\Handler;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class Redirect.
- */
 abstract class Redirect extends Handler
 {
     protected function createRedirectResponse(string $url): ResponseInterface

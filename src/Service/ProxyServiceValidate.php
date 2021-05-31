@@ -13,13 +13,11 @@ use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class Proxy extends Service implements ServiceInterface
+final class ProxyServiceValidate extends Service implements ServiceInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
-
-        $format = $parameters['format'] ?? 'XML';
 
         $parameters += [
             'service' => (string) $request->getUri(),
@@ -36,7 +34,7 @@ final class Proxy extends Service implements ServiceInterface
                             $this
                                 ->buildUri(
                                     $request->getUri(),
-                                    'proxy',
+                                    'proxyValidate',
                                     $this->formatProtocolParameters($parameters)
                                 )
                         )

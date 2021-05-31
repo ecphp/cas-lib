@@ -1,84 +1,79 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection;
+namespace EcPhp\CasLib\Service;
 
 use DOMDocument;
 use DOMXPath;
-use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
-use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use Exception;
 use InvalidArgumentException;
 use LSS\XML2Array;
 use Psr\Http\Message\ResponseInterface;
-
+use Psr\Http\Message\StreamFactoryInterface;
 use const JSON_ERROR_NONE;
 use const LIBXML_NOBLANKS;
 use const LIBXML_NOCDATA;
 use const LIBXML_NONET;
 use const LIBXML_NSCLEAN;
 
-final class Introspector implements IntrospectorInterface
+final class ResponseNormalizer implements ResponseNormalizerInterface
 {
-    public function detect(ResponseInterface $response): IntrospectionInterface
-    {
-        $format = null;
+    private StreamFactoryInterface $streamFactory;
 
+    public function __construct(StreamFactoryInterface $streamFactory)
+    {
+        $this->streamFactory = $streamFactory;
+    }
+
+    public function normalize(ResponseInterface $response): ResponseInterface
+    {
         if (200 !== $response->getStatusCode()) {
             throw new InvalidArgumentException('Unable to detect the response format.');
         }
 
+        $fromFormat = null;
+
         if (true === $response->hasHeader('Content-Type')) {
-            $header = mb_substr($response->getHeaderLine('Content-Type'), 0, 16);
+            $header = substr($response->getHeaderLine('Content-Type'), 0, 16);
 
             switch ($header) {
                 case 'application/json':
-                    $format = 'JSON';
+                    $fromFormat = 'JSON';
 
                     break;
+
                 case 'application/xml':
-                    $format = 'XML';
+                    $fromFormat = 'XML';
 
                     break;
             }
         }
 
-        if (null === $format) {
-            throw new InvalidArgumentException('Unable to detect the response format.');
+        if (null === $fromFormat) {
+            throw new Exception('Unable to detect the response format.');
         }
 
-        try {
-            $data = $this->parse($response, $format);
-        } catch (InvalidArgumentException $exception) {
-            throw new InvalidArgumentException($exception->getMessage());
-        }
+        $parsed = $this->parse($response, $fromFormat);
 
-        if (isset($data['serviceResponse']['authenticationFailure'])) {
-            return new AuthenticationFailure($data, $format, $response);
-        }
-
-        if (isset($data['serviceResponse']['proxyFailure'])) {
-            return new ProxyFailure($data, $format, $response);
-        }
-
-        if (isset($data['serviceResponse']['authenticationSuccess']['user'])) {
-            return new ServiceValidate($data, $format, $response);
-        }
-
-        if (isset($data['serviceResponse']['proxySuccess']['proxyTicket'])) {
-            return new Proxy($data, $format, $response);
-        }
-
-        throw new InvalidArgumentException('Unable to find the response type.');
+        return $response
+            ->withBody(
+                $this
+                    ->streamFactory
+                    ->createStream(
+                        json_encode(
+                            $parsed
+                        )
+                    )
+            );
     }
 
-    /**
-     * @throws InvalidArgumentException
-     *
-     * @return mixed[]
-     */
-    public function parse(ResponseInterface $response, string $format = 'XML'): array
+    private function parse(ResponseInterface $response, string $format): array
     {
         $body = (string) $response->getBody();
 

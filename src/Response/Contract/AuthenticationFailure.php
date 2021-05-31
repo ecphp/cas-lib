@@ -7,10 +7,8 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Handler;
+namespace EcPhp\CasLib\Response\Contract;
 
-use Psr\Http\Server\RequestHandlerInterface;
-
-interface HandlerInterface extends RequestHandlerInterface
+interface AuthenticationFailure extends CasResponseInterface
 {
 }

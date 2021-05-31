@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
@@ -7,26 +12,21 @@ namespace EcPhp\CasLib\Handler;
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Class ProxyCallback.
- */
-final class ProxyCallback extends Handler implements HandlerInterface
+final class ProxyCallback extends Handler implements RequestHandlerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(): ?ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $serverRequest = $this->getServerRequest();
         $response = $this
             ->getResponseFactory()
             ->createResponse(200);
 
         // POST parameters prevails over GET parameters.
         $parameters = $this->getParameters() +
-            (array) $serverRequest->getParsedBody() +
-            Uri::getParams($serverRequest->getUri()) +
+            (array) $request->getParsedBody() +
+            Uri::getParams($request->getUri()) +
             ['pgtId' => null, 'pgtIou' => null];
 
         if (null === $parameters['pgtId'] && null === $parameters['pgtIou']) {

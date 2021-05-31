@@ -9,8 +9,9 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
-use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
 
-interface ServiceInterface extends RequestHandlerInterface
+interface ResponseNormalizerInterface
 {
+    public function normalize(ResponseInterface $response): ResponseInterface;
 }

@@ -1,41 +1,43 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Utils\Uri;
-use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Class ServiceValidate.
- */
 final class ServiceValidate extends Service implements ServiceInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function getProtocolProperties(): array
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $protocolProperties = $this->getProperties()['protocol']['serviceValidate'] ?? [];
+        $parameters = $this->getParameters() + $this->getProtocolProperties()['default_parameters'] ?? [];
 
-        $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
-            'ticket' => Uri::getParam($this->getServerRequest()->getUri(), 'ticket'),
+        $parameters += [
+            'service' => (string) $request->getUri(),
+            'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
 
-        return $protocolProperties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getUri(): UriInterface
-    {
-        return $this->buildUri(
-            $this->getServerRequest()->getUri(),
-            'serviceValidate',
-            $this->formatProtocolParameters($this->getParameters())
-        );
+        return $this
+            ->getClient()
+            ->sendRequest(
+                $this
+                    ->getRequestFactory()
+                    ->createRequest(
+                        'GET',
+                        $this
+                            ->buildUri(
+                                $request->getUri(),
+                                'serviceValidate',
+                                $this->formatProtocolParameters($parameters)
+                            )
+                    )
+            );
     }
 }
