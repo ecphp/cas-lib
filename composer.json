@@ -24,7 +24,7 @@
         "psr/log": "^1.1.1 || ^1.1.0"
     },
     "require-dev": {
-        "drupol/php-conventions": "^1.7.2 || ^1.8.6",
+        "ecphp/php-conventions": "^1",
         "friends-of-phpspec/phpspec-code-coverage": "^4.3.2",
         "infection/infection": "^0.12.2 || ^0.13.6 || ^0.14.4 || ^0.15.3",
         "monolog/monolog": "^1.0",
