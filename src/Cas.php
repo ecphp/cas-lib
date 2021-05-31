@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ * @see https://github.com/ecphp
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib;
@@ -120,9 +127,6 @@ final class Cas implements CasInterface
         $this->introspector = $introspector;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function authenticate(array $parameters = []): ?array
     {
         if (null === $response = $this->requestTicketValidation($parameters)) {
@@ -141,17 +145,11 @@ final class Cas implements CasInterface
         return $this->getIntrospector()->detect($response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProperties(): PropertiesInterface
     {
         return $this->properties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handleProxyCallback(
         array $parameters = [],
         ?ResponseInterface $response = null
@@ -170,9 +168,6 @@ final class Cas implements CasInterface
         return $response ?? $proxyCallback->handle();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function login(array $parameters = []): ?ResponseInterface
     {
         $login = new Login(
@@ -189,9 +184,6 @@ final class Cas implements CasInterface
         return $login->handle();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function logout(array $parameters = []): ?ResponseInterface
     {
         $logout = new Logout(
@@ -208,9 +200,6 @@ final class Cas implements CasInterface
         return $logout->handle();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestProxyTicket(array $parameters = [], ?ResponseInterface $response = null): ?ResponseInterface
     {
         $proxyRequestService = new Proxy(
@@ -248,9 +237,6 @@ final class Cas implements CasInterface
         return $credentials;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestProxyValidate(
         array $parameters = [],
         ?ResponseInterface $response = null
@@ -290,9 +276,6 @@ final class Cas implements CasInterface
         return $credentials;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestServiceValidate(
         array $parameters = [],
         ?ResponseInterface $response = null
@@ -332,9 +315,6 @@ final class Cas implements CasInterface
         return $credentials;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function requestTicketValidation(
         array $parameters = [],
         ?ResponseInterface $response = null
@@ -357,17 +337,11 @@ final class Cas implements CasInterface
             $this->requestServiceValidate($parameters, $response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportAuthentication(array $parameters = []): bool
     {
         return array_key_exists('ticket', $parameters) || Uri::hasParams($this->getServerRequest()->getUri(), 'ticket');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function withServerRequest(ServerRequestInterface $serverRequest): CasInterface
     {
         $clone = clone $this;

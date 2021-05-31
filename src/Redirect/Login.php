@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ * @see https://github.com/ecphp
+ */
+
 declare(strict_types=1);
 
 namespace EcPhp\CasLib\Redirect;
@@ -15,9 +22,6 @@ use function array_key_exists;
  */
 final class Login extends Redirect implements RedirectInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function handle(): ?ResponseInterface
     {
         $parameters = $this->formatProtocolParameters($this->getParameters());
@@ -40,9 +44,6 @@ final class Login extends Redirect implements RedirectInterface
         return $this->createRedirectResponse((string) $this->getUri($validatedParameters));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function formatProtocolParameters(array $parameters): array
     {
         $parameters = parent::formatProtocolParameters($parameters);
@@ -58,9 +59,6 @@ final class Login extends Redirect implements RedirectInterface
         return $parameters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getProtocolProperties(): array
     {
         $protocolProperties = $this->getProperties()['protocol']['login'] ?? [];

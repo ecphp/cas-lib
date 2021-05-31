@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ *
+ * @see https://github.com/ecphp
+ */
+
 declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Service;
@@ -20,16 +27,16 @@ class ProxySpec extends ObjectBehavior
     public function it_can_detect_a_wrong_proxy_response()
     {
         $body = <<< 'EOF'
-<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
- <cas:authenticationSuccess>
-  <cas:user>username</cas:user>
-  <cas:proxyGrantingTicket>pgtIou</cas:proxyGrantingTicket>
-  <cas:proxies>
-    <cas:proxy>http://app/proxyCallback.php</cas:proxy>
-  </cas:proxies>
- </cas:authenticationSuccess>
-</cas:serviceResponse>
-EOF;
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationSuccess>
+              <cas:user>username</cas:user>
+              <cas:proxyGrantingTicket>pgtIou</cas:proxyGrantingTicket>
+              <cas:proxies>
+                <cas:proxy>http://app/proxyCallback.php</cas:proxy>
+              </cas:proxies>
+             </cas:authenticationSuccess>
+            </cas:serviceResponse>
+            EOF;
 
         $response = new Response(200, ['Content-Type' => 'application/xml'], $body);
 
