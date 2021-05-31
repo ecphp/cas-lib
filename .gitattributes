@@ -1,11 +1,13 @@
-/spec export-ignore
-/docs/ export-ignore
-/tests/ export-ignore
 .github/ export-ignore
+/docs/ export-ignore
+/spec export-ignore
+/tests/ export-ignore
+.auto-changelog export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
 .scrutinizer.yml export-ignore
-infection.json.dist export-ignore
 grumphp.yml.dist export-ignore
+infection.json.dist export-ignore
 phpspec.yml.dist export-ignore
+psalm.xml export-ignore
