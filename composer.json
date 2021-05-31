@@ -1,58 +1,56 @@
 {
-  "name": "ecphp/cas-lib",
-  "type": "library",
-  "description": "CAS Lib, a standard library for CAS authentication.",
-  "keywords": [
-    "authentication",
-    "cas",
-    "psr",
-    "single-sign-on"
-  ],
-  "license": "BSD-3-Clause",
-  "require": {
-    "php": ">= 7.1.3",
-    "ext-dom": "*",
-    "ext-json": "*",
-    "ext-libxml": "*",
-    "ext-simplexml": "*",
-    "league/uri-query-parser": "^1.0",
-    "openlss/lib-array2xml": "^1.0",
-    "psr/cache": "^1.0.1",
-    "psr/http-client": "^1.0.0",
-    "psr/http-factory": "^1.0.1",
-    "psr/http-message": "^1.0.1",
-    "psr/log": "^1.1.1 || ^1.1.0"
-  },
-  "require-dev": {
-    "drupol/php-conventions": "^1.7.2 || ^1.8.6",
-    "friends-of-phpspec/phpspec-code-coverage": "^4.3.2",
-    "infection/infection": "^0.12.2 || ^0.13.6 || ^0.14.4 || ^0.15.3",
-    "monolog/monolog": "^1.0",
-    "nyholm/psr7": "^1.2.1",
-    "nyholm/psr7-server": "^0.4.1 || ^1.0.0",
-    "phpspec/phpspec": "^5.1.2 || ^6.2.1",
-    "phpspec/prophecy": "^1.10.1",
-    "phpstan/phpstan-strict-rules": "^0.12",
-    "symfony/cache": "^4.3.9 || ^4.4.2",
-    "symfony/http-client": "^4.4.2",
-    "vimeo/psalm": "^3.12 || ^4.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "EcPhp\\CasLib\\": "./src/"
+    "name": "ecphp/cas-lib",
+    "type": "library",
+    "description": "CAS Lib, a standard library for CAS authentication.",
+    "keywords": [
+        "authentication",
+        "cas",
+        "psr",
+        "single-sign-on"
+    ],
+    "license": "BSD-3-Clause",
+    "require": {
+        "php": ">= 7.1.3",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "league/uri-query-parser": "^1.0",
+        "openlss/lib-array2xml": "^1.0",
+        "psr/cache": "^1.0.1",
+        "psr/http-client": "^1.0.0",
+        "psr/http-factory": "^1.0.1",
+        "psr/http-message": "^1.0.1",
+        "psr/log": "^1.1.1 || ^1.1.0"
+    },
+    "require-dev": {
+        "drupol/php-conventions": "^1.7.2 || ^1.8.6",
+        "friends-of-phpspec/phpspec-code-coverage": "^4.3.2",
+        "infection/infection": "^0.12.2 || ^0.13.6 || ^0.14.4 || ^0.15.3",
+        "monolog/monolog": "^1.0",
+        "nyholm/psr7": "^1.2.1",
+        "nyholm/psr7-server": "^0.4.1 || ^1.0.0",
+        "phpspec/phpspec": "^5.1.2 || ^6.2.1",
+        "phpspec/prophecy": "^1.10.1",
+        "phpstan/phpstan-strict-rules": "^0.12",
+        "symfony/cache": "^4.3.9 || ^4.4.2",
+        "symfony/http-client": "^4.4.2",
+        "vimeo/psalm": "^3.12 || ^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "EcPhp\\CasLib\\": "./src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "spec\\EcPhp\\CasLib\\": "./spec/EcPhp/CasLib/",
+            "tests\\EcPhp\\CasLib\\": "./tests/"
+        }
+    },
+    "scripts": {
+        "grumphp": "./vendor/bin/grumphp run",
+        "phpinsights": "./vendor/bin/phpinsights analyse src/",
+        "phpspec": "./vendor/bin/phpspec run"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "spec\\EcPhp\\CasLib\\": "./spec/EcPhp/CasLib/",
-      "tests\\EcPhp\\CasLib\\": "./tests/"
-    }
-  },
-  "scripts": {
-    "changelog-unreleased": "docker-compose run auto_changelog -c .auto-changelog -u",
-    "changelog-version": "docker-compose run auto_changelog -c .auto-changelog -v",
-    "grumphp": "./vendor/bin/grumphp run",
-    "phpinsights": "./vendor/bin/phpinsights analyse src/",
-    "phpspec": "./vendor/bin/phpspec run"
-  }
 }
