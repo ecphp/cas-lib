@@ -46,7 +46,6 @@ final class Login extends Redirect implements RedirectInterface
     protected function formatProtocolParameters(array $parameters): array
     {
         $parameters = parent::formatProtocolParameters($parameters);
-        $parametersToSetToZero = [];
 
         foreach (['gateway', 'renew'] as $queryParameter) {
             if (false === array_key_exists($queryParameter, $parameters)) {
@@ -54,17 +53,6 @@ final class Login extends Redirect implements RedirectInterface
             }
 
             $parameters[$queryParameter] = 'true';
-            $parametersToSetToZero[] = $queryParameter;
-        }
-
-        if (true === array_key_exists('service', $parameters)) {
-            $service = $this->getUriFactory()->createUri($parameters['service']);
-
-            foreach ($parametersToSetToZero as $parameterToSetToZero) {
-                $service = Uri::withParam($service, $parameterToSetToZero, '0');
-            }
-
-            $parameters['service'] = (string) $service;
         }
 
         return $parameters;
