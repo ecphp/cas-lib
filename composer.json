@@ -37,8 +37,7 @@
         "phpspec/phpspec": "^7",
         "phpstan/phpstan-strict-rules": "^0.12",
         "symfony/cache": "^5.2",
-        "symfony/http-client": "^5.2",
-        "vimeo/psalm": "^4"
+        "symfony/http-client": "^5.2"
     },
     "autoload": {
         "psr-4": {
@@ -52,6 +51,8 @@
         }
     },
     "scripts": {
+        "changelog-unreleased": "docker-compose run auto_changelog -c .auto-changelog -u",
+        "changelog-version": "docker-compose run auto_changelog -c .auto-changelog -v",
         "grumphp": "./vendor/bin/grumphp run",
         "phpinsights": "./vendor/bin/phpinsights analyse src/",
         "phpspec": "./vendor/bin/phpspec run"
