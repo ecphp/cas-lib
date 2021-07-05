@@ -5,7 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.5](https://github.com/ecphp/cas-lib/compare/1.1.4...1.1.5)
+## [1.1.6](https://github.com/ecphp/cas-lib/compare/1.1.5...1.1.6)
+
+### Merged
+
+- Use `ecphp/php-conventions`. [`#25`](https://github.com/ecphp/cas-lib/pull/25)
+
+### Commits
+
+- Update composer.json. [`2af8b60`](https://github.com/ecphp/cas-lib/commit/2af8b60b473fe0f76bc1ca2fe049b6d13beef260)
+- ci: Disable builds on macOS until phpspec/phpspec#1380 is fixed. [`29b7f42`](https://github.com/ecphp/cas-lib/commit/29b7f4244fae42208d6df0c1036e4498218a61db)
+- chore: Update .gitattributes. [`e414bbb`](https://github.com/ecphp/cas-lib/commit/e414bbb465270a8913c3962a3c3898c36acfddb0)
+- chore: Drop support for PHP &lt; 7.4. [`b1e4a30`](https://github.com/ecphp/cas-lib/commit/b1e4a30ae40ea951c39c89d3e3594cb8248c0c25)
+- refactor: Autofix code style. [`b97217e`](https://github.com/ecphp/cas-lib/commit/b97217eeac4a637dc8822717d4f4ff3fe1cc2c2b)
+- chore: Update Grumphp configuration. [`6207426`](https://github.com/ecphp/cas-lib/commit/62074263371df3184f505789b31eecced41da423)
+- chore: Update .gitignore and .gitattributes. [`f4a4e48`](https://github.com/ecphp/cas-lib/commit/f4a4e4881b7fdd538d59aef988f892bd051abec3)
+- chore: Upgrade dev-dependencies. [`51dea37`](https://github.com/ecphp/cas-lib/commit/51dea37d03ca7f351e2ce481200b2d43032efe34)
+- chore: Add missing packages. [`75918f3`](https://github.com/ecphp/cas-lib/commit/75918f3b16f22de8756a430ae55e779321843b03)
+- chore: Use ecphp/php-conventions. [`fae6040`](https://github.com/ecphp/cas-lib/commit/fae60406d98f2ee0dc15464a70c23008af8e3af1)
+- chore: Proper indentation. [`23abcbc`](https://github.com/ecphp/cas-lib/commit/23abcbc127765c5974e23f0f12ef9a5f3b7f0d73)
+
+## [1.1.5](https://github.com/ecphp/cas-lib/compare/1.1.4...1.1.5) - 2021-06-07
 
 ### Merged
 
@@ -17,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: Add Changelog.md. [`3b6e53f`](https://github.com/ecphp/cas-lib/commit/3b6e53f82b43650a592311b1f02cc47a7a4cc77d)
 - CI: Enable automatic changelog parsing on release. [`11c8098`](https://github.com/ecphp/cas-lib/commit/11c809881875c875e61c4e7173d5f1727578b11a)
 - Add Docker stack for changelog generation. [`5bc2c26`](https://github.com/ecphp/cas-lib/commit/5bc2c26b71b1d621d712b6732a3d9de7d50493f5)
 - Do not alter the service parameter with renew and gateway parameters. [`a8c0398`](https://github.com/ecphp/cas-lib/commit/a8c03986ebd2d40a309580500dc3eb2b4d988ee7)
