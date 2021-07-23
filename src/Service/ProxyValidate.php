@@ -14,9 +14,6 @@ namespace EcPhp\CasLib\Service;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class ProxyValidate.
- */
 final class ProxyValidate extends Service implements ServiceInterface
 {
     protected function getProtocolProperties(): array

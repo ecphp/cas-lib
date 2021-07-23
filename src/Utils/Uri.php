@@ -16,9 +16,6 @@ use Psr\Http\Message\UriInterface;
 
 use const PHP_QUERY_RFC1738;
 
-/**
- * Class Uri.
- */
 final class Uri
 {
     public static function getParam(UriInterface $uri, string $param, ?string $default = null): ?string
@@ -45,12 +42,12 @@ final class Uri
     /**
      * Remove one or more parameters from an URI.
      *
-     * @param \Psr\Http\Message\UriInterface $uri
+     * @param UriInterface $uri
      *   The URI.
      * @param string ...$keys
      *   The parameter(s) to remove.
      *
-     * @return \Psr\Http\Message\UriInterface
+     * @return UriInterface
      *   A new URI without the parameter(s) to remove.
      */
     public static function removeParams(UriInterface $uri, string ...$keys): UriInterface

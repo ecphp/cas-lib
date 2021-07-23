@@ -14,9 +14,6 @@ namespace EcPhp\CasLib\Redirect;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class Logout.
- */
 final class Logout extends Redirect implements RedirectInterface
 {
     public function handle(): ?ResponseInterface

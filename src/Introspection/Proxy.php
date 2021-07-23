@@ -13,9 +13,6 @@ namespace EcPhp\CasLib\Introspection;
 
 use EcPhp\CasLib\Introspection\Contract\Proxy as ProxyInterface;
 
-/**
- * Class Proxy.
- */
 final class Proxy extends Introspection implements ProxyInterface
 {
     public function getProxyTicket(): string

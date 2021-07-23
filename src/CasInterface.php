@@ -16,9 +16,6 @@ use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Interface CasInterface.
- */
 interface CasInterface
 {
     /**
@@ -37,7 +34,7 @@ interface CasInterface
     /**
      * Get the CAS properties.
      *
-     * @return \EcPhp\CasLib\Configuration\PropertiesInterface
+     * @return PropertiesInterface
      *   The properties.
      */
     public function getProperties(): PropertiesInterface;
@@ -47,10 +44,10 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
+     * @param ResponseInterface|null $response
      *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      *   An HTTP response or null.
      */
     public function handleProxyCallback(
@@ -64,7 +61,7 @@ interface CasInterface
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      *   An HTTP response or null.
      */
     public function login(array $parameters = []): ?ResponseInterface;
@@ -75,7 +72,7 @@ interface CasInterface
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      *   An HTTP response or null.
      */
     public function logout(array $parameters = []): ?ResponseInterface;
@@ -85,10 +82,10 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
+     * @param ResponseInterface|null $response
      *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      *   An HTTP response or null.
      */
     public function requestProxyTicket(
@@ -101,10 +98,10 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
+     * @param ResponseInterface|null $response
      *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      *   An HTTP response or null.
      */
     public function requestProxyValidate(
@@ -117,10 +114,10 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
+     * @param ResponseInterface|null $response
      *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      *   An HTTP response or null.
      */
     public function requestServiceValidate(
@@ -133,10 +130,10 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     * @param \Psr\Http\Message\ResponseInterface|null $response
+     * @param ResponseInterface|null $response
      *   If provided, use that Response.
      *
-     * @return \Psr\Http\Message\ResponseInterface|null
+     * @return ResponseInterface|null
      *   An HTTP response or null.
      */
     public function requestTicketValidation(
@@ -158,7 +155,7 @@ interface CasInterface
     /**
      * Update the server request in use.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
+     * @param ServerRequestInterface $serverRequest
      *   The server request.
      *
      * @return \EcPhp\CasLib\CasInterface

@@ -15,9 +15,6 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class Proxy.
- */
 final class Proxy extends Service implements ServiceInterface
 {
     public function getCredentials(ResponseInterface $response): ?ResponseInterface

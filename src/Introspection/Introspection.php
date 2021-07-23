@@ -16,26 +16,12 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class Introspection
 {
-    /**
-     * @var string
-     */
-    private $format;
+    private string $format;
 
-    /**
-     * @var array[]
-     */
-    private $parsedResponse;
+    private array $parsedResponse;
 
-    /**
-     * @var \Psr\Http\Message\ResponseInterface
-     */
-    private $response;
+    private ResponseInterface $response;
 
-    /**
-     * Introspection constructor.
-     *
-     * @param array[] $parsedResponse
-     */
     public function __construct(array $parsedResponse, string $format, ResponseInterface $response)
     {
         $this->response = $response;

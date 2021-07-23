@@ -32,40 +32,19 @@ use function array_key_exists;
 
 final class Cas implements CasInterface
 {
-    /**
-     * @var \Psr\Cache\CacheItemPoolInterface
-     */
-    private $cache;
+    private CacheItemPoolInterface $cache;
 
-    /**
-     * @var \Psr\Http\Client\ClientInterface
-     */
-    private $client;
+    private ClientInterface $client;
 
-    /**
-     * @var \EcPhp\CasLib\Introspection\Contract\IntrospectorInterface
-     */
-    private $introspector;
+    private IntrospectorInterface $introspector;
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var PropertiesInterface
-     */
-    private $properties;
+    private PropertiesInterface $properties;
 
-    /**
-     * @var Psr17Interface
-     */
-    private $psr17;
+    private Psr17Interface $psr17;
 
-    /**
-     * @var ServerRequestInterface
-     */
-    private $serverRequest;
+    private ServerRequestInterface $serverRequest;
 
     public function __construct(
         ServerRequestInterface $serverRequest,
