@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace spec\EcPhp\CasLib\Redirect;
 
 use EcPhp\CasLib\Redirect\Login;
+use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use Nyholm\Psr7Server\ServerRequestCreator;
@@ -27,12 +28,13 @@ class LoginSpec extends ObjectBehavior
     public function it_can_deal_with_array_parameters(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
         $serverRequest = new ServerRequest('GET', 'http://app');
         $parameters = [
             'custom' => range(1, 5),
         ];
 
-        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17, $cache, $logger);
 
         $this
             ->handle()
@@ -47,6 +49,7 @@ class LoginSpec extends ObjectBehavior
     public function it_can_deal_with_renew_and_gateway_parameters(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $parameters = [
             'renew' => true,
@@ -54,7 +57,7 @@ class LoginSpec extends ObjectBehavior
             'service' => 'service',
         ];
 
-        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17, $cache, $logger);
 
         $this
             ->handle()
@@ -82,6 +85,7 @@ class LoginSpec extends ObjectBehavior
     public function it_can_deal_with_renew_parameter(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $serverRequest = new ServerRequest('GET', 'http://app');
 
@@ -90,7 +94,7 @@ class LoginSpec extends ObjectBehavior
             'gateway' => false,
         ];
 
-        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17, $cache, $logger);
 
         $this
             ->handle()
@@ -109,13 +113,10 @@ class LoginSpec extends ObjectBehavior
     public function it_can_get_a_response(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
-        );
-        $this->beConstructedWith($creator->fromGlobals(), [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+        $creator = new ServerRequestCreator($psr17, $psr17, $psr17, $psr17);
+
+        $this->beConstructedWith($creator->fromGlobals(), [], Cas::getTestProperties(), $psr17, $cache, $logger);
 
         $this
             ->handle()
@@ -125,13 +126,10 @@ class LoginSpec extends ObjectBehavior
     public function it_is_initializable(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
-        );
-        $this->beConstructedWith($creator->fromGlobals(), [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+        $creator = new ServerRequestCreator($psr17, $psr17, $psr17, $psr17);
+
+        $this->beConstructedWith($creator->fromGlobals(), [], Cas::getTestProperties(), $psr17, $cache, $logger);
 
         $this->shouldHaveType(Login::class);
     }

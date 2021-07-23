@@ -21,14 +21,11 @@ use EcPhp\CasLib\Service\Proxy;
 use EcPhp\CasLib\Service\ProxyValidate;
 use EcPhp\CasLib\Service\ServiceValidate;
 use EcPhp\CasLib\Utils\Uri;
+use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
@@ -36,15 +33,11 @@ use function array_key_exists;
 final class Cas implements CasInterface
 {
     /**
-     * The cache.
-     *
      * @var \Psr\Cache\CacheItemPoolInterface
      */
     private $cache;
 
     /**
-     * The HTTP client.
-     *
      * @var \Psr\Http\Client\ClientInterface
      */
     private $client;
@@ -55,62 +48,30 @@ final class Cas implements CasInterface
     private $introspector;
 
     /**
-     * The logger.
-     *
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
     /**
-     * The CAS properties.
-     *
      * @var PropertiesInterface
      */
     private $properties;
 
     /**
-     * The request factory.
-     *
-     * @var \Psr\Http\Message\RequestFactoryInterface
+     * @var Psr17Interface
      */
-    private $requestFactory;
+    private $psr17;
 
     /**
-     * The response factory.
-     *
-     * @var \Psr\Http\Message\ResponseFactoryInterface
-     */
-    private $responseFactory;
-
-    /**
-     * The server request.
-     *
-     * @var \Psr\Http\Message\ServerRequestInterface
+     * @var ServerRequestInterface
      */
     private $serverRequest;
-
-    /**
-     * The stream factory.
-     *
-     * @var \Psr\Http\Message\StreamFactoryInterface
-     */
-    private $streamFactory;
-
-    /**
-     * The URI factory.
-     *
-     * @var \Psr\Http\Message\UriFactoryInterface
-     */
-    private $uriFactory;
 
     public function __construct(
         ServerRequestInterface $serverRequest,
         PropertiesInterface $properties,
         ClientInterface $client,
-        UriFactoryInterface $uriFactory,
-        ResponseFactoryInterface $responseFactory,
-        RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory,
+        Psr17Interface $psr17,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         IntrospectorInterface $introspector
@@ -118,10 +79,7 @@ final class Cas implements CasInterface
         $this->serverRequest = $serverRequest;
         $this->properties = $properties;
         $this->client = $client;
-        $this->uriFactory = $uriFactory;
-        $this->responseFactory = $responseFactory;
-        $this->requestFactory = $requestFactory;
-        $this->streamFactory = $streamFactory;
+        $this->psr17 = $psr17;
         $this->cache = $cache;
         $this->logger = $logger;
         $this->introspector = $introspector;
@@ -158,9 +116,7 @@ final class Cas implements CasInterface
             $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger()
         );
@@ -174,9 +130,7 @@ final class Cas implements CasInterface
             $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger()
         );
@@ -190,9 +144,7 @@ final class Cas implements CasInterface
             $this->getServerRequest(),
             $parameters,
             $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger()
         );
@@ -207,10 +159,7 @@ final class Cas implements CasInterface
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger(),
             $this->getIntrospector()
@@ -246,10 +195,7 @@ final class Cas implements CasInterface
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger(),
             $this->getIntrospector()
@@ -285,10 +231,7 @@ final class Cas implements CasInterface
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger(),
             $this->getIntrospector()
@@ -370,29 +313,14 @@ final class Cas implements CasInterface
         return $this->logger;
     }
 
-    private function getRequestFactory(): RequestFactoryInterface
+    private function getPsr17(): Psr17Interface
     {
-        return $this->requestFactory;
-    }
-
-    private function getResponseFactory(): ResponseFactoryInterface
-    {
-        return $this->responseFactory;
+        return $this->psr17;
     }
 
     private function getServerRequest(): ServerRequestInterface
     {
         return $this->serverRequest;
-    }
-
-    private function getStreamFactory(): StreamFactoryInterface
-    {
-        return $this->streamFactory;
-    }
-
-    private function getUriFactory(): UriFactoryInterface
-    {
-        return $this->uriFactory;
     }
 
     private function proxyMode(): bool

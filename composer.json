@@ -16,6 +16,7 @@
         "ext-libxml": "*",
         "ext-simplexml": "*",
         "league/uri-query-parser": "^1.0",
+        "loophp/psr17": "^1.0",
         "openlss/lib-array2xml": "^1.0",
         "psr/cache": "^1.0.1",
         "psr/http-client": "^1.0",

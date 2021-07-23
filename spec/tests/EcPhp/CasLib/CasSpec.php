@@ -13,6 +13,7 @@ namespace spec\tests\EcPhp\CasLib;
 
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Introspection\Introspector;
+use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 use PhpSpec\ObjectBehavior;
@@ -31,12 +32,8 @@ class CasSpec extends ObjectBehavior
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
-        );
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+        $creator = new ServerRequestCreator($psr17, $psr17, $psr17, $psr17);
         $serverRequest = $creator->fromGlobals();
 
         $introspector = new Introspector();
@@ -45,10 +42,7 @@ class CasSpec extends ObjectBehavior
             $serverRequest,
             $properties,
             $client,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
+            $psr17,
             new ArrayAdapter(),
             new NullLogger(),
             $introspector
@@ -67,12 +61,8 @@ class CasSpec extends ObjectBehavior
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
-        );
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+        $creator = new ServerRequestCreator($psr17, $psr17, $psr17, $psr17);
         $serverRequest = $creator->fromGlobals();
 
         $introspector = new Introspector();
@@ -81,10 +71,7 @@ class CasSpec extends ObjectBehavior
             $serverRequest,
             $properties,
             $client,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
+            $psr17,
             new ArrayAdapter(),
             new NullLogger(),
             $introspector

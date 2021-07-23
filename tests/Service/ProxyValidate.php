@@ -14,15 +14,12 @@ namespace tests\EcPhp\CasLib\Service;
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Service\Service;
 use EcPhp\CasLib\Utils\Uri;
+use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -48,34 +45,19 @@ class ProxyValidate extends Service
         return parent::getLogger();
     }
 
+    public function getPsr17(): Psr17Interface
+    {
+        return parent::getPsr17();
+    }
+
     public function getRequest(): RequestInterface
     {
         return parent::getRequest();
     }
 
-    public function getRequestFactory(): RequestFactoryInterface
-    {
-        return parent::getRequestFactory();
-    }
-
-    public function getResponseFactory(): ResponseFactoryInterface
-    {
-        return parent::getResponseFactory();
-    }
-
     public function getServerRequest(): ServerRequestInterface
     {
         return parent::getServerRequest();
-    }
-
-    public function getStreamFactory(): StreamFactoryInterface
-    {
-        return parent::getStreamFactory();
-    }
-
-    public function getUriFactory(): UriFactoryInterface
-    {
-        return parent::getUriFactory();
     }
 
     public function parse(ResponseInterface $response): array

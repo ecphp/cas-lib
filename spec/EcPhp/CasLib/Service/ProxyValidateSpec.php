@@ -13,6 +13,7 @@ namespace spec\EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Service\ProxyValidate;
+use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
@@ -41,6 +42,7 @@ class ProxyValidateSpec extends ObjectBehavior
     public function it_can_get_credentials_with_pgtUrl(ServerRequestInterface $serverRequest, ClientInterface $client, CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $serverRequest = new ServerRequest('GET', 'http://from');
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
@@ -69,7 +71,7 @@ class ProxyValidateSpec extends ObjectBehavior
             ->getItem('pgtIou')
             ->willReturn($cacheItem);
 
-        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ST-ticket-pgt'], Cas::getTestPropertiesWithPgtUrl(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ST-ticket-pgt'], Cas::getTestPropertiesWithPgtUrl(), $client, $psr17, $cache, $logger, new Introspector());
 
         $response = $this->handle();
 
@@ -88,11 +90,12 @@ class ProxyValidateSpec extends ObjectBehavior
     public function it_can_get_credentials_without_pgtUrl(ServerRequestInterface $serverRequest, ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $serverRequest = new ServerRequest('GET', 'http://from');
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
-        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ticket'], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, ['service' => 'service', 'ticket' => 'ticket'], Cas::getTestProperties(), $client, $psr17, $cache, $logger, new Introspector());
 
         $response = $this->handle();
 
@@ -116,7 +119,8 @@ class ProxyValidateSpec extends ObjectBehavior
     public function let(ServerRequestInterface $serverRequest, ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17, $cache, $logger, new Introspector());
     }
 }

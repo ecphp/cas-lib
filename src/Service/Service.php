@@ -16,16 +16,13 @@ use EcPhp\CasLib\Handler\Handler;
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
 use InvalidArgumentException;
+use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -45,20 +42,12 @@ abstract class Service extends Handler
      */
     private $introspector;
 
-    /**
-     * @var \Psr\Http\Message\RequestFactoryInterface
-     */
-    private $requestFactory;
-
     public function __construct(
         ServerRequestInterface $serverRequest,
         array $parameters,
         PropertiesInterface $properties,
         ClientInterface $client,
-        UriFactoryInterface $uriFactory,
-        ResponseFactoryInterface $responseFactory,
-        RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory,
+        Psr17Interface $psr17,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         IntrospectorInterface $introspector
@@ -67,15 +56,12 @@ abstract class Service extends Handler
             $serverRequest,
             $parameters,
             $properties,
-            $uriFactory,
-            $responseFactory,
-            $streamFactory,
+            $psr17,
             $cache,
             $logger
         );
 
         $this->client = $client;
-        $this->requestFactory = $requestFactory;
         $this->introspector = $introspector;
     }
 
@@ -135,7 +121,7 @@ abstract class Service extends Handler
             ->debug('Proxy validation service successful.');
 
         return $response
-            ->withBody($this->getStreamFactory()->createStream($body))
+            ->withBody($this->getPsr17()->createStream($body))
             ->withHeader('Content-Type', 'application/json');
     }
 
@@ -166,12 +152,7 @@ abstract class Service extends Handler
 
     protected function getRequest(): RequestInterface
     {
-        return $this->getRequestFactory()->createRequest('GET', $this->getUri());
-    }
-
-    protected function getRequestFactory(): RequestFactoryInterface
-    {
-        return $this->requestFactory;
+        return $this->getPsr17()->createRequest('GET', $this->getUri());
     }
 
     /**
@@ -275,7 +256,7 @@ abstract class Service extends Handler
             ->debug('Response normalization succeeded.', ['body' => $body]);
 
         return $response
-            ->withBody($this->getStreamFactory()->createStream($body))
+            ->withBody($this->getPsr17()->createStream($body))
             ->withHeader('Content-Type', 'application/json');
     }
 }
