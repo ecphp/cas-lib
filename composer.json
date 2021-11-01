@@ -35,7 +35,7 @@
         "nyholm/psr7": "^1.4",
         "nyholm/psr7-server": "^1.0.0",
         "phpspec/phpspec": "^7",
-        "phpstan/phpstan-strict-rules": "^0.12",
+        "phpstan/phpstan-strict-rules": "^0.12 || ^1.0",
         "symfony/cache": "^5.2",
         "symfony/http-client": "^5.2"
     },
