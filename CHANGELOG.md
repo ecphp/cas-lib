@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.6](https://github.com/ecphp/cas-lib/compare/1.1.5...1.1.6)
+## [1.1.7](https://github.com/ecphp/cas-lib/compare/1.1.6...1.1.7)
+
+### Merged
+
+- Bump actions/cache from 2.1.6 to 2.1.7 [`#30`](https://github.com/ecphp/cas-lib/pull/30)
+- Update infection/infection requirement from ^0.23 to ^0.23 || ^0.24 [`#28`](https://github.com/ecphp/cas-lib/pull/28)
+
+### Commits
+
+- fix: Replace `league/uri-query-parser` with `league/uri-components`. [`167aade`](https://github.com/ecphp/cas-lib/commit/167aade628b24e04518489b0860e750a914187f8)
+- fix: ECPHP-179: Autofix licence holder. [`2c0a71b`](https://github.com/ecphp/cas-lib/commit/2c0a71b05ba3798854d87e62e3583324ad0b4a94)
+- Revert "ci: Disable builds on macOS until phpspec/phpspec#1380 is fixed." [`c15617a`](https://github.com/ecphp/cas-lib/commit/c15617a3bbc607b7a4540bb8ff53a301c2be3740)
+
+## [1.1.6](https://github.com/ecphp/cas-lib/compare/1.1.5...1.1.6) - 2021-07-05
 
 ### Merged
 
@@ -13,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: Add/update CHANGELOG. [`798a5d4`](https://github.com/ecphp/cas-lib/commit/798a5d44a634756a62270bd6302db50ea15025ce)
 - Update composer.json. [`2af8b60`](https://github.com/ecphp/cas-lib/commit/2af8b60b473fe0f76bc1ca2fe049b6d13beef260)
 - ci: Disable builds on macOS until phpspec/phpspec#1380 is fixed. [`29b7f42`](https://github.com/ecphp/cas-lib/commit/29b7f4244fae42208d6df0c1036e4498218a61db)
 - chore: Update .gitattributes. [`e414bbb`](https://github.com/ecphp/cas-lib/commit/e414bbb465270a8913c3962a3c3898c36acfddb0)
