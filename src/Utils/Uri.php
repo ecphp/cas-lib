@@ -11,10 +11,8 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Utils;
 
-use League\Uri\Parser\QueryString;
+use League\Uri\Components\Query;
 use Psr\Http\Message\UriInterface;
-
-use const PHP_QUERY_RFC1738;
 
 /**
  * Class Uri.
@@ -31,7 +29,7 @@ final class Uri
      */
     public static function getParams(UriInterface $uri): array
     {
-        return QueryString::extract($uri->getQuery(), '&', PHP_QUERY_RFC1738);
+        return iterator_to_array(Query::createFromUri($uri)->pairs());
     }
 
     /**

@@ -1,21 +1,21 @@
 {
     "name": "ecphp/cas-lib",
-    "type": "library",
     "description": "CAS Lib, a standard library for CAS authentication.",
+    "license": "BSD-3-Clause",
+    "type": "library",
     "keywords": [
         "authentication",
         "cas",
         "psr",
         "single-sign-on"
     ],
-    "license": "BSD-3-Clause",
     "require": {
         "php": ">= 7.4",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
-        "league/uri-query-parser": "^1.0",
+        "league/uri-components": "^2",
         "openlss/lib-array2xml": "^1.0",
         "psr/cache": "^1.0.1",
         "psr/http-client": "^1.0",
@@ -48,6 +48,15 @@
         "psr-4": {
             "spec\\EcPhp\\CasLib\\": "./spec/EcPhp/CasLib/",
             "tests\\EcPhp\\CasLib\\": "./tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "ergebnis/composer-normalize": true,
+            "infection/extension-installer": true,
+            "phpro/grumphp": true,
+            "phpstan/extension-installer": true
         }
     },
     "scripts": {
