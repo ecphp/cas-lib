@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.7](https://github.com/ecphp/cas-lib/compare/1.1.6...1.1.7)
+## [1.1.8](https://github.com/ecphp/cas-lib/compare/1.1.7...1.1.8)
+
+### Commits
+
+- chore: Relax dependencies. [`8aba637`](https://github.com/ecphp/cas-lib/commit/8aba637c8be0a525b07d4b75bfdb2ecfcb35fee8)
+
+## [1.1.7](https://github.com/ecphp/cas-lib/compare/1.1.6...1.1.7) - 2022-01-24
 
 ### Merged
 
@@ -14,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: Add/update CHANGELOG. [`a9ff174`](https://github.com/ecphp/cas-lib/commit/a9ff1741077b172522d340cf831a820563247c73)
 - fix: Replace `league/uri-query-parser` with `league/uri-components`. [`167aade`](https://github.com/ecphp/cas-lib/commit/167aade628b24e04518489b0860e750a914187f8)
 - fix: ECPHP-179: Autofix licence holder. [`2c0a71b`](https://github.com/ecphp/cas-lib/commit/2c0a71b05ba3798854d87e62e3583324ad0b4a94)
 - Revert "ci: Disable builds on macOS until phpspec/phpspec#1380 is fixed." [`c15617a`](https://github.com/ecphp/cas-lib/commit/c15617a3bbc607b7a4540bb8ff53a301c2be3740)
