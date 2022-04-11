@@ -47,6 +47,7 @@ final class Properties implements PropertiesInterface
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return array_key_exists($offset, $this->properties);
@@ -57,6 +58,7 @@ final class Properties implements PropertiesInterface
      *
      * @return array<string, mixed>|string|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->properties[$offset];
