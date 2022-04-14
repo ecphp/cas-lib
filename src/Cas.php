@@ -16,9 +16,9 @@ use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Handler\ProxyCallback;
 use EcPhp\CasLib\Handler\ProxyValidate;
 use EcPhp\CasLib\Handler\ServiceValidate;
-use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Redirect\Login;
 use EcPhp\CasLib\Redirect\Logout;
+use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use loophp\psr17\Psr17Interface;
@@ -35,9 +35,9 @@ final class Cas implements CasInterface
 {
     private CacheItemPoolInterface $cache;
 
-    private ClientInterface $client;
+    private CasResponseBuilderInterface $casResponseBuilder;
 
-    private IntrospectorInterface $introspector;
+    private ClientInterface $client;
 
     private PropertiesInterface $properties;
 
@@ -48,11 +48,11 @@ final class Cas implements CasInterface
         ClientInterface $client,
         Psr17Interface $psr17,
         CacheItemPoolInterface $cache,
-        IntrospectorInterface $introspector
+        CasResponseBuilderInterface $casResponseBuilder
     ) {
         $this->cache = $cache;
         $this->client = $client;
-        $this->introspector = $introspector;
+        $this->casResponseBuilder = $casResponseBuilder;
         $this->properties = $properties;
         $this->psr17 = $psr17;
     }
@@ -63,7 +63,7 @@ final class Cas implements CasInterface
     ): array {
         $response = $this->requestTicketValidation($request, $parameters);
 
-        return $this->introspector->detect($response)->getParsedResponse();
+        return $this->casResponseBuilder->fromResponse($response)->toArray();
     }
 
     public function handleProxyCallback(
@@ -73,8 +73,8 @@ final class Cas implements CasInterface
         return (new ProxyCallback(
             $parameters,
             $this->cache,
+            $this->casResponseBuilder,
             $this->client,
-            $this->introspector,
             $this->properties,
             $this->psr17,
         ))->handle($request);
@@ -87,8 +87,8 @@ final class Cas implements CasInterface
         return (new Login(
             $parameters,
             $this->cache,
+            $this->casResponseBuilder,
             $this->client,
-            $this->introspector,
             $this->properties,
             $this->psr17,
         ))->handle($request);
@@ -101,8 +101,8 @@ final class Cas implements CasInterface
         return (new Logout(
             $parameters,
             $this->cache,
+            $this->casResponseBuilder,
             $this->client,
-            $this->introspector,
             $this->properties,
             $this->psr17,
         ))->handle($request);
@@ -112,48 +112,42 @@ final class Cas implements CasInterface
         RequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        $proxyRequestService = new Proxy(
+        return (new Proxy(
             $parameters,
             $this->cache,
+            $this->casResponseBuilder,
             $this->client,
-            $this->introspector,
             $this->properties,
             $this->psr17,
-        );
-
-        return $proxyRequestService->handle($request);
+        ))->handle($request);
     }
 
     public function requestProxyValidate(
         RequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        $proxyValidateService = new ProxyValidate(
+        return (new ProxyValidate(
             $parameters,
             $this->cache,
+            $this->casResponseBuilder,
             $this->client,
-            $this->introspector,
             $this->properties,
             $this->psr17,
-        );
-
-        return $proxyValidateService->handle($request);
+        ))->handle($request);
     }
 
     public function requestServiceValidate(
         RequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        $serviceValidateService = new ServiceValidate(
+        return (new ServiceValidate(
             $parameters,
             $this->cache,
+            $this->casResponseBuilder,
             $this->client,
-            $this->introspector,
             $this->properties,
             $this->psr17,
-        );
-
-        return $serviceValidateService->handle($request);
+        ))->handle($request);
     }
 
     public function requestTicketValidation(

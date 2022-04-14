@@ -25,7 +25,11 @@ class Cas extends ObjectBehavior
     {
         $callback = static function ($method, $url, $options): ResponseInterface {
             $body = '';
-            $info = [];
+            $info = [
+                'response_headers' => [
+                    'Content-Type' => 'application/xml',
+                ],
+            ];
 
             switch ($url) {
                 case 'http://from/it_can_validate_a_service_ticket/404':
@@ -136,6 +140,12 @@ class Cas extends ObjectBehavior
                     break;
 
                 case 'http://from/it_can_parse_json_in_a_response':
+                    $info = [
+                        'response_headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                    ];
+
                     $body = <<< 'EOF'
                         {
                             "serviceResponse": {

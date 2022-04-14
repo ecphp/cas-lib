@@ -28,9 +28,9 @@ final class Proxy extends Service implements HandlerInterface
             throw CasException::errorWhileDoingRequest($exception);
         }
 
-        $introspect = $this->getIntrospector()->detect($this->normalize($request, $response));
+        $response = $this->getCasResponseBuilder()->fromResponse($response);
 
-        if (false === ($introspect instanceof \EcPhp\CasLib\Introspection\Contract\Proxy)) {
+        if (false === ($response instanceof \EcPhp\CasLib\Contract\Response\Type\Proxy)) {
             throw new Exception('Invalid response type.');
         }
 

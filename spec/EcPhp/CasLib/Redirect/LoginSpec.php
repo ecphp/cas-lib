@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Redirect;
 
-use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Redirect\Login;
+use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -26,7 +26,7 @@ use Symfony\Component\HttpClient\Psr18Client;
 
 class LoginSpec extends ObjectBehavior
 {
-    public function it_can_deal_with_array_parameters(CacheItemPoolInterface $cache)
+    public function it_can_deal_with_array_parameters(CacheItemPoolInterface $cache, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -38,8 +38,8 @@ class LoginSpec extends ObjectBehavior
         $this->beConstructedWith(
             $parameters,
             $cache,
+            $casResponseBuilder,
             new Psr18Client(Cas::getHttpClientMock()),
-            new Introspector(),
             Cas::getTestProperties(),
             $psr17
         );
@@ -59,7 +59,7 @@ class LoginSpec extends ObjectBehavior
             ->shouldReturn('http://local/cas/login?custom%5B0%5D=1&custom%5B1%5D=2&custom%5B2%5D=3&custom%5B3%5D=4&custom%5B4%5D=5&service=http%3A%2F%2Ffrom%2Fit_can_deal_with_array_parameters');
     }
 
-    public function it_can_deal_with_renew_and_gateway_parameters(CacheItemPoolInterface $cache)
+    public function it_can_deal_with_renew_and_gateway_parameters(CacheItemPoolInterface $cache, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -73,8 +73,8 @@ class LoginSpec extends ObjectBehavior
         $this->beConstructedWith(
             $parameters,
             $cache,
+            $casResponseBuilder,
             new Psr18Client(Cas::getHttpClientMock()),
-            new Introspector(),
             Cas::getTestProperties(),
             $psr17
         );
@@ -89,7 +89,7 @@ class LoginSpec extends ObjectBehavior
             ->during('handle', [$request]);
     }
 
-    public function it_can_deal_with_renew_parameter(CacheItemPoolInterface $cache)
+    public function it_can_deal_with_renew_parameter(CacheItemPoolInterface $cache, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -102,8 +102,8 @@ class LoginSpec extends ObjectBehavior
         $this->beConstructedWith(
             $parameters,
             $cache,
+            $casResponseBuilder,
             new Psr18Client(Cas::getHttpClientMock()),
-            new Introspector(),
             Cas::getTestProperties(),
             $psr17
         );
@@ -135,7 +135,7 @@ class LoginSpec extends ObjectBehavior
         $this->shouldHaveType(Login::class);
     }
 
-    public function let(CacheItemPoolInterface $cache)
+    public function let(CacheItemPoolInterface $cache, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -143,8 +143,8 @@ class LoginSpec extends ObjectBehavior
         $this->beConstructedWith(
             [],
             $cache,
+            $casResponseBuilder,
             new Psr18Client(Cas::getHttpClientMock()),
-            new Introspector(),
             Cas::getTestProperties(),
             $psr17
         );

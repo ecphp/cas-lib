@@ -9,15 +9,12 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection\Contract;
+namespace EcPhp\CasLib\Response;
 
+use EcPhp\CasLib\Contract\Response\CasResponseInterface;
 use Psr\Http\Message\ResponseInterface;
 
-interface IntrospectionInterface
+interface CasResponseBuilderInterface
 {
-    public function getFormat(): string;
-
-    public function getParsedResponse(): array;
-
-    public function getResponse(): ResponseInterface;
+    public function fromResponse(ResponseInterface $response): CasResponseInterface;
 }

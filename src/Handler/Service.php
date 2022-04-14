@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
 use EcPhp\CasLib\Exception\CasException;
-use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
 use Exception;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
@@ -31,21 +31,21 @@ abstract class Service extends Handler
             throw CasException::errorWhileDoingRequest($exception);
         }
 
-        $response = $this->normalize($request, $response);
-        $introspect = $this->getIntrospector()->detect($response);
+        $response = $this->getCasResponseBuilder()->fromResponse($response);
 
-        if (false === ($introspect instanceof ServiceValidate)) {
+        if (false === ($response instanceof TypeServiceValidate)) {
             throw new Exception('CAS Service validation failed.');
         }
 
-        $parsedResponse = $introspect->getParsedResponse();
+        $parsedResponse = $response->toArray();
+
         $proxyGrantingTicket = array_key_exists(
             'proxyGrantingTicket',
             $parsedResponse['serviceResponse']['authenticationSuccess']
         );
 
         if (false === $proxyGrantingTicket) {
-            return $response->withHeader('Content-Type', 'application/json');
+            return $response;
         }
 
         $body = json_encode(

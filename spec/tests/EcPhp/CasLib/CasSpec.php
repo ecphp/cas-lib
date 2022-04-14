@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace spec\tests\EcPhp\CasLib;
 
 use EcPhp\CasLib\Cas;
-use EcPhp\CasLib\Introspection\Introspector;
+use EcPhp\CasLib\Contract\Response\Type\ServiceValidate;
+use EcPhp\CasLib\Response\CasResponseBuilder;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
-use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -32,26 +32,22 @@ class CasSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $introspector = new Introspector();
-
         $this->beConstructedWith(new Cas(
             $properties,
             $client,
             $psr17,
             new ArrayAdapter(),
-            $introspector
+            new CasResponseBuilder()
         ));
 
         $request = new Request(
             'GET',
-            new Uri('http://from/it_can_test_the_proxy_mode_with_pgtUrl')
+            'http://from/it_can_test_the_proxy_mode_with_pgtUrl'
         );
 
         $this
             ->requestTicketValidation($request, ['ticket' => 'ST-TICKET-VALID'])
-            ->getBody()
-            ->__toString()
-            ->shouldReturn('{"serviceResponse":{"authenticationSuccess":{"user":"username","proxies":{"proxy":"http:\/\/app\/proxyCallback.php"}}}}');
+            ->shouldBeAnInstanceOf(ServiceValidate::class);
     }
 
     public function it_can_test_the_proxy_mode_without_pgtUrl()
@@ -62,25 +58,21 @@ class CasSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $introspector = new Introspector();
-
         $this->beConstructedWith(new Cas(
             $properties,
             $client,
             $psr17,
             new ArrayAdapter(),
-            $introspector
+            new CasResponseBuilder()
         ));
 
         $request = new Request(
             'GET',
-            new Uri('http://from/it_can_test_the_proxy_mode_without_pgtUrl')
+            'http://from/it_can_test_the_proxy_mode_without_pgtUrl'
         );
 
         $this
             ->requestTicketValidation($request, ['ticket' => 'ST-TICKET-VALID'])
-            ->getBody()
-            ->__toString()
-            ->shouldReturn('{"serviceResponse":{"authenticationSuccess":{"user":"username"}}}');
+            ->shouldBeAnInstanceOf(ServiceValidate::class);
     }
 }

@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace tests\EcPhp\CasLib;
 
 use EcPhp\CasLib\CasInterface;
-use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -29,12 +28,6 @@ final class Cas implements CasInterface
     public function authenticate(RequestInterface $request, array $parameters = []): array
     {
         return $this->cas->authenticate($request, $parameters);
-    }
-
-    public function detect(
-        ResponseInterface $response
-    ): IntrospectionInterface {
-        return $this->cas->detect($response);
     }
 
     public function handleProxyCallback(

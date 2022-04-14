@@ -9,9 +9,10 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection\Contract;
+namespace EcPhp\CasLib\Contract\Response\Type;
 
-interface Proxy extends IntrospectionInterface
+use EcPhp\CasLib\Contract\Response\CasResponseInterface;
+
+interface AuthenticationFailure extends CasResponseInterface
 {
-    public function getProxyTicket(): string;
 }

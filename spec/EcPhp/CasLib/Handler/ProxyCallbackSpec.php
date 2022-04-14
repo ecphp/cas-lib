@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace spec\EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Handler\ProxyCallback;
-use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
+use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Utils\Uri as UtilsUri;
 use Exception;
 use loophp\psr17\Psr17;
@@ -27,7 +27,7 @@ use spec\EcPhp\CasLib\Cas;
 
 class ProxyCallbackSpec extends ObjectBehavior
 {
-    public function it_can_catch_issue_with_the_cache(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, IntrospectorInterface $introspector)
+    public function it_can_catch_issue_with_the_cache(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -61,7 +61,7 @@ class ProxyCallbackSpec extends ObjectBehavior
             ->save($cacheItem)
             ->willReturn(true);
 
-        $this->beConstructedWith([], $cache, $client, $introspector, Cas::getTestProperties(), $psr17);
+        $this->beConstructedWith([], $cache, $casResponseBuilder, $client, Cas::getTestProperties(), $psr17);
 
         $this
             ->shouldThrow(Exception::class)
@@ -94,7 +94,7 @@ class ProxyCallbackSpec extends ObjectBehavior
         $this->shouldHaveType(ProxyCallback::class);
     }
 
-    public function let(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, IntrospectorInterface $introspector)
+    public function let(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -115,6 +115,6 @@ class ProxyCallbackSpec extends ObjectBehavior
             ->save($cacheItem)
             ->willReturn(true);
 
-        $this->beConstructedWith([], $cache, $client, $introspector, Cas::getTestProperties(), $psr17);
+        $this->beConstructedWith([], $cache, $casResponseBuilder, $client, Cas::getTestProperties(), $psr17);
     }
 }

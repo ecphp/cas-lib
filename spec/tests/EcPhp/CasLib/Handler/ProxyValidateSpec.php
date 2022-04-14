@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace spec\tests\EcPhp\CasLib\Handler;
 
-use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
-use EcPhp\CasLib\Introspection\Introspector;
+use EcPhp\CasLib\Response\CasResponseBuilder;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
-use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -62,8 +60,8 @@ class ProxyValidateSpec extends ObjectBehavior
         $this->beConstructedWith(
             [],
             $cache,
+            new CasResponseBuilder(),
             $client,
-            new Introspector(),
             CasSpecUtils::getTestProperties(),
             $psr17
         );
@@ -75,10 +73,6 @@ class ProxyValidateSpec extends ObjectBehavior
         $this
             ->getCache()
             ->shouldBeAnInstanceOf(CacheItemPoolInterface::class);
-
-        $this
-            ->getIntrospector()
-            ->shouldBeAnInstanceOf(IntrospectorInterface::class);
 
         $response = [
             'serviceResponse' => [
@@ -110,43 +104,6 @@ class ProxyValidateSpec extends ObjectBehavior
             ->during('handle', [$request]);
     }
 
-    public function it_can_parse_a_response(CacheItemPoolInterface $cache)
-    {
-        $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-
-        $this->beConstructedWith(
-            [],
-            $cache,
-            new Psr18Client(CasSpecUtils::getHttpClientMock()),
-            new Introspector(),
-            CasSpecUtils::getTestProperties(),
-            $psr17
-        );
-
-        $body = <<< 'EOF'
-                <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                <cas:authenticationSuccess>
-                <cas:user>username</cas:user>
-                </cas:authenticationSuccess>
-                </cas:serviceResponse>
-            EOF;
-
-        $response = new Response(
-            200,
-            [],
-            $body
-        );
-        $request = new Request(
-            'GET',
-            'http://from/it_can_parse_a_response'
-        );
-
-        $this
-            ->parse($request, $response)
-            ->shouldBeArray();
-    }
-
     public function it_is_initializable()
     {
         $this->shouldHaveType(ProxyValidate::class);
@@ -160,8 +117,8 @@ class ProxyValidateSpec extends ObjectBehavior
         $this->beConstructedWith(
             [],
             $cache,
+            new CasResponseBuilder(),
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
-            new Introspector(),
             CasSpecUtils::getTestProperties(),
             $psr17
         );

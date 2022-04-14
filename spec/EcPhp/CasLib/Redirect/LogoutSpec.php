@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Redirect;
 
-use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Redirect\Logout;
+use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
@@ -41,7 +41,7 @@ class LogoutSpec extends ObjectBehavior
         $this->shouldHaveType(Logout::class);
     }
 
-    public function let(CacheItemPoolInterface $cache)
+    public function let(CacheItemPoolInterface $cache, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
@@ -49,8 +49,8 @@ class LogoutSpec extends ObjectBehavior
         $this->beConstructedWith(
             [],
             $cache,
+            $casResponseBuilder,
             new Psr18Client(Cas::getHttpClientMock()),
-            new Introspector(),
             Cas::getTestProperties(),
             $psr17
         );

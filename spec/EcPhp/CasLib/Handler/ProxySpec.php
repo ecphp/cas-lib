@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace spec\EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Handler\Proxy;
-use EcPhp\CasLib\Introspection\Introspector;
+use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use Exception;
 use loophp\psr17\Psr17Interface;
 use Nyholm\Psr7\Request;
@@ -47,13 +47,13 @@ class ProxySpec extends ObjectBehavior
         $this->shouldHaveType(Proxy::class);
     }
 
-    public function let(CacheItemPoolInterface $cache, Psr17Interface $psr17)
+    public function let(CacheItemPoolInterface $cache, Psr17Interface $psr17, CasResponseBuilderInterface $casResponseBuilder)
     {
         $this->beConstructedWith(
             [],
             $cache,
+            $casResponseBuilder,
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
-            new Introspector(),
             Cas::getTestProperties(),
             $psr17
         );

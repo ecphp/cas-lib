@@ -9,14 +9,14 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection;
+namespace EcPhp\CasLib\Response\Type;
 
-use EcPhp\CasLib\Introspection\Contract\Proxy as ProxyInterface;
+use EcPhp\CasLib\Contract\Response\Type\Proxy as ProxyInterface;
 
-final class Proxy extends Introspection implements ProxyInterface
+final class Proxy extends CasResponse implements ProxyInterface
 {
     public function getProxyTicket(): string
     {
-        return $this->getParsedResponse()['serviceResponse']['proxySuccess']['proxyTicket'];
+        return $this->toArray()['serviceResponse']['proxySuccess']['proxyTicket'];
     }
 }

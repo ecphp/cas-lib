@@ -9,19 +9,19 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Introspection;
+namespace spec\EcPhp\CasLib\Response;
 
-use EcPhp\CasLib\Introspection\Contract\AuthenticationFailure;
-use EcPhp\CasLib\Introspection\Contract\Proxy;
-use EcPhp\CasLib\Introspection\Contract\ProxyFailure;
-use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
-use EcPhp\CasLib\Introspection\Introspector;
+use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
+use EcPhp\CasLib\Contract\Response\Type\Proxy;
+use EcPhp\CasLib\Contract\Response\Type\ProxyFailure;
+use EcPhp\CasLib\Contract\Response\Type\ServiceValidate;
+use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use Exception;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
 
-class IntrospectorSpec extends ObjectBehavior
+class CasResponseBuilderSpec extends ObjectBehavior
 {
     public function it_can_detect_a_proxy_failure_response()
     {
@@ -40,7 +40,7 @@ class IntrospectorSpec extends ObjectBehavior
             ->withBody($psr17Factory->createStream($body));
 
         $this
-            ->detect($response)
+            ->fromResponse($response)
             ->shouldImplement(ProxyFailure::class);
     }
 
@@ -63,7 +63,8 @@ class IntrospectorSpec extends ObjectBehavior
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this->detect($response)
+        $this
+            ->fromResponse($response)
             ->shouldBeAnInstanceOf(Proxy::class);
     }
 
@@ -84,7 +85,8 @@ class IntrospectorSpec extends ObjectBehavior
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this->detect($response)
+        $this
+            ->fromResponse($response)
             ->shouldBeAnInstanceOf(ServiceValidate::class);
 
         $body = <<< 'EOF'
@@ -101,7 +103,8 @@ class IntrospectorSpec extends ObjectBehavior
             ->withHeader('Content-Type', 'application/json')
             ->withBody($psr17Factory->createStream($body));
 
-        $this->detect($response)
+        $this
+            ->fromResponse($response)
             ->shouldBeAnInstanceOf(ServiceValidate::class);
     }
 
@@ -125,7 +128,8 @@ class IntrospectorSpec extends ObjectBehavior
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this->detect($response)
+        $this
+            ->fromResponse($response)
             ->shouldBeAnInstanceOf(ServiceValidate::class);
     }
 
@@ -143,7 +147,7 @@ class IntrospectorSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('detect', [$response]);
+            ->during('fromResponse', [$response]);
 
         $body = <<< 'EOF'
             FOO
@@ -155,7 +159,7 @@ class IntrospectorSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('detect', [$response]);
+            ->during('fromResponse', [$response]);
     }
 
     public function it_can_detect_an_authentication_failure_response()
@@ -175,7 +179,7 @@ class IntrospectorSpec extends ObjectBehavior
             ->withBody($psr17Factory->createStream($body));
 
         $this
-            ->detect($response)
+            ->fromResponse($response)
             ->shouldBeAnInstanceOf(AuthenticationFailure::class);
     }
 
@@ -199,7 +203,7 @@ class IntrospectorSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('detect', [$response]);
+            ->during('fromResponse', [$response]);
     }
 
     public function it_can_detect_an_unsupported_parse_format()
@@ -216,7 +220,7 @@ class IntrospectorSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('parse', [$response, 'FOOBAR']);
+            ->during('fromResponse', [$response, 'FOOBAR']);
     }
 
     public function it_can_detect_the_type_of_a_response()
@@ -240,9 +244,7 @@ class IntrospectorSpec extends ObjectBehavior
         );
 
         $this
-            ->detect(
-                $response
-            )
+            ->fromResponse($response)
             ->shouldReturnAnInstanceOf(ServiceValidate::class);
 
         $body = <<< 'EOF'
@@ -265,11 +267,11 @@ class IntrospectorSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('detect', [$response]);
+            ->during('fromResponse', [$response]);
     }
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(Introspector::class);
+        $this->shouldHaveType(CasResponseBuilderInterface::class);
     }
 }

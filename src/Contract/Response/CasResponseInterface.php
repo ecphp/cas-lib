@@ -9,11 +9,11 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Introspection\Contract;
+namespace EcPhp\CasLib\Contract\Response;
 
-interface ServiceValidate extends IntrospectionInterface
+use Psr\Http\Message\ResponseInterface;
+
+interface CasResponseInterface extends ResponseInterface
 {
-    public function getCredentials(): array;
-
-    public function getProxies(): array;
+    public function toArray(): array;
 }

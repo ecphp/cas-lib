@@ -12,27 +12,23 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
-use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
+use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Utils\Uri;
-use Exception;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
-
-use const JSON_ERROR_NONE;
 
 abstract class Handler
 {
     private CacheItemPoolInterface $cache;
 
-    private ClientInterface $client;
+    private CasResponseBuilderInterface $casResponseBuilder;
 
-    private IntrospectorInterface $introspector;
+    private ClientInterface $client;
 
     private array $parameters;
 
@@ -46,14 +42,14 @@ abstract class Handler
     public function __construct(
         array $parameters,
         CacheItemPoolInterface $cache,
+        CasResponseBuilderInterface $casResponseBuilder,
         ClientInterface $client,
-        IntrospectorInterface $introspector,
         PropertiesInterface $properties,
         Psr17Interface $psr17
     ) {
         $this->cache = $cache;
+        $this->casResponseBuilder = $casResponseBuilder;
         $this->client = $client;
-        $this->introspector = $introspector;
         $this->parameters = $parameters;
         $this->properties = $properties;
         $this->psr17 = $psr17;
@@ -134,14 +130,14 @@ abstract class Handler
         return $this->cache;
     }
 
+    protected function getCasResponseBuilder(): CasResponseBuilderInterface
+    {
+        return $this->casResponseBuilder;
+    }
+
     protected function getClient(): ClientInterface
     {
         return $this->client;
-    }
-
-    protected function getIntrospector(): IntrospectorInterface
-    {
-        return $this->introspector;
     }
 
     /**
@@ -170,43 +166,5 @@ abstract class Handler
     protected function getPsr17(): Psr17Interface
     {
         return $this->psr17;
-    }
-
-    /**
-     * Normalize a response.
-     */
-    protected function normalize(RequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
-        $body = $this->parse($request, $response);
-
-        if ([] === $body) {
-            throw new Exception('Unable to parse the response during the normalization process.');
-        }
-
-        $body = json_encode($body);
-
-        if (false === $body || JSON_ERROR_NONE !== json_last_error()) {
-            throw new Exception('Unable to encode the response in JSON during the normalization process.');
-        }
-
-        return $response
-            ->withBody($this->getPsr17()->createStream($body))
-            ->withHeader('Content-Type', 'application/json');
-    }
-
-    /**
-     * Parse the response format.
-     *
-     * @return array[]|string[]
-     *   The parsed response.
-     */
-    protected function parse(RequestInterface $request, ResponseInterface $response): array
-    {
-        return $this
-            ->getIntrospector()
-            ->parse(
-                $response,
-                $this->getProtocolProperties($request)['default_parameters']['format'] ?? 'XML'
-            );
     }
 }
