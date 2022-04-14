@@ -4,7 +4,7 @@ Requirements
 PHP
 ---
 
-PHP greater than 7.1 is required for this library.
+PHP greater than 7.4 is required for this library.
 
 PHP Extensions
 --------------
@@ -28,9 +28,9 @@ class.
 +------------------+-----------+---------------------------------+------------------------+
 | Cache            | `PSR-6`_  | `cache-implementation`_         | `symfony/cache`_       |
 +------------------+-----------+---------------------------------+------------------------+
-| Server request   | `PSR-7`_  | `http-message-implementations`_ | `nyholm/psr7-server`_  |
+| HTTP Message     | `PSR-7`_  | `http-message-implementations`_ | `nyholm/psr7`_         |
 +------------------+-----------+---------------------------------+------------------------+
-| HTTP factories   | `PSR-17`_ | `http-factory-implementations`_ | `nyholm/psr7`_         |
+| HTTP Factory     | `PSR-17`_ | `http-factory-implementations`_ | `loophp/psr17`_        |
 +------------------+-----------+---------------------------------+------------------------+
 | HTTP Client      | `PSR-18`_ | `http-client-implementations`_  | `symfony/http-client`_ |
 +------------------+-----------+---------------------------------+------------------------+
@@ -47,8 +47,8 @@ You may use custom code for that, but you can also use any of the following pack
 .. _zendframework/zend-httphandlerrunner: https://packagist.org/packages/zendframework/zend-httphandlerrunner
 .. _http-interop/response-sender: https://packagist.org/packages/http-interop/response-sender
 .. _monolog/monolog: https://packagist.org/packages/monolog/monolog
-.. _nyholm/psr7-server: https://packagist.org/packages/nyholm/psr7-server
 .. _nyholm/psr7: https://packagist.org/packages/nyholm/psr7
+.. _loophp/psr17: https://packagist.org/packages/loophp/psr17
 .. _symfony/cache: https://packagist.org/packages/symfony/cache
 .. _symfony/http-client: https://packagist.org/packages/symfony/http-client
 .. _cache-implementation: https://packagist.org/providers/psr/cache-implementation
