@@ -18,7 +18,6 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
 use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
-use Psr\Log\NullLogger;
 use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\HttpClient\Psr18Client;
@@ -40,7 +39,6 @@ class CasSpec extends ObjectBehavior
             $client,
             $psr17,
             new ArrayAdapter(),
-            new NullLogger(),
             $introspector
         ));
 
@@ -71,7 +69,6 @@ class CasSpec extends ObjectBehavior
             $client,
             $psr17,
             new ArrayAdapter(),
-            new NullLogger(),
             $introspector
         ));
 

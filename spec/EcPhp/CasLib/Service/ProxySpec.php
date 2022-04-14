@@ -13,12 +13,12 @@ namespace spec\EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Service\Proxy;
+use Exception;
 use loophp\psr17\Psr17Interface;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Log\LoggerInterface;
 use spec\EcPhp\CasLib\Cas;
 
 class ProxySpec extends ObjectBehavior
@@ -40,8 +40,8 @@ class ProxySpec extends ObjectBehavior
         $response = new Response(200, ['Content-Type' => 'application/xml'], $body);
 
         $this
-            ->getCredentials($response)
-            ->shouldBeNull();
+            ->shouldThrow(Exception::class)
+            ->during('getCredentials', [$response]);
     }
 
     public function it_can_detect_when_no_credentials()
@@ -49,8 +49,8 @@ class ProxySpec extends ObjectBehavior
         $response = new Response(500);
 
         $this
-            ->getCredentials($response)
-            ->shouldBeNull();
+            ->shouldThrow(Exception::class)
+            ->during('getCredentials', [$response]);
     }
 
     public function it_is_initializable()
@@ -58,8 +58,8 @@ class ProxySpec extends ObjectBehavior
         $this->shouldHaveType(Proxy::class);
     }
 
-    public function let(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger, Psr17Interface $psr17)
+    public function let(ClientInterface $client, CacheItemPoolInterface $cache, Psr17Interface $psr17)
     {
-        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, $logger, new Introspector());
+        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, new Introspector());
     }
 }

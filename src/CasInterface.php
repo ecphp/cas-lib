@@ -30,7 +30,7 @@ interface CasInterface
     public function authenticate(
         RequestInterface $request,
         array $parameters = []
-    ): ?array;
+    ): array;
 
     public function detect(ResponseInterface $response): IntrospectionInterface;
 
@@ -54,7 +54,7 @@ interface CasInterface
     public function handleProxyCallback(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * If not authenticated, redirect to CAS login.
@@ -68,7 +68,7 @@ interface CasInterface
     public function login(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Redirect to CAS logout.
@@ -82,7 +82,7 @@ interface CasInterface
     public function logout(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Request a proxy ticket.
@@ -96,7 +96,7 @@ interface CasInterface
     public function requestProxyTicket(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Request a proxy validation.
@@ -110,7 +110,7 @@ interface CasInterface
     public function requestProxyValidate(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Request a service validation.
@@ -124,7 +124,7 @@ interface CasInterface
     public function requestServiceValidate(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Request a ticket validation.
@@ -138,7 +138,7 @@ interface CasInterface
     public function requestTicketValidation(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Check if the request needs to be authenticated.

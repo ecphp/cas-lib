@@ -17,7 +17,7 @@ use Psr\Http\Message\UriInterface;
 
 final class Logout extends Redirect implements RedirectInterface
 {
-    public function handle(RequestInterface $request): ?ResponseInterface
+    public function handle(RequestInterface $request): ResponseInterface
     {
         return $this->createRedirectResponse((string) $this->getUri($request));
     }

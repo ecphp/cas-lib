@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Redirect;
 
 use EcPhp\CasLib\Utils\Uri;
+use Exception;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -20,24 +21,10 @@ use function array_key_exists;
 
 final class Login extends Redirect implements RedirectInterface
 {
-    public function handle(RequestInterface $request): ?ResponseInterface
+    public function handle(RequestInterface $request): ResponseInterface
     {
         $parameters = $this->formatProtocolParameters($this->getParameters($request));
         $validatedParameters = $this->validate($request, $parameters);
-
-        if (null === $validatedParameters) {
-            $this
-                ->getLogger()
-                ->debug(
-                    'Login parameters are invalid, not redirecting to login page.',
-                    [
-                        'parameters' => $parameters,
-                        'validatedParameters' => $validatedParameters,
-                    ]
-                );
-
-            return null;
-        }
 
         return $this->createRedirectResponse((string) $this->getUri($request, $validatedParameters));
     }
@@ -93,11 +80,9 @@ final class Login extends Redirect implements RedirectInterface
         $gateway = $parameters['gateway'] ?? false;
 
         if ('true' === $renew && 'true' === $gateway) {
-            $this
-                ->getLogger()
-                ->error('Unable to get the Login response, gateway and renew parameter cannot be set together.');
-
-            return null;
+            throw new Exception(
+                'Unable to get the Login response, gateway and renew parameter cannot be set together.'
+            );
         }
 
         foreach (['gateway', 'renew'] as $queryParameter) {
@@ -106,7 +91,7 @@ final class Login extends Redirect implements RedirectInterface
             }
 
             if ('true' !== Uri::getParam($uri, $queryParameter, 'true')) {
-                return null;
+                throw new Exception('Login parameters are invalid.');
             }
         }
 

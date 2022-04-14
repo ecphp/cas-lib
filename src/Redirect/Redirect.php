@@ -18,10 +18,6 @@ abstract class Redirect extends Handler
 {
     protected function createRedirectResponse(string $url): ResponseInterface
     {
-        $this
-            ->getLogger()
-            ->debug('Building service response redirection to {url}.', ['url' => $url]);
-
         return $this
             ->getPsr17()
             ->createResponse(302)

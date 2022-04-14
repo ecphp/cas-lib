@@ -11,27 +11,19 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Service;
 
-use InvalidArgumentException;
+use Exception;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
 final class Proxy extends Service implements ServiceInterface
 {
-    public function getCredentials(ResponseInterface $response): ?ResponseInterface
+    public function getCredentials(ResponseInterface $response): ResponseInterface
     {
-        try {
-            $introspect = $this->getIntrospector()->detect($response);
-        } catch (InvalidArgumentException $exception) {
-            $this
-                ->getLogger()
-                ->error($exception->getMessage());
-
-            return null;
-        }
+        $introspect = $this->getIntrospector()->detect($response);
 
         if (false === ($introspect instanceof \EcPhp\CasLib\Introspection\Contract\Proxy)) {
-            return null;
+            throw new Exception('Invalid response type.');
         }
 
         return $response;

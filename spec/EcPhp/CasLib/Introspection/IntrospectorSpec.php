@@ -16,7 +16,7 @@ use EcPhp\CasLib\Introspection\Contract\Proxy;
 use EcPhp\CasLib\Introspection\Contract\ProxyFailure;
 use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
 use EcPhp\CasLib\Introspection\Introspector;
-use InvalidArgumentException;
+use Exception;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
@@ -39,7 +39,8 @@ class IntrospectorSpec extends ObjectBehavior
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this->detect($response)
+        $this
+            ->detect($response)
             ->shouldImplement(ProxyFailure::class);
     }
 
@@ -141,7 +142,7 @@ class IntrospectorSpec extends ObjectBehavior
             ->withBody($psr17Factory->createStream($body));
 
         $this
-            ->shouldThrow(InvalidArgumentException::class)
+            ->shouldThrow(Exception::class)
             ->during('detect', [$response]);
 
         $body = <<< 'EOF'
@@ -153,7 +154,7 @@ class IntrospectorSpec extends ObjectBehavior
             ->withBody($psr17Factory->createStream($body));
 
         $this
-            ->shouldThrow(InvalidArgumentException::class)
+            ->shouldThrow(Exception::class)
             ->during('detect', [$response]);
     }
 
@@ -173,7 +174,8 @@ class IntrospectorSpec extends ObjectBehavior
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $this->detect($response)
+        $this
+            ->detect($response)
             ->shouldBeAnInstanceOf(AuthenticationFailure::class);
     }
 
@@ -196,7 +198,7 @@ class IntrospectorSpec extends ObjectBehavior
             ->withBody($psr17Factory->createStream($body));
 
         $this
-            ->shouldThrow(InvalidArgumentException::class)
+            ->shouldThrow(Exception::class)
             ->during('detect', [$response]);
     }
 
@@ -213,7 +215,7 @@ class IntrospectorSpec extends ObjectBehavior
             ->withBody($psr17Factory->createStream($body));
 
         $this
-            ->shouldThrow(InvalidArgumentException::class)
+            ->shouldThrow(Exception::class)
             ->during('parse', [$response, 'FOOBAR']);
     }
 

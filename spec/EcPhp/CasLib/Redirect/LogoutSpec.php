@@ -20,16 +20,15 @@ use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
 use spec\EcPhp\CasLib\Cas;
 
 class LogoutSpec extends ObjectBehavior
 {
-    public function it_can_get_a_response(CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_can_get_a_response(CacheItemPoolInterface $cache)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache, $logger);
+        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache);
 
         $request = new Request(
             'GET',
@@ -41,9 +40,9 @@ class LogoutSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(ResponseInterface::class);
     }
 
-    public function it_is_initializable(CacheItemPoolInterface $cache, LoggerInterface $logger, Psr17Interface $psr17)
+    public function it_is_initializable(CacheItemPoolInterface $cache, Psr17Interface $psr17)
     {
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache, $logger);
+        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache);
 
         $this->shouldHaveType(Logout::class);
     }

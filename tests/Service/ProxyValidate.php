@@ -19,7 +19,6 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use Psr\Log\LoggerInterface;
 
 class ProxyValidate extends Service
 {
@@ -38,17 +37,12 @@ class ProxyValidate extends Service
         return parent::getIntrospector();
     }
 
-    public function getLogger(): LoggerInterface
-    {
-        return parent::getLogger();
-    }
-
     public function parse(RequestInterface $request, ResponseInterface $response): array
     {
         return parent::parse($request, $response);
     }
 
-    public function updateParsedResponseWithPgt(array $response): ?array
+    public function updateParsedResponseWithPgt(array $response): array
     {
         return parent::updateParsedResponseWithPgt($response);
     }

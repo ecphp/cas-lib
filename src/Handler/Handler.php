@@ -17,15 +17,12 @@ use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
 
 abstract class Handler
 {
     private CacheItemPoolInterface $cache;
-
-    private LoggerInterface $logger;
 
     private array $parameters;
 
@@ -40,11 +37,9 @@ abstract class Handler
         array $parameters,
         PropertiesInterface $properties,
         Psr17Interface $psr17,
-        CacheItemPoolInterface $cache,
-        LoggerInterface $logger
+        CacheItemPoolInterface $cache
     ) {
         $this->cache = $cache;
-        $this->logger = $logger;
         $this->parameters = $parameters;
         $this->properties = $properties;
         $this->psr17 = $psr17;
@@ -135,11 +130,6 @@ abstract class Handler
     protected function getCache(): CacheItemPoolInterface
     {
         return $this->cache;
-    }
-
-    protected function getLogger(): LoggerInterface
-    {
-        return $this->logger;
     }
 
     /**

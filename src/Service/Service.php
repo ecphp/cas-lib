@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Handler\Handler;
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Introspection\Contract\ServiceValidate;
-use InvalidArgumentException;
+use Exception;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -23,7 +24,6 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
 
@@ -41,44 +41,25 @@ abstract class Service extends Handler
         ClientInterface $client,
         Psr17Interface $psr17,
         CacheItemPoolInterface $cache,
-        LoggerInterface $logger,
         IntrospectorInterface $introspector
     ) {
         parent::__construct(
             $parameters,
             $properties,
             $psr17,
-            $cache,
-            $logger
+            $cache
         );
 
         $this->client = $client;
         $this->introspector = $introspector;
     }
 
-    public function getCredentials(ResponseInterface $response): ?ResponseInterface
+    public function getCredentials(ResponseInterface $response): ResponseInterface
     {
-        try {
-            $introspect = $this->getIntrospector()->detect($response);
-        } catch (InvalidArgumentException $exception) {
-            $this
-                ->getLogger()
-                ->error($exception->getMessage());
-
-            return null;
-        }
+        $introspect = $this->getIntrospector()->detect($response);
 
         if (false === ($introspect instanceof ServiceValidate)) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Service validation failed.',
-                    [
-                        'response' => (string) $response->getBody(),
-                    ]
-                );
-
-            return null;
+            throw new Exception('CAS Service validation failed.');
         }
 
         $parsedResponse = $introspect->getParsedResponse();
@@ -88,47 +69,31 @@ abstract class Service extends Handler
         );
 
         if (false === $proxyGrantingTicket) {
-            $this
-                ->getLogger()
-                ->debug('Service validation service successful.');
-
             return $response->withHeader('Content-Type', 'application/json');
         }
 
-        $parsedResponse = $this->updateParsedResponseWithPgt($parsedResponse);
-
-        if (null === $parsedResponse) {
-            return null;
-        }
-
-        $body = json_encode($parsedResponse);
+        $body = json_encode(
+            $this->updateParsedResponseWithPgt($parsedResponse)
+        );
 
         if (false === $body) {
-            return null;
+            throw new Exception('Unable to JSON encode the body');
         }
-
-        $this
-            ->getLogger()
-            ->debug('Proxy validation service successful.');
 
         return $response
             ->withBody($this->getPsr17()->createStream($body))
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function handle(RequestInterface $request): ?ResponseInterface
+    public function handle(RequestInterface $request): ResponseInterface
     {
         try {
             $response = $this->getClient()->sendRequest($request);
         } catch (ClientExceptionInterface $exception) {
-            $this
-                ->getLogger()
-                ->error($exception->getMessage());
-
-            $response = null;
+            throw CasException::errorWhileDoingRequest($exception);
         }
 
-        return null === $response ? null : $this->normalize($request, $response);
+        return $this->normalize($request, $response);
     }
 
     protected function getClient(): ClientInterface
@@ -154,25 +119,12 @@ abstract class Service extends Handler
      */
     protected function parse(RequestInterface $request, ResponseInterface $response): array
     {
-        $format = $this->getProtocolProperties($request)['default_parameters']['format'] ?? 'XML';
-
-        try {
-            $array = $this->getIntrospector()->parse($response, $format);
-        } catch (InvalidArgumentException $exception) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Unable to parse the response with the specified format {format}.',
-                    [
-                        'format' => $format,
-                        'response' => (string) $response->getBody(),
-                    ]
-                );
-
-            $array = [];
-        }
-
-        return $array;
+        return $this
+            ->getIntrospector()
+            ->parse(
+                $response,
+                $this->getProtocolProperties($request)['default_parameters']['format'] ?? 'XML'
+            );
     }
 
     /**
@@ -180,18 +132,16 @@ abstract class Service extends Handler
      *
      * @return array[]|null
      */
-    protected function updateParsedResponseWithPgt(array $response): ?array
+    protected function updateParsedResponseWithPgt(array $response): array
     {
         $pgt = $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
 
-        $hasPgtIou = $this->getCache()->hasItem($pgt);
+        $hasPgtIou = $this
+            ->getCache()
+            ->hasItem($pgt);
 
         if (false === $hasPgtIou) {
-            $this
-                ->getLogger()
-                ->error('CAS validation failed: pgtIou not found in the cache.', ['pgtIou' => $pgt]);
-
-            return null;
+            throw new Exception('CAS validation failed: pgtIou not found in the cache.');
         }
 
         $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'] = $this
@@ -210,36 +160,14 @@ abstract class Service extends Handler
         $body = $this->parse($request, $response);
 
         if ([] === $body) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Unable to parse the response during the normalization process.',
-                    [
-                        'body' => (string) $response->getBody(),
-                    ]
-                );
-
-            return $response;
+            throw new Exception('Unable to parse the response during the normalization process.');
         }
 
         $body = json_encode($body);
 
         if (false === $body || JSON_ERROR_NONE !== json_last_error()) {
-            $this
-                ->getLogger()
-                ->error(
-                    'Unable to encode the response in JSON during the normalization process.',
-                    [
-                        'body' => (string) $response->getBody(),
-                    ]
-                );
-
-            return $response;
+            throw new Exception('Unable to encode the response in JSON during the normalization process.');
         }
-
-        $this
-            ->getLogger()
-            ->debug('Response normalization succeeded.', ['body' => $body]);
 
         return $response
             ->withBody($this->getPsr17()->createStream($body))

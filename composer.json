@@ -33,7 +33,6 @@
         "infection/infection": "^0.23 || ^0.24",
         "infection/phpspec-adapter": "^0.1.2",
         "loophp/psr17": "^1.0",
-        "monolog/monolog": "^1.0 || ^2.0",
         "nyholm/psr7": "^1.4",
         "phpspec/phpspec": "^7",
         "phpstan/phpstan-strict-rules": "^1",

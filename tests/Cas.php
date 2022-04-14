@@ -27,7 +27,7 @@ final class Cas implements CasInterface
         $this->cas = $cas;
     }
 
-    public function authenticate(RequestInterface $request, array $parameters = []): ?array
+    public function authenticate(RequestInterface $request, array $parameters = []): array
     {
         return $this->cas->authenticate($request, $parameters);
     }
@@ -46,16 +46,16 @@ final class Cas implements CasInterface
     public function handleProxyCallback(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface {
+    ): ResponseInterface {
         return $this->cas->handleProxyCallback($request, $parameters);
     }
 
-    public function login(RequestInterface $request, array $parameters = []): ?ResponseInterface
+    public function login(RequestInterface $request, array $parameters = []): ResponseInterface
     {
         return $this->cas->login($request, $parameters);
     }
 
-    public function logout(RequestInterface $request, array $parameters = []): ?ResponseInterface
+    public function logout(RequestInterface $request, array $parameters = []): ResponseInterface
     {
         return $this->cas->logout($request, $parameters);
     }
@@ -63,28 +63,28 @@ final class Cas implements CasInterface
     public function requestProxyTicket(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface {
+    ): ResponseInterface {
         return $this->cas->requestProxyTicket($request, $parameters);
     }
 
     public function requestProxyValidate(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface {
+    ): ResponseInterface {
         return $this->cas->requestProxyValidate($request, $parameters);
     }
 
     public function requestServiceValidate(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface {
+    ): ResponseInterface {
         return $this->cas->requestServiceValidate($request, $parameters);
     }
 
     public function requestTicketValidation(
         RequestInterface $request,
         array $parameters = []
-    ): ?ResponseInterface {
+    ): ResponseInterface {
         return $this->cas->requestTicketValidation($request, $parameters);
     }
 

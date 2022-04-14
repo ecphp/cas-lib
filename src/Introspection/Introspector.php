@@ -34,7 +34,7 @@ final class Introspector implements IntrospectorInterface
         $format = null;
 
         if (200 !== $response->getStatusCode()) {
-            throw new InvalidArgumentException('Invalid status code.');
+            throw new Exception('Invalid status code.');
         }
 
         if (true === $response->hasHeader('Content-Type')) {
@@ -54,17 +54,13 @@ final class Introspector implements IntrospectorInterface
         }
 
         if (null === $format) {
-            throw new InvalidArgumentException('Unable to detect the response format.');
+            throw new Exception('Unable to detect the response format.');
         }
 
-        try {
-            $data = $this->parse($response, $format);
-        } catch (InvalidArgumentException $exception) {
-            throw new InvalidArgumentException($exception->getMessage());
-        }
+        $data = $this->parse($response, $format);
 
         if (false === array_key_exists('serviceResponse', $data)) {
-            throw new InvalidArgumentException('Unable to find the response type.');
+            throw new Exception('Unable to find the response type.');
         }
 
         if (array_key_exists('authenticationFailure', $data['serviceResponse'])) {
@@ -87,7 +83,7 @@ final class Introspector implements IntrospectorInterface
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws Exception
      *
      * @return mixed[]
      */
@@ -96,7 +92,7 @@ final class Introspector implements IntrospectorInterface
         $body = (string) $response->getBody();
 
         if ('' === $body) {
-            throw new InvalidArgumentException('Empty response body');
+            throw new Exception('Empty response body');
         }
 
         if ('XML' === $format) {
@@ -113,7 +109,7 @@ final class Introspector implements IntrospectorInterface
 
                 $data = XML2Array::createArray($dom);
             } catch (Exception $e) {
-                throw new InvalidArgumentException('Unable to parse the response using XML format.', 0, $e);
+                throw new Exception('Unable to parse the response using XML format.', 0, $e);
             }
 
             return $data;
@@ -123,13 +119,13 @@ final class Introspector implements IntrospectorInterface
             $json = json_decode($body, true);
 
             if (null === $json || JSON_ERROR_NONE !== json_last_error()) {
-                throw new InvalidArgumentException('Unable to parse the response using JSON format.');
+                throw new Exception('Unable to parse the response using JSON format.');
             }
 
             return $json;
         }
 
-        throw new InvalidArgumentException('Unsupported format.');
+        throw new Exception('Unsupported format.');
     }
 
     private function removeDomNamespace(DOMDocument $doc, string $namespace): void
