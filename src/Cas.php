@@ -24,8 +24,9 @@ use Exception;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 use function array_key_exists;
 
@@ -58,7 +59,7 @@ final class Cas implements CasInterface
     }
 
     public function authenticate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): array {
         $response = $this->requestTicketValidation($request, $parameters);
@@ -67,91 +68,122 @@ final class Cas implements CasInterface
     }
 
     public function handleProxyCallback(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        return (new ProxyCallback(
-            $parameters,
-            $this->cache,
-            $this->casResponseBuilder,
-            $this->client,
-            $this->properties,
-            $this->psr17,
-        ))->handle($request);
+        return $this
+            ->process(
+                $request,
+                new ProxyCallback(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
     public function login(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        return (new Login(
-            $parameters,
-            $this->cache,
-            $this->casResponseBuilder,
-            $this->client,
-            $this->properties,
-            $this->psr17,
-        ))->handle($request);
+        return $this
+            ->process(
+                $request,
+                new Login(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
     public function logout(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        return (new Logout(
-            $parameters,
-            $this->cache,
-            $this->casResponseBuilder,
-            $this->client,
-            $this->properties,
-            $this->psr17,
-        ))->handle($request);
+        return $this
+            ->process(
+                $request,
+                new Logout(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
+    }
+
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
+        return $handler->handle($request);
     }
 
     public function requestProxyTicket(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        return (new Proxy(
-            $parameters,
-            $this->cache,
-            $this->casResponseBuilder,
-            $this->client,
-            $this->properties,
-            $this->psr17,
-        ))->handle($request);
+        return $this
+            ->process(
+                $request,
+                new Proxy(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
     public function requestProxyValidate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        return (new ProxyValidate(
-            $parameters,
-            $this->cache,
-            $this->casResponseBuilder,
-            $this->client,
-            $this->properties,
-            $this->psr17,
-        ))->handle($request);
+        return $this
+            ->process(
+                $request,
+                new ProxyValidate(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
     public function requestServiceValidate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        return (new ServiceValidate(
-            $parameters,
-            $this->cache,
-            $this->casResponseBuilder,
-            $this->client,
-            $this->properties,
-            $this->psr17,
-        ))->handle($request);
+        return $this
+            ->process(
+                $request,
+                new ServiceValidate(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
     public function requestTicketValidation(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
         if (false === $this->supportAuthentication($request, $parameters)) {
@@ -173,7 +205,7 @@ final class Cas implements CasInterface
     }
 
     public function supportAuthentication(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): bool {
         return array_key_exists('ticket', $parameters) || Uri::hasParams($request->getUri(), 'ticket');

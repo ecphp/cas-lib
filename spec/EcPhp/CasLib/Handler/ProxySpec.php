@@ -15,7 +15,7 @@ use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use Exception;
 use loophp\psr17\Psr17Interface;
-use Nyholm\Psr7\Request;
+use Nyholm\Psr7\ServerRequest;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use spec\EcPhp\CasLib\Cas;
@@ -26,7 +26,7 @@ class ProxySpec extends ObjectBehavior
 {
     public function it_can_detect_a_wrong_proxy_response()
     {
-        $request = new Request('GET', 'http://from');
+        $request = new ServerRequest('GET', 'http://from');
 
         $this
             ->shouldThrow(Exception::class)
@@ -35,7 +35,7 @@ class ProxySpec extends ObjectBehavior
 
     public function it_can_detect_when_no_credentials()
     {
-        $request = new Request('GET', 'http://from');
+        $request = new ServerRequest('GET', 'http://from');
 
         $this
             ->shouldThrow(Exception::class)

@@ -15,7 +15,7 @@ use EcPhp\CasLib\Redirect\Logout;
 use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Request;
+use Nyholm\Psr7\ServerRequest;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,7 +26,7 @@ class LogoutSpec extends ObjectBehavior
 {
     public function it_can_get_a_response()
     {
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             'http://from/it_can_get_a_response'
         );

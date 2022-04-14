@@ -11,10 +11,8 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-interface HandlerInterface
+interface HandlerInterface extends RequestHandlerInterface
 {
-    public function handle(RequestInterface $request): ResponseInterface;
 }

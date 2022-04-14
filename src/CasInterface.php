@@ -11,22 +11,20 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib;
 
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 
-interface CasInterface
+interface CasInterface extends MiddlewareInterface
 {
     /**
      * Authenticate the request.
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return array[]|null
-     *   The user response if authenticated, null otherwise.
      */
     public function authenticate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): array;
 
@@ -35,12 +33,9 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     *   An HTTP response or null.
      */
     public function handleProxyCallback(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface;
 
@@ -49,12 +44,9 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     *   An HTTP response or null.
      */
     public function login(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface;
 
@@ -63,12 +55,9 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     *   An HTTP response or null.
      */
     public function logout(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface;
 
@@ -77,12 +66,9 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     *   An HTTP response or null.
      */
     public function requestProxyTicket(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface;
 
@@ -91,12 +77,9 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     *   An HTTP response or null.
      */
     public function requestProxyValidate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface;
 
@@ -105,12 +88,9 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     *   An HTTP response or null.
      */
     public function requestServiceValidate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface;
 
@@ -119,12 +99,9 @@ interface CasInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
-     *
-     * @return \Psr\Http\Message\ResponseInterface|null
-     *   An HTTP response or null.
      */
     public function requestTicketValidation(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface;
 
@@ -138,7 +115,7 @@ interface CasInterface
      *   True if it can run the authentication, false otherwise.
      */
     public function supportAuthentication(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): bool;
 }

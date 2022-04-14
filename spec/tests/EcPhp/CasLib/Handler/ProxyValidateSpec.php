@@ -15,7 +15,7 @@ use EcPhp\CasLib\Response\CasResponseBuilder;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Request;
+use Nyholm\Psr7\ServerRequest;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -97,7 +97,7 @@ class ProxyValidateSpec extends ObjectBehavior
 
     public function it_can_detect_when_no_credentials()
     {
-        $request = new Request('GET', 'http://from/it_can_detect_when_no_credentials/error500');
+        $request = new ServerRequest('GET', 'http://from/it_can_detect_when_no_credentials/error500');
 
         $this
             ->shouldThrow(Exception::class)

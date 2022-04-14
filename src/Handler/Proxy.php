@@ -15,12 +15,13 @@ use EcPhp\CasLib\Exception\CasException;
 use Exception;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Throwable;
 
 final class Proxy extends Service implements HandlerInterface
 {
-    public function handle(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         try {
             $response = $this->getClient()->sendRequest($request);

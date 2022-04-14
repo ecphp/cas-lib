@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace tests\EcPhp\CasLib;
 
 use EcPhp\CasLib\CasInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 final class Cas implements CasInterface
 {
@@ -25,57 +26,62 @@ final class Cas implements CasInterface
         $this->cas = $cas;
     }
 
-    public function authenticate(RequestInterface $request, array $parameters = []): array
+    public function authenticate(ServerRequestInterface $request, array $parameters = []): array
     {
         return $this->cas->authenticate($request, $parameters);
     }
 
     public function handleProxyCallback(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
         return $this->cas->handleProxyCallback($request, $parameters);
     }
 
-    public function login(RequestInterface $request, array $parameters = []): ResponseInterface
+    public function login(ServerRequestInterface $request, array $parameters = []): ResponseInterface
     {
         return $this->cas->login($request, $parameters);
     }
 
-    public function logout(RequestInterface $request, array $parameters = []): ResponseInterface
+    public function logout(ServerRequestInterface $request, array $parameters = []): ResponseInterface
     {
         return $this->cas->logout($request, $parameters);
     }
 
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        return $this->cas->process($request, $handler);
+    }
+
     public function requestProxyTicket(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
         return $this->cas->requestProxyTicket($request, $parameters);
     }
 
     public function requestProxyValidate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
         return $this->cas->requestProxyValidate($request, $parameters);
     }
 
     public function requestServiceValidate(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
         return $this->cas->requestServiceValidate($request, $parameters);
     }
 
     public function requestTicketValidation(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
         return $this->cas->requestTicketValidation($request, $parameters);
     }
 
-    public function supportAuthentication(RequestInterface $request, array $parameters = []): bool
+    public function supportAuthentication(ServerRequestInterface $request, array $parameters = []): bool
     {
         return $this->cas->supportAuthentication($request, $parameters);
     }

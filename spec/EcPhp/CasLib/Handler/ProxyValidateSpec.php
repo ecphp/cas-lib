@@ -16,7 +16,7 @@ use EcPhp\CasLib\Response\CasResponseBuilder;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Request;
+use Nyholm\Psr7\ServerRequest;
 use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
@@ -30,7 +30,7 @@ class ProxyValidateSpec extends ObjectBehavior
 {
     public function it_can_detect_when_no_credentials()
     {
-        $request = new Request('GET', 'http://from');
+        $request = new ServerRequest('GET', 'http://from');
 
         $this
             ->shouldThrow(Exception::class)
@@ -75,7 +75,7 @@ class ProxyValidateSpec extends ObjectBehavior
             $psr17
         );
 
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             new Uri('http://from/it_can_get_credentials_with_pgtUrl')
         );
@@ -87,7 +87,7 @@ class ProxyValidateSpec extends ObjectBehavior
 
     public function it_can_get_credentials_without_pgtUrl()
     {
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             'http://from/it_can_get_credentials_without_pgtUrl'
         );

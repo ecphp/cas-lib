@@ -16,7 +16,7 @@ use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Request;
+use Nyholm\Psr7\ServerRequest;
 use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
@@ -44,7 +44,7 @@ class LoginSpec extends ObjectBehavior
             $psr17
         );
 
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             new Uri('http://from/it_can_deal_with_array_parameters')
         );
@@ -79,7 +79,7 @@ class LoginSpec extends ObjectBehavior
             $psr17
         );
 
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             new Uri('http://from/it_can_deal_with_renew_and_gateway_parameters')
         );
@@ -108,7 +108,7 @@ class LoginSpec extends ObjectBehavior
             $psr17
         );
 
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             new Uri('http://from/it_can_deal_with_renew_parameter')
         );
@@ -120,7 +120,7 @@ class LoginSpec extends ObjectBehavior
 
     public function it_can_get_a_response()
     {
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             new Uri('http://from/it_can_deal_with_renew_parameter')
         );

@@ -16,7 +16,7 @@ use EcPhp\CasLib\Contract\Response\Type\ServiceValidate;
 use EcPhp\CasLib\Response\CasResponseBuilder;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Request;
+use Nyholm\Psr7\ServerRequest;
 use PhpSpec\ObjectBehavior;
 use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -40,7 +40,7 @@ class CasSpec extends ObjectBehavior
             new CasResponseBuilder()
         ));
 
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             'http://from/it_can_test_the_proxy_mode_with_pgtUrl'
         );
@@ -66,7 +66,7 @@ class CasSpec extends ObjectBehavior
             new CasResponseBuilder()
         ));
 
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             'http://from/it_can_test_the_proxy_mode_without_pgtUrl'
         );

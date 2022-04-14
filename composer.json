@@ -24,6 +24,8 @@
         "psr/http-factory-implementation": "^1",
         "psr/http-message": "^1.0",
         "psr/http-message-implementation": "^1",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
         "psr/log": "^1.1 || ^2 || ^3"
     },
     "require-dev": {
@@ -38,6 +40,9 @@
         "phpstan/phpstan-strict-rules": "^1",
         "symfony/cache": "^5.2",
         "symfony/http-client": "^5.2"
+    },
+    "provide": {
+        "psr/http-server-handler-implementation": "^1.0"
     },
     "suggest": {
         "loophp/psr17": "Provides a PSR17 synthetic implementation",
@@ -67,7 +72,6 @@
         "changelog-unreleased": "docker-compose run auto_changelog -c .auto-changelog -u",
         "changelog-version": "docker-compose run auto_changelog -c .auto-changelog -v",
         "grumphp": "./vendor/bin/grumphp run",
-        "phpinsights": "./vendor/bin/phpinsights analyse src/",
         "phpspec": "./vendor/bin/phpspec run"
     }
 }

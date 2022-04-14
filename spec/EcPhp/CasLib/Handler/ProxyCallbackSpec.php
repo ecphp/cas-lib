@@ -17,7 +17,7 @@ use EcPhp\CasLib\Utils\Uri as UtilsUri;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\Request;
+use Nyholm\Psr7\ServerRequest;
 use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
@@ -32,7 +32,7 @@ class ProxyCallbackSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             UtilsUri::withParams(
                 new Uri('http://from/it_can_catch_issue_with_the_cache'),
@@ -70,7 +70,7 @@ class ProxyCallbackSpec extends ObjectBehavior
 
     public function it_can_test_if_the_cache_is_working(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem)
     {
-        $request = new Request(
+        $request = new ServerRequest(
             'GET',
             UtilsUri::withParams(
                 new Uri('http://from/it_can_test_if_the_cache_is_working'),

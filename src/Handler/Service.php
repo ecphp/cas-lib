@@ -17,13 +17,14 @@ use Exception;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
 
 abstract class Service extends Handler
 {
-    public function handle(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         try {
             $response = $this->getClient()->sendRequest($request);

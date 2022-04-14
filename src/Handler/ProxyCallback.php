@@ -13,13 +13,13 @@ namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 final class ProxyCallback extends Handler implements HandlerInterface
 {
-    public function handle(RequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = $this
             ->getPsr17()
