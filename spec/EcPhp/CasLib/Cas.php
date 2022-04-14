@@ -12,36 +12,52 @@ declare(strict_types=1);
 namespace spec\EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
+use Exception;
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 use tests\EcPhp\CasLib\Exception\TestClientException;
 
 class Cas extends ObjectBehavior
 {
     public static function getHttpClientMock()
     {
-        $callback = static function ($method, $url, $options) {
+        $callback = static function ($method, $url, $options): ResponseInterface {
             $body = '';
             $info = [];
 
             switch ($url) {
-                case 'http://local/cas/serviceValidate?service=service&ticket=ticket':
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket&service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice':
-                case 'http://local/cas/serviceValidate?ticket=PT-ticket&service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice':
-                case 'http://local/cas/serviceValidate?ticket=PT-ticket&service=http%3A%2F%2Ffrom':
-                $body = <<< 'EOF'
-                    <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                     <cas:authenticationSuccess>
-                      <cas:user>username</cas:user>
-                     </cas:authenticationSuccess>
-                    </cas:serviceResponse>
-                    EOF;
+                case 'http://from/it_can_validate_a_service_ticket/404':
+                    $info = [
+                        'http_code' => 404,
+                    ];
 
-                break;
+                    break;
 
-                case 'http://local/cas/serviceValidate?service=service&ticket=ticket-failure':
+                case 'http://from/?ticket=EMPTY-BODY':
+                    $body = '';
+
+                    break;
+
+                case 'http://from/it_can_test_the_proxy_mode_without_pgtUrl':
+                case 'http://from/it_can_get_credentials_without_pgtUrl':
+                case 'http://from/it_can_validate_a_service_ticket':
+                case 'http://from/it_can_validate_a_good_service_validate_request':
+                case 'http://from/?ticket=ST-TICKET-VALID':
+                    $body = <<< 'EOF'
+                            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+                            <cas:authenticationSuccess>
+                            <cas:user>username</cas:user>
+                            </cas:authenticationSuccess>
+                            </cas:serviceResponse>
+                        EOF;
+
+                    break;
+
+                case 'http://from/it_can_validate_a_bad_service_validate_request':
+                case 'http://from/?ticket=PT-TICKET-INVALID':
+                case 'http://from/?ticket=ST-TICKET-INVALID':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
                          <cas:authenticationFailure>
@@ -51,13 +67,9 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/proxyValidate?service=service&ticket=ticket':
-                case 'http://local/cas/proxyValidate?ticket=PT-ticket&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/proxyValidate?ticket=ST-ticket&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice&ticket=ticket':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice%26renew%3Dtrue&ticket=ticket&renew=true':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice&ticket=ticket':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice%26renew%3Dtrue&ticket=ticket&renew=true':
+                case 'http://from/it_can_test_the_proxy_mode_with_pgtUrl':
+                case 'http://from/it_can_validate_a_good_proxy_ticket':
+                case 'http://from/?ticket=PT-TICKET-VALID':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
                          <cas:authenticationSuccess>
@@ -71,7 +83,8 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket-pgt&service=http%3A%2F%2Ffrom':
+                case 'http://from/it_can_get_credentials_with_pgtUrl':
+                case 'http://from/?ticket=ST-ticket-pgt':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
                          <cas:authenticationSuccess>
@@ -83,7 +96,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket-pgt-pgtiou-not-found&service=http%3A%2F%2Ffrom':
+                case 'http://from/?ticket=ST-ticket-pgt-pgtiou-not-found':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
                          <cas:authenticationSuccess>
@@ -95,7 +108,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/proxyValidate?ticket=ST-ticket-pgt-pgtiou-pgtid-null&service=http%3A%2F%2Ffrom':
+                case 'http://from/?ticket=ST-ticket-pgt-pgtiou-pgtid-null':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
                          <cas:authenticationSuccess>
@@ -107,10 +120,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/proxyValidate?service=service&ticket=ST-ticket-pgt':
-                case 'http://local/cas/proxyValidate?ticket=ST-ticket-pgt&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Ffrom&ticket=PT-ticket':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dhttp%253A%252F%252Ffrom&ticket=PT-ticket-pgt':
+                case 'http://from/it_can_validate_a_good_proxy_ticket/2':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
                          <cas:authenticationSuccess>
@@ -125,7 +135,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/serviceValidate?service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice%26format%3DJSON&ticket=ticket&format=JSON':
+                case 'http://from/it_can_parse_json_in_a_response':
                     $body = <<< 'EOF'
                         {
                             "serviceResponse": {
@@ -138,7 +148,8 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/proxy?targetService=targetService&pgt=pgt':
+                case 'http://from/it_can_request_a_proxy_ticket':
+                case 'http://from/it_can_parse_a_good_proxy_request_response':
                     $body = <<< 'EOF'
                         <?xml version="1.0" encoding="utf-8"?>
                         <cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas"
@@ -152,7 +163,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/proxy?targetService=targetService&pgt=pgt-error-in-getCredentials':
+                case 'http://from/it_can_parse_a_bad_proxy_request_response':
                     $body = <<< 'EOF'
                         <?xml version="1.0" encoding="utf-8"?>
                         <cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas"
@@ -166,11 +177,18 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/serviceValidate?service=http%3A%2F%2Ffrom&ticket=BAD-http-query':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Ffrom&ticket=BAD-http-query':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice%26error%3DTestClientException&ticket=ticket&error=TestClientException':
-                case 'http://local/cas/proxy?targetService=targetService&pgt=pgt&error=TestClientException':
+                case 'http://from/it_can_validate_a_bad_proxy_ticket':
+                case 'http://from/TestClientException':
+                case 'http://from/?ticket=BAD-http-query':
                     throw new TestClientException();
+
+                    break;
+
+                case 'https://example.com/error':
+                    break;
+
+                default:
+                    throw new Exception(sprintf('URL %s is not defined in the HTTP mock client.', $url));
 
                     break;
             }

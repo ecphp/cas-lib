@@ -13,11 +13,11 @@ namespace spec\tests\EcPhp\CasLib;
 
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Introspection\Introspector;
+use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7Server\ServerRequestCreator;
+use Nyholm\Psr7\Request;
+use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -31,18 +31,10 @@ class CasSpec extends ObjectBehavior
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
-        );
-        $serverRequest = $creator->fromGlobals();
 
         $introspector = new Introspector();
 
         $this->beConstructedWith(new Cas(
-            $serverRequest,
             $properties,
             $client,
             $psr17Factory,
@@ -54,31 +46,28 @@ class CasSpec extends ObjectBehavior
             $introspector
         ));
 
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_test_the_proxy_mode_with_pgtUrl')
+        );
+
         $this
-            ->requestTicketValidation(['service' => 'service', 'ticket' => 'ticket'], null)
+            ->requestTicketValidation($request, ['ticket' => 'ST-TICKET-VALID'])
             ->getBody()
             ->__toString()
             ->shouldReturn('{"serviceResponse":{"authenticationSuccess":{"user":"username","proxies":{"proxy":"http:\/\/app\/proxyCallback.php"}}}}');
     }
 
-    public function it_can_test_the_proxy_mode_without_pgtUrl(CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_can_test_the_proxy_mode_without_pgtUrl()
     {
         $properties = CasSpecUtils::getTestProperties();
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
-        );
-        $serverRequest = $creator->fromGlobals();
 
         $introspector = new Introspector();
 
         $this->beConstructedWith(new Cas(
-            $serverRequest,
             $properties,
             $client,
             $psr17Factory,
@@ -90,8 +79,13 @@ class CasSpec extends ObjectBehavior
             $introspector
         ));
 
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_test_the_proxy_mode_without_pgtUrl')
+        );
+
         $this
-            ->requestTicketValidation(['service' => 'service', 'ticket' => 'ticket'], null)
+            ->requestTicketValidation($request, ['ticket' => 'ST-TICKET-VALID'])
             ->getBody()
             ->__toString()
             ->shouldReturn('{"serviceResponse":{"authenticationSuccess":{"user":"username"}}}');

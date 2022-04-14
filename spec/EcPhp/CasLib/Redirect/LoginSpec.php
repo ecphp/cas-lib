@@ -13,12 +13,11 @@ namespace spec\EcPhp\CasLib\Redirect;
 
 use EcPhp\CasLib\Redirect\Login;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Nyholm\Psr7\ServerRequest;
-use Nyholm\Psr7Server\ServerRequestCreator;
+use Nyholm\Psr7\Request;
+use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use spec\EcPhp\CasLib\Cas;
 
@@ -27,24 +26,29 @@ class LoginSpec extends ObjectBehavior
     public function it_can_deal_with_array_parameters(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
-        $serverRequest = new ServerRequest('GET', 'http://app');
+
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_deal_with_array_parameters')
+        );
+
         $parameters = [
             'custom' => range(1, 5),
         ];
 
-        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $this
-            ->handle()
+            ->handle($request)
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
         $this
-            ->handle()
+            ->handle($request)
             ->getHeaderLine('Location')
-            ->shouldReturn('http://local/cas/login?custom%5B0%5D=1&custom%5B1%5D=2&custom%5B2%5D=3&custom%5B3%5D=4&custom%5B4%5D=5&service=http%3A%2F%2Fapp');
+            ->shouldReturn('http://local/cas/login?custom%5B0%5D=1&custom%5B1%5D=2&custom%5B2%5D=3&custom%5B3%5D=4&custom%5B4%5D=5&service=http%3A%2F%2Ffrom%2Fit_can_deal_with_array_parameters');
     }
 
-    public function it_can_deal_with_renew_and_gateway_parameters(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_can_deal_with_renew_and_gateway_parameters(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
 
@@ -54,10 +58,15 @@ class LoginSpec extends ObjectBehavior
             'service' => 'service',
         ];
 
-        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_deal_with_renew_and_gateway_parameters')
+        );
 
         $this
-            ->handle()
+            ->handle($request)
             ->shouldBeNull();
 
         $logger
@@ -79,28 +88,31 @@ class LoginSpec extends ObjectBehavior
             ->shouldHaveBeenCalledOnce();
     }
 
-    public function it_can_deal_with_renew_parameter(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_can_deal_with_renew_parameter(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
-
-        $serverRequest = new ServerRequest('GET', 'http://app');
 
         $parameters = [
             'renew' => 'coin',
             'gateway' => false,
         ];
 
-        $this->beConstructedWith($serverRequest, $parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith($parameters, Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_deal_with_renew_parameter')
+        );
 
         $this
-            ->handle()
+            ->handle($request)
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
         $logger
             ->debug(
                 'Building service response redirection to {url}.',
                 [
-                    'url' => 'http://local/cas/login?renew=true&service=http%3A%2F%2Fapp',
+                    'url' => 'http://local/cas/login?renew=true&service=http%3A%2F%2Ffrom%2Fit_can_deal_with_renew_parameter',
                 ]
             )
             ->shouldHaveBeenCalledOnce();
@@ -109,29 +121,22 @@ class LoginSpec extends ObjectBehavior
     public function it_can_get_a_response(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
+        $this->beConstructedWith([], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_deal_with_renew_parameter')
         );
-        $this->beConstructedWith($creator->fromGlobals(), [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $this
-            ->handle()
+            ->handle($request)
             ->shouldBeAnInstanceOf(ResponseInterface::class);
     }
 
     public function it_is_initializable(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
-        $creator = new ServerRequestCreator(
-            $psr17Factory, // ServerRequestFactory
-            $psr17Factory, // UriFactory
-            $psr17Factory, // UploadedFileFactory
-            $psr17Factory  // StreamFactory
-        );
-        $this->beConstructedWith($creator->fromGlobals(), [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith([], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
 
         $this->shouldHaveType(Login::class);
     }

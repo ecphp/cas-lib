@@ -14,16 +14,15 @@ namespace spec\tests\EcPhp\CasLib\Service;
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Introspection\Introspector;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Request;
 use Nyholm\Psr7\Response;
-use Nyholm\Psr7\ServerRequest;
+use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -37,7 +36,6 @@ class ProxyValidateSpec extends ObjectBehavior
     {
         $psr17Factory = new Psr17Factory();
 
-        $serverRequest = new ServerRequest('GET', 'http://from');
         $client = new Psr18Client(Cas::getHttpClientMock());
 
         $cacheItem
@@ -64,7 +62,7 @@ class ProxyValidateSpec extends ObjectBehavior
             ->getItem('pgtIou')
             ->willReturn($cacheItem);
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $this
             ->getClient()
@@ -83,10 +81,6 @@ class ProxyValidateSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(UriFactoryInterface::class);
 
         $this
-            ->getServerRequest()
-            ->shouldBeAnInstanceOf(ServerRequestInterface::class);
-
-        $this
             ->getStreamFactory()
             ->shouldBeAnInstanceOf(StreamFactoryInterface::class);
 
@@ -97,10 +91,6 @@ class ProxyValidateSpec extends ObjectBehavior
         $this
             ->getResponseFactory()
             ->shouldBeAnInstanceOf(ResponseFactoryInterface::class);
-
-        $this
-            ->getRequest()
-            ->shouldBeAnInstanceOf(RequestInterface::class);
 
         $this
             ->getIntrospector()
@@ -140,14 +130,13 @@ class ProxyValidateSpec extends ObjectBehavior
     {
         $psr17Factory = new Psr17Factory();
 
-        $serverRequest = new ServerRequest('GET', 'http://from');
         $client = new Psr18Client(Cas::getHttpClientMock());
 
         $cache
             ->hasItem('pgtIou')
             ->willReturn(false);
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $response = [
             'serviceResponse' => [
@@ -170,15 +159,18 @@ class ProxyValidateSpec extends ObjectBehavior
     {
         $psr17Factory = new Psr17Factory();
 
-        $serverRequest = new ServerRequest('GET', 'http://from');
         $client = new Psr18Client(Cas::getHttpClientMock());
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
 
         $response = new Response(200, [], 'foo');
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_parse_a_response')
+        );
 
         $this
-            ->parse($response)
+            ->parse($request, $response)
             ->shouldBeArray();
 
         $logger
@@ -191,10 +183,10 @@ class ProxyValidateSpec extends ObjectBehavior
         $this->shouldHaveType(ProxyValidate::class);
     }
 
-    public function let(ServerRequestInterface $serverRequest, ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function let(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
     }
 }
