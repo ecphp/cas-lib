@@ -13,11 +13,9 @@ namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
 use EcPhp\CasLib\Utils\Uri;
+use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -33,11 +31,7 @@ abstract class Handler
 
     private PropertiesInterface $properties;
 
-    private ResponseFactoryInterface $responseFactory;
-
-    private StreamFactoryInterface $streamFactory;
-
-    private UriFactoryInterface $uriFactory;
+    private Psr17Interface $psr17;
 
     /**
      * @param array[]|string[] $parameters
@@ -45,19 +39,15 @@ abstract class Handler
     public function __construct(
         array $parameters,
         PropertiesInterface $properties,
-        UriFactoryInterface $uriFactory,
-        ResponseFactoryInterface $responseFactory,
-        StreamFactoryInterface $streamFactory,
+        Psr17Interface $psr17,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger
     ) {
-        $this->parameters = $parameters;
-        $this->properties = $properties;
-        $this->uriFactory = $uriFactory;
-        $this->responseFactory = $responseFactory;
-        $this->streamFactory = $streamFactory;
         $this->cache = $cache;
         $this->logger = $logger;
+        $this->parameters = $parameters;
+        $this->properties = $properties;
+        $this->psr17 = $psr17;
     }
 
     /**
@@ -101,7 +91,7 @@ abstract class Handler
             }
         );
 
-        return $this->getUriFactory()
+        return $this->getPsr17()
             ->createUri($properties['base_url'])
             ->withPath($baseUrl['path'] . $properties['protocol'][$name]['path'])
             ->withQuery(http_build_query($query))
@@ -127,7 +117,7 @@ abstract class Handler
         );
 
         if (true === array_key_exists('service', $parameters)) {
-            $service = $this->getUriFactory()->createUri(
+            $service = $this->getPsr17()->createUri(
                 $parameters['service']
             );
 
@@ -175,18 +165,8 @@ abstract class Handler
         return [];
     }
 
-    protected function getResponseFactory(): ResponseFactoryInterface
+    protected function getPsr17(): Psr17Interface
     {
-        return $this->responseFactory;
-    }
-
-    protected function getStreamFactory(): StreamFactoryInterface
-    {
-        return $this->streamFactory;
-    }
-
-    protected function getUriFactory(): UriFactoryInterface
-    {
-        return $this->uriFactory;
+        return $this->psr17;
     }
 }

@@ -13,7 +13,7 @@ namespace spec\EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Service\Proxy;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use loophp\psr17\Psr17Interface;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
@@ -58,10 +58,8 @@ class ProxySpec extends ObjectBehavior
         $this->shouldHaveType(Proxy::class);
     }
 
-    public function let(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function let(ClientInterface $client, CacheItemPoolInterface $cache, LoggerInterface $logger, Psr17Interface $psr17)
     {
-        $psr17Factory = new Psr17Factory();
-
-        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger, new Introspector());
+        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, $logger, new Introspector());
     }
 }

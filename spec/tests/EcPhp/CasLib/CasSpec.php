@@ -31,16 +31,14 @@ class CasSpec extends ObjectBehavior
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $introspector = new Introspector();
 
         $this->beConstructedWith(new Cas(
             $properties,
             $client,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
+            $psr17,
             new ArrayAdapter(),
             new NullLogger(),
             $introspector
@@ -64,16 +62,14 @@ class CasSpec extends ObjectBehavior
         $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $introspector = new Introspector();
 
         $this->beConstructedWith(new Cas(
             $properties,
             $client,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
+            $psr17,
             new ArrayAdapter(),
             new NullLogger(),
             $introspector

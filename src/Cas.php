@@ -21,14 +21,11 @@ use EcPhp\CasLib\Service\Proxy;
 use EcPhp\CasLib\Service\ProxyValidate;
 use EcPhp\CasLib\Service\ServiceValidate;
 use EcPhp\CasLib\Utils\Uri;
+use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
@@ -47,34 +44,22 @@ final class Cas implements CasInterface
 
     private PropertiesInterface $properties;
 
-    private RequestFactoryInterface $requestFactory;
-
-    private ResponseFactoryInterface $responseFactory;
-
-    private StreamFactoryInterface $streamFactory;
-
-    private UriFactoryInterface $uriFactory;
+    private Psr17Interface $psr17;
 
     public function __construct(
         PropertiesInterface $properties,
         ClientInterface $client,
-        UriFactoryInterface $uriFactory,
-        ResponseFactoryInterface $responseFactory,
-        RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory,
+        Psr17Interface $psr17,
         CacheItemPoolInterface $cache,
         LoggerInterface $logger,
         IntrospectorInterface $introspector
     ) {
-        $this->properties = $properties;
-        $this->client = $client;
-        $this->uriFactory = $uriFactory;
-        $this->responseFactory = $responseFactory;
-        $this->requestFactory = $requestFactory;
-        $this->streamFactory = $streamFactory;
         $this->cache = $cache;
-        $this->logger = $logger;
+        $this->client = $client;
         $this->introspector = $introspector;
+        $this->logger = $logger;
+        $this->properties = $properties;
+        $this->psr17 = $psr17;
     }
 
     public function authenticate(RequestInterface $request, array $parameters = []): ?array
@@ -108,9 +93,7 @@ final class Cas implements CasInterface
         $proxyCallback = new ProxyCallback(
             $parameters,
             $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger()
         );
@@ -123,9 +106,7 @@ final class Cas implements CasInterface
         $login = new Login(
             $parameters,
             $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger()
         );
@@ -138,9 +119,7 @@ final class Cas implements CasInterface
         $logout = new Logout(
             $parameters,
             $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger()
         );
@@ -156,10 +135,7 @@ final class Cas implements CasInterface
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger(),
             $this->getIntrospector()
@@ -192,10 +168,7 @@ final class Cas implements CasInterface
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger(),
             $this->getIntrospector()
@@ -228,10 +201,7 @@ final class Cas implements CasInterface
             $parameters,
             $this->getProperties(),
             $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
+            $this->getPsr17(),
             $this->getCache(),
             $this->getLogger(),
             $this->getIntrospector()
@@ -305,24 +275,9 @@ final class Cas implements CasInterface
         return $this->logger;
     }
 
-    private function getRequestFactory(): RequestFactoryInterface
+    private function getPsr17(): Psr17Interface
     {
-        return $this->requestFactory;
-    }
-
-    private function getResponseFactory(): ResponseFactoryInterface
-    {
-        return $this->responseFactory;
-    }
-
-    private function getStreamFactory(): StreamFactoryInterface
-    {
-        return $this->streamFactory;
-    }
-
-    private function getUriFactory(): UriFactoryInterface
-    {
-        return $this->uriFactory;
+        return $this->psr17;
     }
 
     private function proxyMode(): bool

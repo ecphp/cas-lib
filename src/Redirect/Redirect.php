@@ -23,7 +23,7 @@ abstract class Redirect extends Handler
             ->debug('Building service response redirection to {url}.', ['url' => $url]);
 
         return $this
-            ->getResponseFactory()
+            ->getPsr17()
             ->createResponse(302)
             ->withHeader('Location', $url);
     }

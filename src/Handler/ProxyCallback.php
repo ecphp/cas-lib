@@ -21,7 +21,7 @@ final class ProxyCallback extends Handler implements HandlerInterface
     public function handle(RequestInterface $request): ?ResponseInterface
     {
         $response = $this
-            ->getResponseFactory()
+            ->getPsr17()
             ->createResponse(200);
 
         // POST parameters prevails over GET parameters.

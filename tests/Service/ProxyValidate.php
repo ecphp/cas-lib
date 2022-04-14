@@ -16,12 +16,8 @@ use EcPhp\CasLib\Service\Service;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -45,26 +41,6 @@ class ProxyValidate extends Service
     public function getLogger(): LoggerInterface
     {
         return parent::getLogger();
-    }
-
-    public function getRequestFactory(): RequestFactoryInterface
-    {
-        return parent::getRequestFactory();
-    }
-
-    public function getResponseFactory(): ResponseFactoryInterface
-    {
-        return parent::getResponseFactory();
-    }
-
-    public function getStreamFactory(): StreamFactoryInterface
-    {
-        return parent::getStreamFactory();
-    }
-
-    public function getUriFactory(): UriFactoryInterface
-    {
-        return parent::getUriFactory();
     }
 
     public function parse(RequestInterface $request, ResponseInterface $response): array

@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace spec\EcPhp\CasLib\Redirect;
 
 use EcPhp\CasLib\Redirect\Logout;
+use loophp\psr17\Psr17;
+use loophp\psr17\Psr17Interface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
 use Nyholm\Psr7\Uri;
@@ -26,7 +28,8 @@ class LogoutSpec extends ObjectBehavior
     public function it_can_get_a_response(CacheItemPoolInterface $cache, LoggerInterface $logger)
     {
         $psr17Factory = new Psr17Factory();
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache, $logger);
 
         $request = new Request(
             'GET',
@@ -38,10 +41,9 @@ class LogoutSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(ResponseInterface::class);
     }
 
-    public function it_is_initializable(CacheItemPoolInterface $cache, LoggerInterface $logger)
+    public function it_is_initializable(CacheItemPoolInterface $cache, LoggerInterface $logger, Psr17Interface $psr17)
     {
-        $psr17Factory = new Psr17Factory();
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache, $logger);
 
         $this->shouldHaveType(Logout::class);
     }
