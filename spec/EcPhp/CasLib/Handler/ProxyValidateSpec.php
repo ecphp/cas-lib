@@ -9,15 +9,14 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Service;
+namespace spec\EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Handler\ProxyValidate;
 use EcPhp\CasLib\Introspection\Introspector;
-use EcPhp\CasLib\Service\ProxyValidate;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
-use Nyholm\Psr7\Response;
 use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
@@ -32,11 +31,11 @@ class ProxyValidateSpec extends ObjectBehavior
 {
     public function it_can_detect_when_no_credentials()
     {
-        $response = new Response(500);
+        $request = new Request('GET', 'http://from');
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('getCredentials', [$response]);
+            ->during('handle', [$request]);
     }
 
     public function it_can_get_credentials_with_pgtUrl(ClientInterface $client, CacheItemPoolInterface $cache, CacheItemInterface $cacheItem)
@@ -70,44 +69,34 @@ class ProxyValidateSpec extends ObjectBehavior
             ->getItem('pgtIou')
             ->willReturn($cacheItem);
 
-        $this->beConstructedWith([], Cas::getTestPropertiesWithPgtUrl(), $client, $psr17, $cache, new Introspector());
+        $this->beConstructedWith(
+            [],
+            $cache,
+            $client,
+            new Introspector(),
+            Cas::getTestPropertiesWithPgtUrl(),
+            $psr17
+        );
 
         $request = new Request(
             'GET',
             new Uri('http://from/it_can_get_credentials_with_pgtUrl')
         );
 
-        $response = $this->handle($request);
-
-        $response
-            ->shouldBeAnInstanceOf(ResponseInterface::class);
-
         $this
-            ->getCredentials($response->getWrappedObject())
+            ->handle($request)
             ->shouldImplement(ResponseInterface::class);
     }
 
-    public function it_can_get_credentials_without_pgtUrl(ClientInterface $client, CacheItemPoolInterface $cache)
+    public function it_can_get_credentials_without_pgtUrl()
     {
-        $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
-
-        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, new Introspector());
-
         $request = new Request(
             'GET',
-            new Uri('http://from/it_can_get_credentials_without_pgtUrl')
+            'http://from/it_can_get_credentials_without_pgtUrl'
         );
 
-        $response = $this->handle($request);
-
-        $response
-            ->shouldBeAnInstanceOf(ResponseInterface::class);
-
         $this
-            ->getCredentials($response->getWrappedObject())
+            ->handle($request)
             ->shouldImplement(ResponseInterface::class);
     }
 
@@ -116,11 +105,18 @@ class ProxyValidateSpec extends ObjectBehavior
         $this->shouldHaveType(ProxyValidate::class);
     }
 
-    public function let(ClientInterface $client, CacheItemPoolInterface $cache)
+    public function let(CacheItemPoolInterface $cache)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, new Introspector());
+        $this->beConstructedWith(
+            [],
+            $cache,
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            new Introspector(),
+            Cas::getTestProperties(),
+            $psr17
+        );
     }
 }

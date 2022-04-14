@@ -11,28 +11,24 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Redirect;
 
+use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Redirect\Logout;
 use loophp\psr17\Psr17;
-use loophp\psr17\Psr17Interface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
-use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
 use spec\EcPhp\CasLib\Cas;
+use Symfony\Component\HttpClient\Psr18Client;
 
 class LogoutSpec extends ObjectBehavior
 {
-    public function it_can_get_a_response(CacheItemPoolInterface $cache)
+    public function it_can_get_a_response()
     {
-        $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache);
-
         $request = new Request(
             'GET',
-            new Uri('http://from/it_can_get_a_response')
+            'http://from/it_can_get_a_response'
         );
 
         $this
@@ -40,10 +36,23 @@ class LogoutSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(ResponseInterface::class);
     }
 
-    public function it_is_initializable(CacheItemPoolInterface $cache, Psr17Interface $psr17)
+    public function it_is_initializable()
     {
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache);
-
         $this->shouldHaveType(Logout::class);
+    }
+
+    public function let(CacheItemPoolInterface $cache)
+    {
+        $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+
+        $this->beConstructedWith(
+            [],
+            $cache,
+            new Psr18Client(Cas::getHttpClientMock()),
+            new Introspector(),
+            Cas::getTestProperties(),
+            $psr17
+        );
     }
 }

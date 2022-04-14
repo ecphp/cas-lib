@@ -12,14 +12,13 @@ declare(strict_types=1);
 namespace EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Handler\ProxyCallback;
-use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
+use EcPhp\CasLib\Handler\ProxyValidate;
+use EcPhp\CasLib\Handler\ServiceValidate;
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Redirect\Login;
 use EcPhp\CasLib\Redirect\Logout;
-use EcPhp\CasLib\Service\Proxy;
-use EcPhp\CasLib\Service\ProxyValidate;
-use EcPhp\CasLib\Service\ServiceValidate;
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use loophp\psr17\Psr17Interface;
@@ -58,59 +57,55 @@ final class Cas implements CasInterface
         $this->psr17 = $psr17;
     }
 
-    public function authenticate(RequestInterface $request, array $parameters = []): array
-    {
+    public function authenticate(
+        RequestInterface $request,
+        array $parameters = []
+    ): array {
         $response = $this->requestTicketValidation($request, $parameters);
 
-        return $this->getIntrospector()->detect($response)->getParsedResponse();
-    }
-
-    public function detect(ResponseInterface $response): IntrospectionInterface
-    {
-        return $this->getIntrospector()->detect($response);
-    }
-
-    public function getProperties(): PropertiesInterface
-    {
-        return $this->properties;
+        return $this->introspector->detect($response)->getParsedResponse();
     }
 
     public function handleProxyCallback(
         RequestInterface $request,
         array $parameters = []
     ): ResponseInterface {
-        $proxyCallback = new ProxyCallback(
+        return (new ProxyCallback(
             $parameters,
-            $this->getProperties(),
-            $this->getPsr17(),
-            $this->getCache()
-        );
-
-        return $proxyCallback->handle($request);
+            $this->cache,
+            $this->client,
+            $this->introspector,
+            $this->properties,
+            $this->psr17,
+        ))->handle($request);
     }
 
-    public function login(RequestInterface $request, array $parameters = []): ResponseInterface
-    {
-        $login = new Login(
+    public function login(
+        RequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        return (new Login(
             $parameters,
-            $this->getProperties(),
-            $this->getPsr17(),
-            $this->getCache()
-        );
-
-        return $login->handle($request);
+            $this->cache,
+            $this->client,
+            $this->introspector,
+            $this->properties,
+            $this->psr17,
+        ))->handle($request);
     }
 
-    public function logout(RequestInterface $request, array $parameters = []): ResponseInterface
-    {
-        $logout = new Logout(
+    public function logout(
+        RequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        return (new Logout(
             $parameters,
-            $this->getProperties(),
-            $this->getPsr17(),
-            $this->getCache()
-        );
-
-        return $logout->handle($request);
+            $this->cache,
+            $this->client,
+            $this->introspector,
+            $this->properties,
+            $this->psr17,
+        ))->handle($request);
     }
 
     public function requestProxyTicket(
@@ -119,16 +114,14 @@ final class Cas implements CasInterface
     ): ResponseInterface {
         $proxyRequestService = new Proxy(
             $parameters,
-            $this->getProperties(),
-            $this->getHttpClient(),
-            $this->getPsr17(),
-            $this->getCache(),
-            $this->getIntrospector()
+            $this->cache,
+            $this->client,
+            $this->introspector,
+            $this->properties,
+            $this->psr17,
         );
 
-        $response = $proxyRequestService->handle($request);
-
-        return $proxyRequestService->getCredentials($response);
+        return $proxyRequestService->handle($request);
     }
 
     public function requestProxyValidate(
@@ -137,16 +130,14 @@ final class Cas implements CasInterface
     ): ResponseInterface {
         $proxyValidateService = new ProxyValidate(
             $parameters,
-            $this->getProperties(),
-            $this->getHttpClient(),
-            $this->getPsr17(),
-            $this->getCache(),
-            $this->getIntrospector()
+            $this->cache,
+            $this->client,
+            $this->introspector,
+            $this->properties,
+            $this->psr17,
         );
 
-        $response = $proxyValidateService->handle($request);
-
-        return $proxyValidateService->getCredentials($response);
+        return $proxyValidateService->handle($request);
     }
 
     public function requestServiceValidate(
@@ -155,16 +146,14 @@ final class Cas implements CasInterface
     ): ResponseInterface {
         $serviceValidateService = new ServiceValidate(
             $parameters,
-            $this->getProperties(),
-            $this->getHttpClient(),
-            $this->getPsr17(),
-            $this->getCache(),
-            $this->getIntrospector()
+            $this->cache,
+            $this->client,
+            $this->introspector,
+            $this->properties,
+            $this->psr17,
         );
 
-        $response = $serviceValidateService->handle($request);
-
-        return $serviceValidateService->getCredentials($response);
+        return $serviceValidateService->handle($request);
     }
 
     public function requestTicketValidation(
@@ -196,28 +185,8 @@ final class Cas implements CasInterface
         return array_key_exists('ticket', $parameters) || Uri::hasParams($request->getUri(), 'ticket');
     }
 
-    private function getCache(): CacheItemPoolInterface
-    {
-        return $this->cache;
-    }
-
-    private function getHttpClient(): ClientInterface
-    {
-        return $this->client;
-    }
-
-    private function getIntrospector(): IntrospectorInterface
-    {
-        return $this->introspector;
-    }
-
-    private function getPsr17(): Psr17Interface
-    {
-        return $this->psr17;
-    }
-
     private function proxyMode(): bool
     {
-        return isset($this->getProperties()['protocol']['serviceValidate']['default_parameters']['pgtUrl']);
+        return isset($this->properties['protocol']['serviceValidate']['default_parameters']['pgtUrl']);
     }
 }

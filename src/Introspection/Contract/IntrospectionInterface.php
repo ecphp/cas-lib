@@ -20,6 +20,4 @@ interface IntrospectionInterface
     public function getParsedResponse(): array;
 
     public function getResponse(): ResponseInterface;
-
-    public function withParsedResponse(array $parsedResponse): IntrospectionInterface;
 }

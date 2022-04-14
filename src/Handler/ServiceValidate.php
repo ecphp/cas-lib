@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Service;
+namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
-final class ServiceValidate extends Service implements ServiceInterface
+final class ServiceValidate extends Service implements ServiceValidateHandlerInterface
 {
     protected function getProtocolProperties(RequestInterface $request): array
     {
@@ -31,10 +31,11 @@ final class ServiceValidate extends Service implements ServiceInterface
 
     protected function getUri(RequestInterface $request): UriInterface
     {
-        return $this->buildUri(
-            $request->getUri(),
-            'serviceValidate',
-            $this->formatProtocolParameters($this->getParameters($request))
-        );
+        return $this
+            ->buildUri(
+                $request->getUri(),
+                'serviceValidate',
+                $this->formatProtocolParameters($this->getParameters($request))
+            );
     }
 }

@@ -9,14 +9,44 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Service;
+namespace tests\EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Handler\Service;
+use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Utils\Uri;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-final class ProxyValidate extends Service implements ServiceInterface
+class ProxyValidate extends Service
 {
+    public function getCache(): CacheItemPoolInterface
+    {
+        return parent::getCache();
+    }
+
+    public function getClient(): ClientInterface
+    {
+        return parent::getClient();
+    }
+
+    public function getIntrospector(): IntrospectorInterface
+    {
+        return parent::getIntrospector();
+    }
+
+    public function parse(RequestInterface $request, ResponseInterface $response): array
+    {
+        return parent::parse($request, $response);
+    }
+
+    public function updateParsedResponseWithPgt(array $response): array
+    {
+        return parent::updateParsedResponseWithPgt($response);
+    }
+
     protected function getProtocolProperties(RequestInterface $request): array
     {
         $protocolProperties = $this->getProperties()['protocol']['proxyValidate'] ?? [];

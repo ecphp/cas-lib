@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Redirect;
 
+use EcPhp\CasLib\Introspection\Introspector;
 use EcPhp\CasLib\Redirect\Login;
 use Exception;
 use loophp\psr17\Psr17;
-use loophp\psr17\Psr17Interface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Request;
 use Nyholm\Psr7\Uri;
@@ -22,6 +22,7 @@ use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\ResponseInterface;
 use spec\EcPhp\CasLib\Cas;
+use Symfony\Component\HttpClient\Psr18Client;
 
 class LoginSpec extends ObjectBehavior
 {
@@ -34,7 +35,14 @@ class LoginSpec extends ObjectBehavior
             'custom' => range(1, 5),
         ];
 
-        $this->beConstructedWith($parameters, Cas::getTestProperties(), $psr17, $cache);
+        $this->beConstructedWith(
+            $parameters,
+            $cache,
+            new Psr18Client(Cas::getHttpClientMock()),
+            new Introspector(),
+            Cas::getTestProperties(),
+            $psr17
+        );
 
         $request = new Request(
             'GET',
@@ -62,7 +70,14 @@ class LoginSpec extends ObjectBehavior
             'service' => 'service',
         ];
 
-        $this->beConstructedWith($parameters, Cas::getTestProperties(), $psr17, $cache);
+        $this->beConstructedWith(
+            $parameters,
+            $cache,
+            new Psr18Client(Cas::getHttpClientMock()),
+            new Introspector(),
+            Cas::getTestProperties(),
+            $psr17
+        );
 
         $request = new Request(
             'GET',
@@ -84,7 +99,14 @@ class LoginSpec extends ObjectBehavior
             'gateway' => false,
         ];
 
-        $this->beConstructedWith($parameters, Cas::getTestProperties(), $psr17, $cache);
+        $this->beConstructedWith(
+            $parameters,
+            $cache,
+            new Psr18Client(Cas::getHttpClientMock()),
+            new Introspector(),
+            Cas::getTestProperties(),
+            $psr17
+        );
 
         $request = new Request(
             'GET',
@@ -96,27 +118,35 @@ class LoginSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(ResponseInterface::class);
     }
 
-    public function it_can_get_a_response(CacheItemPoolInterface $cache)
+    public function it_can_get_a_response()
+    {
+        $request = new Request(
+            'GET',
+            new Uri('http://from/it_can_deal_with_renew_parameter')
+        );
+
+        $this
+            ->handle($request)
+            ->shouldBeAnInstanceOf(ResponseInterface::class);
+    }
+
+    public function it_is_initializable()
+    {
+        $this->shouldHaveType(Login::class);
+    }
+
+    public function let(CacheItemPoolInterface $cache)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache);
-
-        $request = new Request(
-            'GET',
-            new Uri('http://from/it_can_deal_with_renew_parameter')
+        $this->beConstructedWith(
+            [],
+            $cache,
+            new Psr18Client(Cas::getHttpClientMock()),
+            new Introspector(),
+            Cas::getTestProperties(),
+            $psr17
         );
-
-        $this
-            ->handle($request)
-            ->shouldBeAnInstanceOf(ResponseInterface::class);
-    }
-
-    public function it_is_initializable(CacheItemPoolInterface $cache, Psr17Interface $psr17)
-    {
-        $this->beConstructedWith([], Cas::getTestProperties(), $psr17, $cache);
-
-        $this->shouldHaveType(Login::class);
     }
 }

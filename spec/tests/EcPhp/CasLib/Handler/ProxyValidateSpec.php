@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace spec\tests\EcPhp\CasLib\Service;
+namespace spec\tests\EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
 use EcPhp\CasLib\Introspection\Introspector;
@@ -22,9 +22,9 @@ use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use spec\EcPhp\CasLib\Cas;
+use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\HttpClient\Psr18Client;
-use tests\EcPhp\CasLib\Service\ProxyValidate;
+use tests\EcPhp\CasLib\Handler\ProxyValidate;
 
 class ProxyValidateSpec extends ObjectBehavior
 {
@@ -33,7 +33,7 @@ class ProxyValidateSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $client = new Psr18Client(Cas::getHttpClientMock());
+        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $cacheItem
             ->set('pgtId')
@@ -59,7 +59,14 @@ class ProxyValidateSpec extends ObjectBehavior
             ->getItem('pgtIou')
             ->willReturn($cacheItem);
 
-        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, new Introspector());
+        $this->beConstructedWith(
+            [],
+            $cache,
+            $client,
+            new Introspector(),
+            CasSpecUtils::getTestProperties(),
+            $psr17
+        );
 
         $this
             ->getClient()
@@ -96,11 +103,11 @@ class ProxyValidateSpec extends ObjectBehavior
 
     public function it_can_detect_when_no_credentials()
     {
-        $response = new Response(500);
+        $request = new Request('GET', 'http://from/it_can_detect_when_no_credentials/error500');
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('getCredentials', [$response]);
+            ->during('handle', [$request]);
     }
 
     public function it_can_parse_a_response(CacheItemPoolInterface $cache)
@@ -108,9 +115,14 @@ class ProxyValidateSpec extends ObjectBehavior
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $client = new Psr18Client(Cas::getHttpClientMock());
-
-        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, new Introspector());
+        $this->beConstructedWith(
+            [],
+            $cache,
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            new Introspector(),
+            CasSpecUtils::getTestProperties(),
+            $psr17
+        );
 
         $body = <<< 'EOF'
                 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
@@ -140,11 +152,18 @@ class ProxyValidateSpec extends ObjectBehavior
         $this->shouldHaveType(ProxyValidate::class);
     }
 
-    public function let(ClientInterface $client, CacheItemPoolInterface $cache)
+    public function let(CacheItemPoolInterface $cache)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $this->beConstructedWith([], Cas::getTestProperties(), $client, $psr17, $cache, new Introspector());
+        $this->beConstructedWith(
+            [],
+            $cache,
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            new Introspector(),
+            CasSpecUtils::getTestProperties(),
+            $psr17
+        );
     }
 }

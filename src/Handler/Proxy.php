@@ -9,18 +9,26 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Service;
+namespace EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Exception\CasException;
 use Exception;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
+use Throwable;
 
-final class Proxy extends Service implements ServiceInterface
+final class Proxy extends Service implements HandlerInterface
 {
-    public function getCredentials(ResponseInterface $response): ResponseInterface
+    public function handle(RequestInterface $request): ResponseInterface
     {
-        $introspect = $this->getIntrospector()->detect($response);
+        try {
+            $response = $this->getClient()->sendRequest($request);
+        } catch (Throwable $exception) {
+            throw CasException::errorWhileDoingRequest($exception);
+        }
+
+        $introspect = $this->getIntrospector()->detect($this->normalize($request, $response));
 
         if (false === ($introspect instanceof \EcPhp\CasLib\Introspection\Contract\Proxy)) {
             throw new Exception('Invalid response type.');
@@ -36,10 +44,11 @@ final class Proxy extends Service implements ServiceInterface
 
     protected function getUri(RequestInterface $request): UriInterface
     {
-        return $this->buildUri(
-            $request->getUri(),
-            'proxy',
-            $this->formatProtocolParameters($this->getParameters($request))
-        );
+        return $this
+            ->buildUri(
+                $request->getUri(),
+                'proxy',
+                $this->formatProtocolParameters($this->getParameters($request))
+            );
     }
 }

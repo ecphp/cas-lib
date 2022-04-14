@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib;
 
-use EcPhp\CasLib\Configuration\PropertiesInterface;
-use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -31,16 +29,6 @@ interface CasInterface
         RequestInterface $request,
         array $parameters = []
     ): array;
-
-    public function detect(ResponseInterface $response): IntrospectionInterface;
-
-    /**
-     * Get the CAS properties.
-     *
-     * @return \EcPhp\CasLib\Configuration\PropertiesInterface
-     *   The properties.
-     */
-    public function getProperties(): PropertiesInterface;
 
     /**
      * Handle the request made on the proxy callback URL.
