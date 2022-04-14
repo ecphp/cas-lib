@@ -12,28 +12,29 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Service;
 
 use EcPhp\CasLib\Utils\Uri;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 final class ProxyValidate extends Service implements ServiceInterface
 {
-    protected function getProtocolProperties(): array
+    protected function getProtocolProperties(RequestInterface $request): array
     {
         $protocolProperties = $this->getProperties()['protocol']['proxyValidate'] ?? [];
 
         $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
-            'ticket' => Uri::getParam($this->getServerRequest()->getUri(), 'ticket'),
+            'service' => (string) $request->getUri(),
+            'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
 
         return $protocolProperties;
     }
 
-    protected function getUri(): UriInterface
+    protected function getUri(RequestInterface $request): UriInterface
     {
         return $this->buildUri(
-            $this->getServerRequest()->getUri(),
+            $request->getUri(),
             'proxyValidate',
-            $this->formatProtocolParameters($this->getParameters())
+            $this->formatProtocolParameters($this->getParameters($request))
         );
     }
 }

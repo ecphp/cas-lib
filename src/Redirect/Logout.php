@@ -11,26 +11,28 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Redirect;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
 final class Logout extends Redirect implements RedirectInterface
 {
-    public function handle(): ?ResponseInterface
+    public function handle(RequestInterface $request): ?ResponseInterface
     {
-        return $this->createRedirectResponse((string) $this->getUri());
+        return $this->createRedirectResponse((string) $this->getUri($request));
     }
 
-    protected function getProtocolProperties(): array
+    protected function getProtocolProperties(RequestInterface $request): array
     {
         return $this->getProperties()['protocol']['logout'] ?? [];
     }
 
-    private function getUri(): UriInterface
+    private function getUri(RequestInterface $request): UriInterface
     {
-        $serverRequest = $this->getServerRequest()->getUri();
-        $parameters = $this->formatProtocolParameters($this->getParameters());
-
-        return $this->buildUri($serverRequest, 'logout', $parameters);
+        return $this->buildUri(
+            $request->getUri(),
+            'logout',
+            $this->formatProtocolParameters($this->getParameters($request))
+        );
     }
 }

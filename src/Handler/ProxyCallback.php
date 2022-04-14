@@ -13,21 +13,21 @@ namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 final class ProxyCallback extends Handler implements HandlerInterface
 {
-    public function handle(): ?ResponseInterface
+    public function handle(RequestInterface $request): ?ResponseInterface
     {
-        $serverRequest = $this->getServerRequest();
         $response = $this
             ->getResponseFactory()
             ->createResponse(200);
 
         // POST parameters prevails over GET parameters.
-        $parameters = $this->getParameters() +
-            (array) $serverRequest->getParsedBody() +
-            Uri::getParams($serverRequest->getUri()) +
+        $parameters = $this->getParameters($request) +
+            (array) $request->getBody() +
+            Uri::getParams($request->getUri()) +
             ['pgtId' => null, 'pgtIou' => null];
 
         if (null === $parameters['pgtId'] && null === $parameters['pgtIou']) {

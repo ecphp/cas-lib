@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Redirect;
 
 use EcPhp\CasLib\Utils\Uri;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -19,10 +20,10 @@ use function array_key_exists;
 
 final class Login extends Redirect implements RedirectInterface
 {
-    public function handle(): ?ResponseInterface
+    public function handle(RequestInterface $request): ?ResponseInterface
     {
-        $parameters = $this->formatProtocolParameters($this->getParameters());
-        $validatedParameters = $this->validate($parameters);
+        $parameters = $this->formatProtocolParameters($this->getParameters($request));
+        $validatedParameters = $this->validate($request, $parameters);
 
         if (null === $validatedParameters) {
             $this
@@ -38,7 +39,7 @@ final class Login extends Redirect implements RedirectInterface
             return null;
         }
 
-        return $this->createRedirectResponse((string) $this->getUri($validatedParameters));
+        return $this->createRedirectResponse((string) $this->getUri($request, $validatedParameters));
     }
 
     protected function formatProtocolParameters(array $parameters): array
@@ -56,12 +57,12 @@ final class Login extends Redirect implements RedirectInterface
         return $parameters;
     }
 
-    protected function getProtocolProperties(): array
+    protected function getProtocolProperties(RequestInterface $request): array
     {
         $protocolProperties = $this->getProperties()['protocol']['login'] ?? [];
 
         $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
+            'service' => (string) $request->getUri(),
         ];
 
         return $protocolProperties;
@@ -70,10 +71,10 @@ final class Login extends Redirect implements RedirectInterface
     /**
      * @param string[] $parameters
      */
-    private function getUri(array $parameters = []): UriInterface
+    private function getUri(RequestInterface $request, array $parameters = []): UriInterface
     {
         return $this->buildUri(
-            $this->getServerRequest()->getUri(),
+            $request->getUri(),
             'login',
             $parameters
         );
@@ -84,9 +85,9 @@ final class Login extends Redirect implements RedirectInterface
      *
      * @return string[]|null
      */
-    private function validate(array $parameters): ?array
+    private function validate(RequestInterface $request, array $parameters): ?array
     {
-        $uri = $this->getServerRequest()->getUri();
+        $uri = $request->getUri();
 
         $renew = $parameters['renew'] ?? false;
         $gateway = $parameters['gateway'] ?? false;

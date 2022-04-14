@@ -20,7 +20,6 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
@@ -48,11 +47,6 @@ class ProxyValidate extends Service
         return parent::getLogger();
     }
 
-    public function getRequest(): RequestInterface
-    {
-        return parent::getRequest();
-    }
-
     public function getRequestFactory(): RequestFactoryInterface
     {
         return parent::getRequestFactory();
@@ -61,11 +55,6 @@ class ProxyValidate extends Service
     public function getResponseFactory(): ResponseFactoryInterface
     {
         return parent::getResponseFactory();
-    }
-
-    public function getServerRequest(): ServerRequestInterface
-    {
-        return parent::getServerRequest();
     }
 
     public function getStreamFactory(): StreamFactoryInterface
@@ -78,9 +67,9 @@ class ProxyValidate extends Service
         return parent::getUriFactory();
     }
 
-    public function parse(ResponseInterface $response): array
+    public function parse(RequestInterface $request, ResponseInterface $response): array
     {
-        return parent::parse($response);
+        return parent::parse($request, $response);
     }
 
     public function updateParsedResponseWithPgt(array $response): ?array
@@ -88,27 +77,24 @@ class ProxyValidate extends Service
         return parent::updateParsedResponseWithPgt($response);
     }
 
-    protected function getProtocolProperties(): array
+    protected function getProtocolProperties(RequestInterface $request): array
     {
         $protocolProperties = $this->getProperties()['protocol']['proxyValidate'] ?? [];
 
         $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
-            'ticket' => Uri::getParam($this->getServerRequest()->getUri(), 'ticket'),
+            'service' => (string) $request->getUri(),
+            'ticket' => Uri::getParam($request->getUri(), 'ticket'),
         ];
 
         return $protocolProperties;
     }
 
-    /**
-     * Get the URI.
-     */
-    protected function getUri(): UriInterface
+    protected function getUri(RequestInterface $request): UriInterface
     {
         return $this->buildUri(
-            $this->getServerRequest()->getUri(),
+            $request->getUri(),
             'proxyValidate',
-            $this->formatProtocolParameters($this->getParameters())
+            $this->formatProtocolParameters($this->getParameters($request))
         );
     }
 }

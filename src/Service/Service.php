@@ -23,7 +23,6 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
@@ -42,7 +41,6 @@ abstract class Service extends Handler
     private RequestFactoryInterface $requestFactory;
 
     public function __construct(
-        ServerRequestInterface $serverRequest,
         array $parameters,
         PropertiesInterface $properties,
         ClientInterface $client,
@@ -55,7 +53,6 @@ abstract class Service extends Handler
         IntrospectorInterface $introspector
     ) {
         parent::__construct(
-            $serverRequest,
             $parameters,
             $properties,
             $uriFactory,
@@ -130,10 +127,10 @@ abstract class Service extends Handler
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function handle(): ?ResponseInterface
+    public function handle(RequestInterface $request): ?ResponseInterface
     {
         try {
-            $response = $this->getClient()->sendRequest($this->getRequest());
+            $response = $this->getClient()->sendRequest($request);
         } catch (ClientExceptionInterface $exception) {
             $this
                 ->getLogger()
@@ -142,7 +139,7 @@ abstract class Service extends Handler
             $response = null;
         }
 
-        return null === $response ? $response : $this->normalize($response);
+        return null === $response ? null : $this->normalize($request, $response);
     }
 
     protected function getClient(): ClientInterface
@@ -155,11 +152,6 @@ abstract class Service extends Handler
         return $this->introspector;
     }
 
-    protected function getRequest(): RequestInterface
-    {
-        return $this->getRequestFactory()->createRequest('GET', $this->getUri());
-    }
-
     protected function getRequestFactory(): RequestFactoryInterface
     {
         return $this->requestFactory;
@@ -168,7 +160,7 @@ abstract class Service extends Handler
     /**
      * Get the URI.
      */
-    abstract protected function getUri(): UriInterface;
+    abstract protected function getUri(RequestInterface $request): UriInterface;
 
     /**
      * Parse the response format.
@@ -176,9 +168,9 @@ abstract class Service extends Handler
      * @return array[]|string[]
      *   The parsed response.
      */
-    protected function parse(ResponseInterface $response): array
+    protected function parse(RequestInterface $request, ResponseInterface $response): array
     {
-        $format = $this->getProtocolProperties()['default_parameters']['format'] ?? 'XML';
+        $format = $this->getProtocolProperties($request)['default_parameters']['format'] ?? 'XML';
 
         try {
             $array = $this->getIntrospector()->parse($response, $format);
@@ -229,9 +221,9 @@ abstract class Service extends Handler
     /**
      * Normalize a response.
      */
-    private function normalize(ResponseInterface $response): ResponseInterface
+    private function normalize(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $body = $this->parse($response);
+        $body = $this->parse($request, $response);
 
         if ([] === $body) {
             $this

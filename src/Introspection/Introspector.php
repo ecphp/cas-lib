@@ -34,7 +34,7 @@ final class Introspector implements IntrospectorInterface
         $format = null;
 
         if (200 !== $response->getStatusCode()) {
-            throw new InvalidArgumentException('Unable to detect the response format.');
+            throw new InvalidArgumentException('Invalid status code.');
         }
 
         if (true === $response->hasHeader('Content-Type')) {

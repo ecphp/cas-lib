@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Service;
 
 use InvalidArgumentException;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -36,17 +37,17 @@ final class Proxy extends Service implements ServiceInterface
         return $response;
     }
 
-    protected function getProtocolProperties(): array
+    protected function getProtocolProperties(RequestInterface $request): array
     {
         return $this->getProperties()['protocol']['proxy'] ?? [];
     }
 
-    protected function getUri(): UriInterface
+    protected function getUri(RequestInterface $request): UriInterface
     {
         return $this->buildUri(
-            $this->getServerRequest()->getUri(),
+            $request->getUri(),
             'proxy',
-            $this->formatProtocolParameters($this->getParameters())
+            $this->formatProtocolParameters($this->getParameters($request))
         );
     }
 }
