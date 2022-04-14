@@ -15,9 +15,6 @@ use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class ProxyCallback.
- */
 final class ProxyCallback extends Handler implements HandlerInterface
 {
     public function handle(): ?ResponseInterface

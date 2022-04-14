@@ -35,20 +35,11 @@ use const JSON_ERROR_NONE;
 
 abstract class Service extends Handler
 {
-    /**
-     * @var \Psr\Http\Client\ClientInterface
-     */
-    private $client;
+    private ClientInterface $client;
 
-    /**
-     * @var \EcPhp\CasLib\Introspection\Contract\IntrospectorInterface
-     */
-    private $introspector;
+    private IntrospectorInterface $introspector;
 
-    /**
-     * @var \Psr\Http\Message\RequestFactoryInterface
-     */
-    private $requestFactory;
+    private RequestFactoryInterface $requestFactory;
 
     public function __construct(
         ServerRequestInterface $serverRequest,

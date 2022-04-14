@@ -11,21 +11,18 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Configuration;
 
+use ReturnTypeWillChange;
+
 use function array_key_exists;
 
-/**
- * Class Properties.
- */
 final class Properties implements PropertiesInterface
 {
     /**
      * @var array<string, mixed>
      */
-    private $properties;
+    private array $properties;
 
     /**
-     * Properties constructor.
-     *
      * @param array<string, mixed> $properties
      */
     public function __construct(array $properties)
@@ -44,10 +41,8 @@ final class Properties implements PropertiesInterface
 
     /**
      * @param mixed $offset
-     *
-     * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->properties);
     }
@@ -57,6 +52,7 @@ final class Properties implements PropertiesInterface
      *
      * @return array<string, mixed>|string|null
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->properties[$offset];
@@ -65,20 +61,16 @@ final class Properties implements PropertiesInterface
     /**
      * @param mixed $offset
      * @param mixed $value
-     *
-     * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->properties[$offset] = $value;
     }
 
     /**
      * @param mixed $offset
-     *
-     * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->properties[$offset]);
     }

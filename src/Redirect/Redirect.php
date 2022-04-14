@@ -14,9 +14,6 @@ namespace EcPhp\CasLib\Redirect;
 use EcPhp\CasLib\Handler\Handler;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class Redirect.
- */
 abstract class Redirect extends Handler
 {
     protected function createRedirectResponse(string $url): ResponseInterface

@@ -14,9 +14,6 @@ namespace EcPhp\CasLib\Utils;
 use League\Uri\Components\Query;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class Uri.
- */
 final class Uri
 {
     public static function getParam(UriInterface $uri, string $param, ?string $default = null): ?string

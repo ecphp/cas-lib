@@ -16,9 +16,6 @@ use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Interface CasInterface.
- */
 interface CasInterface
 {
     /**

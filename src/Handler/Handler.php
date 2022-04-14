@@ -23,54 +23,25 @@ use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
 
-/**
- * Class Handler.
- */
 abstract class Handler
 {
-    /**
-     * @var \Psr\Cache\CacheItemPoolInterface
-     */
-    private $cache;
+    private CacheItemPoolInterface $cache;
+
+    private LoggerInterface $logger;
+
+    private array $parameters;
+
+    private PropertiesInterface $properties;
+
+    private ResponseFactoryInterface $responseFactory;
+
+    private ServerRequestInterface $serverRequest;
+
+    private StreamFactoryInterface $streamFactory;
+
+    private UriFactoryInterface $uriFactory;
 
     /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var array[]|string[]
-     */
-    private $parameters;
-
-    /**
-     * @var \EcPhp\CasLib\Configuration\PropertiesInterface
-     */
-    private $properties;
-
-    /**
-     * @var \Psr\Http\Message\ResponseFactoryInterface
-     */
-    private $responseFactory;
-
-    /**
-     * @var \Psr\Http\Message\ServerRequestInterface
-     */
-    private $serverRequest;
-
-    /**
-     * @var \Psr\Http\Message\StreamFactoryInterface
-     */
-    private $streamFactory;
-
-    /**
-     * @var \Psr\Http\Message\UriFactoryInterface
-     */
-    private $uriFactory;
-
-    /**
-     * Handler constructor.
-     *
      * @param array[]|string[] $parameters
      */
     public function __construct(

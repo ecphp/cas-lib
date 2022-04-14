@@ -17,9 +17,6 @@ use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
 
-/**
- * Class Login.
- */
 final class Login extends Redirect implements RedirectInterface
 {
     public function handle(): ?ResponseInterface

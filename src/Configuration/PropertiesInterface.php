@@ -14,8 +14,6 @@ namespace EcPhp\CasLib\Configuration;
 use ArrayAccess;
 
 /**
- * Interface PropertiesInterface.
- *
  * @template-extends ArrayAccess<string, mixed>
  */
 interface PropertiesInterface extends ArrayAccess

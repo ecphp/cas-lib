@@ -20,6 +20,7 @@ use InvalidArgumentException;
 use LSS\XML2Array;
 use Psr\Http\Message\ResponseInterface;
 
+use function array_key_exists;
 use const JSON_ERROR_NONE;
 use const LIBXML_NOBLANKS;
 use const LIBXML_NOCDATA;
@@ -37,7 +38,7 @@ final class Introspector implements IntrospectorInterface
         }
 
         if (true === $response->hasHeader('Content-Type')) {
-            $header = mb_substr($response->getHeaderLine('Content-Type'), 0, 16);
+            $header = substr($response->getHeaderLine('Content-Type'), 0, 16);
 
             switch ($header) {
                 case 'application/json':
@@ -62,19 +63,23 @@ final class Introspector implements IntrospectorInterface
             throw new InvalidArgumentException($exception->getMessage());
         }
 
-        if (isset($data['serviceResponse']['authenticationFailure'])) {
+        if (false === array_key_exists('serviceResponse', $data)) {
+            throw new InvalidArgumentException('Unable to find the response type.');
+        }
+
+        if (array_key_exists('authenticationFailure', $data['serviceResponse'])) {
             return new AuthenticationFailure($data, $format, $response);
         }
 
-        if (isset($data['serviceResponse']['proxyFailure'])) {
+        if (array_key_exists('proxyFailure', $data['serviceResponse'])) {
             return new ProxyFailure($data, $format, $response);
         }
 
-        if (isset($data['serviceResponse']['authenticationSuccess']['user'])) {
+        if (array_key_exists('authenticationSuccess', $data['serviceResponse']) && array_key_exists('user', $data['serviceResponse']['authenticationSuccess'])) {
             return new ServiceValidate($data, $format, $response);
         }
 
-        if (isset($data['serviceResponse']['proxySuccess']['proxyTicket'])) {
+        if (array_key_exists('proxySuccess', $data['serviceResponse']) && array_key_exists('proxyTicket', $data['serviceResponse']['proxySuccess'])) {
             return new Proxy($data, $format, $response);
         }
 

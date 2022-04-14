@@ -35,73 +35,25 @@ use function array_key_exists;
 
 final class Cas implements CasInterface
 {
-    /**
-     * The cache.
-     *
-     * @var \Psr\Cache\CacheItemPoolInterface
-     */
-    private $cache;
+    private CacheItemPoolInterface $cache;
 
-    /**
-     * The HTTP client.
-     *
-     * @var \Psr\Http\Client\ClientInterface
-     */
-    private $client;
+    private ClientInterface $client;
 
-    /**
-     * @var \EcPhp\CasLib\Introspection\Contract\IntrospectorInterface
-     */
-    private $introspector;
+    private IntrospectorInterface $introspector;
 
-    /**
-     * The logger.
-     *
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * The CAS properties.
-     *
-     * @var PropertiesInterface
-     */
-    private $properties;
+    private PropertiesInterface $properties;
 
-    /**
-     * The request factory.
-     *
-     * @var \Psr\Http\Message\RequestFactoryInterface
-     */
-    private $requestFactory;
+    private RequestFactoryInterface $requestFactory;
 
-    /**
-     * The response factory.
-     *
-     * @var \Psr\Http\Message\ResponseFactoryInterface
-     */
-    private $responseFactory;
+    private ResponseFactoryInterface $responseFactory;
 
-    /**
-     * The server request.
-     *
-     * @var \Psr\Http\Message\ServerRequestInterface
-     */
-    private $serverRequest;
+    private ServerRequestInterface $serverRequest;
 
-    /**
-     * The stream factory.
-     *
-     * @var \Psr\Http\Message\StreamFactoryInterface
-     */
-    private $streamFactory;
+    private StreamFactoryInterface $streamFactory;
 
-    /**
-     * The URI factory.
-     *
-     * @var \Psr\Http\Message\UriFactoryInterface
-     */
-    private $uriFactory;
+    private UriFactoryInterface $uriFactory;
 
     public function __construct(
         ServerRequestInterface $serverRequest,

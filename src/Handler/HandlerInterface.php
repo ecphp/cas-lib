@@ -13,9 +13,6 @@ namespace EcPhp\CasLib\Handler;
 
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Interface HandlerInterface.
- */
 interface HandlerInterface
 {
     /**
