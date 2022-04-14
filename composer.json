@@ -32,7 +32,7 @@
         "friends-of-phpspec/phpspec-code-coverage": "^6.0.0",
         "infection/infection": "^0.23 || ^0.24",
         "infection/phpspec-adapter": "^0.1.2",
-        "monolog/monolog": "^1.0",
+        "monolog/monolog": "^1.0 || ^2.0",
         "nyholm/psr7": "^1.4",
         "nyholm/psr7-server": "^1.0.0",
         "phpspec/phpspec": "^7",
