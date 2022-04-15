@@ -13,6 +13,7 @@ namespace spec\EcPhp\CasLib;
 
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
+use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Response\CasResponseBuilder;
 use EcPhp\CasLib\Utils\Uri as UtilsUri;
 use Exception;
@@ -42,27 +43,6 @@ class CasSpec extends ObjectBehavior
      */
     protected $cacheItem;
 
-    public function it_can_authenticate()
-    {
-        $request = new ServerRequest(
-            'GET',
-            'http://from/?ticket=ST-TICKET-INVALID'
-        );
-
-        $this
-            ->shouldThrow(Exception::class)
-            ->during('authenticate', [$request]);
-
-        $request = new ServerRequest(
-            'GET',
-            'http://from/?ticket=ST-TICKET-VALID'
-        );
-
-        $this
-            ->authenticate($request)
-            ->shouldBeArray();
-    }
-
     /**
      * @param \PhpSpec\Wrapper\Collaborator|\Psr\Http\Client\ClientInterface $client
      * @param \PhpSpec\Wrapper\Collaborator|\Psr\Cache\CacheItemPoolInterface $cache
@@ -73,7 +53,6 @@ class CasSpec extends ObjectBehavior
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $cacheItem = new CacheItem();
         $cacheItem->set('pgtId');
@@ -86,7 +65,43 @@ class CasSpec extends ObjectBehavior
             ->getItem('pgtIou')
             ->willReturn($cacheItem);
 
-        $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
+        $cache
+            ->hasItem('unknownPgtIou')
+            ->willReturn(false);
+
+        $cache
+            ->hasItem('pgtIouWithPgtIdNull')
+            ->willReturn(true);
+
+        $cache
+            ->getItem('pgtIouWithPgtIdNull')
+            ->willReturn(new CacheItem());
+
+        $this->beConstructedWith(
+            CasSpecUtils::getTestProperties(),
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder()
+        );
+
+        $request = new ServerRequest(
+            'GET',
+            'http://from/?ticket=ST-TICKET-INVALID'
+        );
+
+        $this
+            ->shouldThrow(CasException::class)
+            ->during('authenticate', [$request]);
+
+        $request = new ServerRequest(
+            'GET',
+            'http://from/?ticket=ST-TICKET-VALID'
+        );
+
+        $this
+            ->authenticate($request)
+            ->shouldBeArray();
 
         $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-TICKET-VALID']));
 
@@ -112,12 +127,6 @@ class CasSpec extends ObjectBehavior
             ->shouldThrow(Exception::class)
             ->during('authenticate', [$request]);
 
-        $request = new ServerRequest('GET', new Uri('http://from'));
-
-        $this
-            ->shouldThrow(Exception::class)
-            ->during('authenticate', [$request]);
-
         $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt']));
 
         $this
@@ -130,12 +139,11 @@ class CasSpec extends ObjectBehavior
             ->shouldThrow(Exception::class)
             ->during('authenticate', [$request]);
 
-        // This test returns a valid response because pgtUrl is not enabled.
         $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt-pgtiou-pgtid-null']));
 
         $this
-            ->authenticate($request)
-            ->shouldBeArray();
+            ->shouldThrow(Exception::class)
+            ->during('authenticate', [$request]);
     }
 
     public function it_can_authenticate_a_request_in_proxy_mode(ClientInterface $client, CacheItemPoolInterface $cache)

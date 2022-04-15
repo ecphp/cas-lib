@@ -19,10 +19,10 @@ final class Logout extends Redirect implements RedirectInterface
 {
     public function handle(RequestInterface $request): ResponseInterface
     {
-        return $this->createRedirectResponse((string) $this->getUri($request));
+        return $this->createRedirectResponse($this->getUri($request));
     }
 
-    protected function getProtocolProperties(RequestInterface $request): array
+    protected function getProtocolProperties(UriInterface $uri): array
     {
         return $this->getProperties()['protocol']['logout'] ?? [];
     }

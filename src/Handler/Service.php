@@ -19,8 +19,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-
-use function array_key_exists;
+use Throwable;
 
 abstract class Service extends Handler
 {
@@ -38,57 +37,48 @@ abstract class Service extends Handler
             throw new Exception('CAS Service validation failed.');
         }
 
-        $parsedResponse = $response->toArray();
-
-        $proxyGrantingTicket = array_key_exists(
-            'proxyGrantingTicket',
-            $parsedResponse['serviceResponse']['authenticationSuccess']
-        );
-
-        if (false === $proxyGrantingTicket) {
+        try {
+            $proxyGrantingTicket = $response->getProxyGrantingTicket();
+        } catch (Throwable $exception) {
             return $response;
         }
 
-        $body = json_encode(
-            $this->updateParsedResponseWithPgt($parsedResponse)
-        );
+        $hasPgtIou = $this
+            ->getCache()
+            ->hasItem($proxyGrantingTicket);
 
-        if (false === $body) {
-            throw new Exception('Unable to JSON encode the body');
+        if (false === $hasPgtIou) {
+            throw new Exception('PGT not found in the cache.');
+        }
+
+        try {
+            $pgtId = $this
+                ->getCache()
+                ->getItem($proxyGrantingTicket);
+        } catch (Throwable $exception) {
+            throw new Exception('Unable to get PGT from cache', 0, $exception);
+        }
+
+        if (null === $pgtId->get()) {
+            throw new Exception('Invalid PGT ID value.');
         }
 
         return $response
-            ->withBody($this->getPsr17()->createStream($body))
-            ->withHeader('Content-Type', 'application/json');
+            ->withBody(
+                $this
+                    ->getPsr17()
+                    ->createStream(
+                        str_replace(
+                            $proxyGrantingTicket,
+                            $pgtId->get(),
+                            (string) $response->getBody()
+                        )
+                    )
+            );
     }
 
     /**
      * Get the URI.
      */
     abstract protected function getUri(RequestInterface $request): UriInterface;
-
-    /**
-     * @param array[] $response
-     *
-     * @return array[]|null
-     */
-    protected function updateParsedResponseWithPgt(array $response): array
-    {
-        $pgt = $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'];
-
-        $hasPgtIou = $this
-            ->getCache()
-            ->hasItem($pgt);
-
-        if (false === $hasPgtIou) {
-            throw new Exception('CAS validation failed: pgtIou not found in the cache.');
-        }
-
-        $response['serviceResponse']['authenticationSuccess']['proxyGrantingTicket'] = $this
-            ->getCache()
-            ->getItem($pgt)
-            ->get();
-
-        return $response;
-    }
 }

@@ -18,4 +18,6 @@ interface ServiceValidate extends CasResponseInterface
     public function getCredentials(): array;
 
     public function getProxies(): array;
+
+    public function getProxyGrantingTicket(): string;
 }

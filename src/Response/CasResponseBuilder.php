@@ -12,13 +12,12 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Response;
 
 use EcPhp\CasLib\Contract\Response\CasResponseInterface;
+use EcPhp\CasLib\Exception\CasResponseBuilderException;
 use EcPhp\CasLib\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Response\Type\Proxy;
 use EcPhp\CasLib\Response\Type\ProxyFailure;
 use EcPhp\CasLib\Response\Type\ServiceValidate;
 use EcPhp\CasLib\Utils\Response as ResponseUtils;
-use Exception;
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
 use function array_key_exists;
@@ -29,14 +28,14 @@ final class CasResponseBuilder implements CasResponseBuilderInterface
 {
     public function fromResponse(ResponseInterface $response): CasResponseInterface
     {
-        if (200 !== $response->getStatusCode()) {
-            throw new Exception('Invalid status code.');
+        if (200 !== $code = $response->getStatusCode()) {
+            throw CasResponseBuilderException::invalidStatusCode($code);
         }
 
         $data = (new ResponseUtils())->toArray($response);
 
         if (false === array_key_exists('serviceResponse', $data)) {
-            throw new Exception('Invalid CAS response type.');
+            throw CasResponseBuilderException::invalidResponseType();
         }
 
         if (array_key_exists('authenticationFailure', $data['serviceResponse'])) {
@@ -47,14 +46,14 @@ final class CasResponseBuilder implements CasResponseBuilderInterface
             return new ProxyFailure($response);
         }
 
-        if (array_key_exists('authenticationSuccess', $data['serviceResponse']) && array_key_exists('user', $data['serviceResponse']['authenticationSuccess'])) {
+        if (array_key_exists('authenticationSuccess', $data['serviceResponse'])) {
             return new ServiceValidate($response);
         }
 
-        if (array_key_exists('proxySuccess', $data['serviceResponse']) && array_key_exists('proxyTicket', $data['serviceResponse']['proxySuccess'])) {
+        if (array_key_exists('proxySuccess', $data['serviceResponse'])) {
             return new Proxy($response);
         }
 
-        throw new InvalidArgumentException('Unknown CAS response type.');
+        throw CasResponseBuilderException::unknownResponseType();
     }
 }

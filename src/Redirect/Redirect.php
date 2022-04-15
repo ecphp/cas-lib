@@ -13,14 +13,15 @@ namespace EcPhp\CasLib\Redirect;
 
 use EcPhp\CasLib\Handler\Handler;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 abstract class Redirect extends Handler
 {
-    protected function createRedirectResponse(string $url): ResponseInterface
+    protected function createRedirectResponse(UriInterface $uri): ResponseInterface
     {
         return $this
             ->getPsr17()
             ->createResponse(302)
-            ->withHeader('Location', $url);
+            ->withHeader('Location', (string) $uri);
     }
 }

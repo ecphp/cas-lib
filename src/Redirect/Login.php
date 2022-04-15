@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Redirect;
 
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
-use Exception;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -23,10 +23,16 @@ final class Login extends Redirect implements RedirectInterface
 {
     public function handle(RequestInterface $request): ResponseInterface
     {
-        $parameters = $this->formatProtocolParameters($this->getParameters($request));
+        $parameters = $this
+            ->formatProtocolParameters(
+                $this->getParameters($request)
+            );
         $validatedParameters = $this->validate($request, $parameters);
 
-        return $this->createRedirectResponse((string) $this->getUri($request, $validatedParameters));
+        return $this
+            ->createRedirectResponse(
+                $this->getUri($request, $validatedParameters)
+            );
     }
 
     protected function formatProtocolParameters(array $parameters): array
@@ -44,12 +50,12 @@ final class Login extends Redirect implements RedirectInterface
         return $parameters;
     }
 
-    protected function getProtocolProperties(RequestInterface $request): array
+    protected function getProtocolProperties(UriInterface $uri): array
     {
         $protocolProperties = $this->getProperties()['protocol']['login'] ?? [];
 
         $protocolProperties['default_parameters'] += [
-            'service' => (string) $request->getUri(),
+            'service' => (string) $uri,
         ];
 
         return $protocolProperties;
@@ -58,8 +64,10 @@ final class Login extends Redirect implements RedirectInterface
     /**
      * @param string[] $parameters
      */
-    private function getUri(RequestInterface $request, array $parameters = []): UriInterface
-    {
+    private function getUri(
+        RequestInterface $request,
+        array $parameters = []
+    ): UriInterface {
         return $this->buildUri(
             $request->getUri(),
             'login',
@@ -70,19 +78,19 @@ final class Login extends Redirect implements RedirectInterface
     /**
      * @param string[] $parameters
      *
-     * @return string[]|null
+     * @return string[]
      */
-    private function validate(RequestInterface $request, array $parameters): ?array
-    {
+    private function validate(
+        RequestInterface $request,
+        array $parameters
+    ): array {
         $uri = $request->getUri();
 
         $renew = $parameters['renew'] ?? false;
         $gateway = $parameters['gateway'] ?? false;
 
         if ('true' === $renew && 'true' === $gateway) {
-            throw new Exception(
-                'Unable to get the Login response, gateway and renew parameter cannot be set together.'
-            );
+            throw CasHandlerException::loginRenewAndGatewayParametersAreSet();
         }
 
         foreach (['gateway', 'renew'] as $queryParameter) {
@@ -91,7 +99,7 @@ final class Login extends Redirect implements RedirectInterface
             }
 
             if ('true' !== Uri::getParam($uri, $queryParameter, 'true')) {
-                throw new Exception('Login parameters are invalid.');
+                throw CasHandlerException::loginInvalidParameters();
             }
         }
 

@@ -12,9 +12,13 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Response;
 
 use EcPhp\CasLib\Contract\Response\CasResponseInterface;
+use EcPhp\CasLib\Exception\CasResponseBuilderException;
 use Psr\Http\Message\ResponseInterface;
 
 interface CasResponseBuilderInterface
 {
+    /**
+     * @throws CasResponseBuilderException
+     */
     public function fromResponse(ResponseInterface $response): CasResponseInterface;
 }

@@ -17,13 +17,13 @@ use Psr\Http\Message\UriInterface;
 
 final class ProxyValidate extends Service implements ServiceValidateHandlerInterface
 {
-    protected function getProtocolProperties(RequestInterface $request): array
+    protected function getProtocolProperties(UriInterface $uri): array
     {
         $protocolProperties = $this->getProperties()['protocol']['proxyValidate'] ?? [];
 
         $protocolProperties['default_parameters'] += [
-            'service' => (string) $request->getUri(),
-            'ticket' => Uri::getParam($request->getUri(), 'ticket'),
+            'service' => (string) $uri,
+            'ticket' => Uri::getParam($uri, 'ticket'),
         ];
 
         return $protocolProperties;

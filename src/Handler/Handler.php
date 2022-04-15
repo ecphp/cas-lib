@@ -145,7 +145,7 @@ abstract class Handler
      */
     protected function getParameters(RequestInterface $request): array
     {
-        return $this->parameters + ($this->getProtocolProperties($request)['default_parameters'] ?? []);
+        return $this->parameters + ($this->getProtocolProperties($request->getUri())['default_parameters'] ?? []);
     }
 
     protected function getProperties(): PropertiesInterface
@@ -158,7 +158,7 @@ abstract class Handler
      *
      * @return array[]
      */
-    protected function getProtocolProperties(RequestInterface $request): array
+    protected function getProtocolProperties(UriInterface $uri): array
     {
         return [];
     }

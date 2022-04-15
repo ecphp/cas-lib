@@ -73,26 +73,6 @@ class ProxyValidateSpec extends ObjectBehavior
         $this
             ->getCache()
             ->shouldBeAnInstanceOf(CacheItemPoolInterface::class);
-
-        $response = [
-            'serviceResponse' => [
-                'authenticationSuccess' => [
-                    'proxyGrantingTicket' => 'pgtIou',
-                ],
-            ],
-        ];
-
-        $this
-            ->updateParsedResponseWithPgt($response)
-            ->shouldReturn(
-                [
-                    'serviceResponse' => [
-                        'authenticationSuccess' => [
-                            'proxyGrantingTicket' => 'pgtId',
-                        ],
-                    ],
-                ]
-            );
     }
 
     public function it_can_detect_when_no_credentials()

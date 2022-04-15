@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Handler\ProxyCallback;
 use EcPhp\CasLib\Handler\ProxyValidate;
@@ -20,13 +21,13 @@ use EcPhp\CasLib\Redirect\Login;
 use EcPhp\CasLib\Redirect\Logout;
 use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Utils\Uri;
-use Exception;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 use function array_key_exists;
 
@@ -62,9 +63,22 @@ final class Cas implements CasInterface
         ServerRequestInterface $request,
         array $parameters = []
     ): array {
-        $response = $this->requestTicketValidation($request, $parameters);
+        try {
+            $response = $this->requestTicketValidation($request, $parameters);
+        } catch (Throwable $exception) {
+            throw CasException::unableToAuthenticate($exception);
+        }
 
-        return $this->casResponseBuilder->fromResponse($response)->toArray();
+        try {
+            $credentials = $this
+                ->casResponseBuilder
+                ->fromResponse($response)
+                ->toArray();
+        } catch (Throwable $exception) {
+            throw CasException::unableToAuthenticate($exception);
+        }
+
+        return $credentials;
     }
 
     public function handleProxyCallback(
@@ -187,7 +201,7 @@ final class Cas implements CasInterface
         array $parameters = []
     ): ResponseInterface {
         if (false === $this->supportAuthentication($request, $parameters)) {
-            throw new Exception('This request does not support ticket validation.');
+            throw CasException::unsupportedRequest();
         }
 
         /** @var string $ticket */

@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Response\Type;
 
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as ServiceValidateInterface;
+use Exception;
+
+use function array_key_exists;
 
 final class ServiceValidate extends CasResponse implements ServiceValidateInterface
 {
@@ -27,5 +30,21 @@ final class ServiceValidate extends CasResponse implements ServiceValidateInterf
         return true === $hasProxy ?
             $this->toArray()['serviceResponse']['authenticationSuccess']['proxies'] :
             [];
+    }
+
+    public function getProxyGrantingTicket(): string
+    {
+        $credentials = $this->getCredentials();
+
+        $proxyGrantingTicket = array_key_exists(
+            'proxyGrantingTicket',
+            $credentials
+        );
+
+        if (false === $proxyGrantingTicket) {
+            throw new Exception('Missing PGT in ServiceValidate Response.');
+        }
+
+        return $credentials['proxyGrantingTicket'];
     }
 }

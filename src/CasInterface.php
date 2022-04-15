@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib;
 
+use EcPhp\CasLib\Exception\CasExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -22,6 +23,8 @@ interface CasInterface extends MiddlewareInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
+     *
+     * @throws CasExceptionInterface
      */
     public function authenticate(
         ServerRequestInterface $request,
@@ -99,6 +102,8 @@ interface CasInterface extends MiddlewareInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
+     *
+     * @throws CasExceptionInterface
      */
     public function requestTicketValidation(
         ServerRequestInterface $request,

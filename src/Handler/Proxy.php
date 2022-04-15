@@ -38,7 +38,7 @@ final class Proxy extends Service implements HandlerInterface
         return $response;
     }
 
-    protected function getProtocolProperties(RequestInterface $request): array
+    protected function getProtocolProperties(UriInterface $uri): array
     {
         return $this->getProperties()['protocol']['proxy'] ?? [];
     }

@@ -13,11 +13,13 @@ namespace EcPhp\CasLib\Utils;
 
 use DOMDocument;
 use DOMXPath;
-use Exception;
+use EcPhp\CasLib\Exception\CasException;
+use ErrorException;
 use LSS\XML2Array;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
-use const JSON_ERROR_NONE;
+use const JSON_THROW_ON_ERROR;
 use const LIBXML_NOBLANKS;
 use const LIBXML_NOCDATA;
 use const LIBXML_NONET;
@@ -26,7 +28,7 @@ use const LIBXML_NSCLEAN;
 final class Response
 {
     /**
-     * @throws Exception
+     * @throws CasException
      *
      * @return mixed[]
      */
@@ -35,46 +37,53 @@ final class Response
         $body = (string) $response->getBody();
 
         if ('' === $body) {
-            throw new Exception('Empty response body');
+            throw CasException::emptyResponseBodyFailure();
         }
 
         if (false === $response->hasHeader('Content-Type')) {
-            throw new Exception('Unable to detect response format.');
+            throw CasException::missingResponseContentTypeHeader();
         }
 
         $header = substr($response->getHeaderLine('Content-Type'), 0, 16);
 
         switch ($header) {
             case 'application/json':
-                $json = json_decode($body, true);
-
-                if (null === $json || JSON_ERROR_NONE !== json_last_error()) {
-                    throw new Exception('Unable to parse the response using JSON format.');
+                try {
+                    $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+                } catch (Throwable $exception) {
+                    throw CasException::unableToConvertResponseFromJson($exception);
                 }
 
                 return $json;
 
             case 'application/xml':
-                try {
-                    $dom = new DOMDocument();
-
-                    $dom
-                        ->loadXML(
-                            $body,
-                            LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_NOBLANKS | LIBXML_NONET
+                set_error_handler(
+                    static function ($errno, $errstr, $errfile, $errline): void {
+                        throw CasException::unableToLoadXml(
+                            new ErrorException($errstr, 0, $errno, $errfile, $errline)
                         );
+                    }
+                );
+                $dom = new DOMDocument();
+                $dom
+                    ->loadXML(
+                        $body,
+                        LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_NOBLANKS | LIBXML_NONET
+                    );
+                restore_error_handler();
 
-                    $this->removeDomNamespace($dom, 'cas');
+                $this->removeDomNamespace($dom, 'cas');
 
+                try {
                     $data = XML2Array::createArray($dom);
-                } catch (Exception $e) {
-                    throw new Exception('Unable to parse the response using XML format.', 0, $e);
+                } catch (Throwable $exception) {
+                    throw CasException::unableToConvertResponseFromXml($exception);
                 }
 
                 return $data;
         }
 
-        throw new Exception('Unsupported format.');
+        throw CasException::unsupportedResponseFormat($header);
     }
 
     private function removeDomNamespace(DOMDocument $doc, string $namespace): void
