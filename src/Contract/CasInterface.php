@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib;
+namespace EcPhp\CasLib\Contract;
 
 use EcPhp\CasLib\Exception\CasExceptionInterface;
 use Psr\Http\Message\ResponseInterface;

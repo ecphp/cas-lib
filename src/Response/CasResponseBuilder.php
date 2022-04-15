@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Response;
 
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Contract\Response\CasResponseInterface;
 use EcPhp\CasLib\Exception\CasResponseBuilderException;
 use EcPhp\CasLib\Response\Type\AuthenticationFailure;

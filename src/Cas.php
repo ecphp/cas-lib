@@ -11,14 +11,15 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib;
 
-use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Contract\CasInterface;
+use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Exception\CasException;
+use EcPhp\CasLib\Handler\Login;
+use EcPhp\CasLib\Handler\Logout;
 use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Handler\ProxyCallback;
 use EcPhp\CasLib\Handler\ServiceValidate;
-use EcPhp\CasLib\Redirect\Login;
-use EcPhp\CasLib\Redirect\Logout;
-use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Utils\Uri;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -192,9 +193,11 @@ final class Cas implements CasInterface
             ''
         );
 
-        $parameters += ['ticket' => $ticket];
-
-        return $this->requestServiceValidate($request, $parameters);
+        return $this
+            ->requestServiceValidate(
+                $request,
+                $parameters + ['ticket' => $ticket]
+            );
     }
 
     public function supportAuthentication(

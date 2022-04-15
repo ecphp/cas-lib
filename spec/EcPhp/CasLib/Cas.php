@@ -217,48 +217,24 @@ class Cas extends ObjectBehavior
             'protocol' => [
                 'login' => [
                     'path' => '/login',
-                    'allowed_parameters' => [
-                        'service',
-                        'custom',
-                        'renew',
-                        'gateway',
-                    ],
                 ],
                 'logout' => [
                     'path' => '/logout',
-                    'allowed_parameters' => [
-                        'service',
-                        'custom',
-                    ],
                 ],
                 'serviceValidate' => [
                     'path' => '/serviceValidate',
-                    'allowed_parameters' => [
-                        'ticket',
-                        'service',
-                        'custom',
-                    ],
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
                 ],
                 'proxyValidate' => [
                     'path' => '/proxyValidate',
-                    'allowed_parameters' => [
-                        'ticket',
-                        'service',
-                        'custom',
-                    ],
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
                 ],
                 'proxy' => [
                     'path' => '/proxy',
-                    'allowed_parameters' => [
-                        'targetService',
-                        'pgt',
-                    ],
                 ],
             ],
         ]);

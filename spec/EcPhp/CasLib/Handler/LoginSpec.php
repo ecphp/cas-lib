@@ -9,10 +9,11 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Redirect;
+namespace spec\EcPhp\CasLib\Handler;
 
-use EcPhp\CasLib\Redirect\Login;
-use EcPhp\CasLib\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Handler\Login;
+use Ergebnis\Http\Method;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -45,7 +46,7 @@ class LoginSpec extends ObjectBehavior
         );
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_deal_with_array_parameters')
         );
 
@@ -80,7 +81,7 @@ class LoginSpec extends ObjectBehavior
         );
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_deal_with_renew_and_gateway_parameters')
         );
 
@@ -109,7 +110,7 @@ class LoginSpec extends ObjectBehavior
         );
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_deal_with_renew_parameter')
         );
 
@@ -121,7 +122,7 @@ class LoginSpec extends ObjectBehavior
     public function it_can_get_a_response()
     {
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_deal_with_renew_parameter')
         );
 

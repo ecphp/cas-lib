@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Configuration;
+namespace EcPhp\CasLib\Contract\Configuration;
 
 use ArrayAccess;
 

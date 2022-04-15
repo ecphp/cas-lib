@@ -9,10 +9,11 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Redirect;
+namespace spec\EcPhp\CasLib\Handler;
 
-use EcPhp\CasLib\Redirect\Logout;
-use EcPhp\CasLib\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Handler\Logout;
+use Ergebnis\Http\Method;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
@@ -27,7 +28,7 @@ class LogoutSpec extends ObjectBehavior
     public function it_can_get_a_response()
     {
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/it_can_get_a_response'
         );
 

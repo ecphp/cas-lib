@@ -11,8 +11,9 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Handler\Proxy;
-use EcPhp\CasLib\Response\CasResponseBuilderInterface;
+use Ergebnis\Http\Method;
 use Exception;
 use loophp\psr17\Psr17Interface;
 use Nyholm\Psr7\ServerRequest;
@@ -26,7 +27,7 @@ class ProxySpec extends ObjectBehavior
 {
     public function it_can_detect_a_wrong_proxy_response()
     {
-        $request = new ServerRequest('GET', 'http://from');
+        $request = new ServerRequest(Method::GET, 'http://from');
 
         $this
             ->shouldThrow(Exception::class)
@@ -35,7 +36,7 @@ class ProxySpec extends ObjectBehavior
 
     public function it_can_detect_when_no_credentials()
     {
-        $request = new ServerRequest('GET', 'http://from');
+        $request = new ServerRequest(Method::GET, 'http://from');
 
         $this
             ->shouldThrow(Exception::class)

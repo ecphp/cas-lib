@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Handler\ServiceValidateHandlerInterface;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
 use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasHandlerException;

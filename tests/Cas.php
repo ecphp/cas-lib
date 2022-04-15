@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace tests\EcPhp\CasLib;
 
-use EcPhp\CasLib\CasInterface;
+use EcPhp\CasLib\Contract\CasInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

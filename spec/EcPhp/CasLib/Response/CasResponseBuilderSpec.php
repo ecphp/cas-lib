@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Response;
 
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Contract\Response\Type\Proxy;
 use EcPhp\CasLib\Contract\Response\Type\ProxyFailure;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate;
-use EcPhp\CasLib\Response\CasResponseBuilderInterface;
 use Exception;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -220,7 +220,31 @@ class CasResponseBuilderSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('fromResponse', [$response, 'FOOBAR']);
+            ->during('fromResponse', [$response]);
+    }
+
+    public function it_can_detect_an_unsupported_response_type()
+    {
+        $body = <<< 'EOF'
+                <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+                 <cas:foobar>
+                 </cas:foobar>
+                </cas:serviceResponse>
+            EOF;
+
+        $headers = [
+            'Content-Type' => 'application/xml',
+        ];
+
+        $response = new Response(
+            200,
+            $headers,
+            $body
+        );
+
+        $this
+            ->shouldThrow(Exception::class)
+            ->during('fromResponse', [$response]);
     }
 
     public function it_can_detect_the_type_of_a_response()

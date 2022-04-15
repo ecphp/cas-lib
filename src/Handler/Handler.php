@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
-use EcPhp\CasLib\Configuration\PropertiesInterface;
-use EcPhp\CasLib\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Utils\Uri;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -60,17 +60,8 @@ abstract class Handler
      */
     protected function buildUri(UriInterface $from, string $name, array $query = []): UriInterface
     {
+        $query = $query + Uri::getParams($from);
         $properties = $this->getProperties();
-
-        // Remove parameters that are not allowed.
-        $query = array_intersect_key(
-            $query,
-            (array) array_combine(
-                $properties['protocol'][$name]['allowed_parameters'] ?? [],
-                $properties['protocol'][$name]['allowed_parameters'] ?? []
-            )
-        ) + Uri::getParams($from);
-
         $baseUrl = parse_url($properties['base_url']);
 
         if (false === $baseUrl) {
@@ -90,7 +81,8 @@ abstract class Handler
             static fn ($item): bool => [] === $item ? false : ('' !== $item)
         );
 
-        return $this->getPsr17()
+        return $this
+            ->getPsr17()
             ->createUri($properties['base_url'])
             ->withPath($baseUrl['path'] . $properties['protocol'][$name]['path'])
             ->withQuery(http_build_query($query))
@@ -110,16 +102,12 @@ abstract class Handler
         );
 
         if (true === array_key_exists('service', $parameters)) {
-            $service = $this->getPsr17()->createUri(
-                $parameters['service']
-            );
-
-            $service = Uri::removeParams(
-                $service,
+            $parameters['service'] = (string) Uri::removeParams(
+                $this
+                    ->getPsr17()
+                    ->createUri($parameters['service']),
                 'ticket'
             );
-
-            $parameters['service'] = (string) $service;
         }
 
         return $parameters;

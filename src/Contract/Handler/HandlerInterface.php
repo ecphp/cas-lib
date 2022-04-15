@@ -9,8 +9,10 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Handler;
+namespace EcPhp\CasLib\Contract\Handler;
 
-interface ServiceValidateHandlerInterface extends HandlerInterface
+use Psr\Http\Server\RequestHandlerInterface;
+
+interface HandlerInterface extends RequestHandlerInterface
 {
 }

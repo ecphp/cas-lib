@@ -17,6 +17,7 @@ use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasExceptionInterface;
 use EcPhp\CasLib\Response\CasResponseBuilder;
 use EcPhp\CasLib\Utils\Uri as UtilsUri;
+use Ergebnis\Http\Method;
 use Exception;
 use InvalidArgumentException;
 use loophp\psr17\Psr17;
@@ -87,7 +88,7 @@ class CasSpec extends ObjectBehavior
         );
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/?ticket=ST-TICKET-INVALID'
         );
 
@@ -96,7 +97,7 @@ class CasSpec extends ObjectBehavior
             ->during('authenticate', [$request]);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/?ticket=ST-TICKET-VALID'
         );
 
@@ -104,31 +105,31 @@ class CasSpec extends ObjectBehavior
             ->authenticate($request)
             ->shouldBeArray();
 
-        $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-TICKET-VALID']));
+        $request = new ServerRequest(Method::GET, UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-TICKET-VALID']));
 
         $this
             ->authenticate($request)
             ->shouldBeArray();
 
-        $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-TICKET-INVALID']));
+        $request = new ServerRequest(Method::GET, UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-TICKET-INVALID']));
 
         $this
             ->shouldThrow(Exception::class)
             ->during('authenticate', [$request]);
 
-        $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'PT-TICKET-VALID']));
+        $request = new ServerRequest(Method::GET, UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'PT-TICKET-VALID']));
 
         $this
             ->authenticate($request)
             ->shouldBeArray();
 
-        $request = new ServerRequest('GET', new Uri('http://from'));
+        $request = new ServerRequest(Method::GET, new Uri('http://from'));
 
         $this
             ->shouldThrow(Exception::class)
             ->during('authenticate', [$request]);
 
-        $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt']));
+        $request = new ServerRequest(Method::GET, UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt']));
 
         $this
             ->authenticate($request)
@@ -141,13 +142,13 @@ class CasSpec extends ObjectBehavior
                 ],
             ]);
 
-        $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt-pgtiou-not-found']));
+        $request = new ServerRequest(Method::GET, UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt-pgtiou-not-found']));
 
         $this
             ->shouldThrow(Exception::class)
             ->during('authenticate', [$request]);
 
-        $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt-pgtiou-pgtid-null']));
+        $request = new ServerRequest(Method::GET, UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt-pgtiou-pgtid-null']));
 
         $this
             ->shouldThrow(Exception::class)
@@ -181,14 +182,14 @@ class CasSpec extends ObjectBehavior
 
         $this->beConstructedWith(CasSpecUtils::getTestPropertiesWithPgtUrl(), $client, $psr17, $cache, new CasResponseBuilder());
 
-        $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-TICKET-VALID']));
+        $request = new ServerRequest(Method::GET, UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-TICKET-VALID']));
 
         $this
             ->authenticate($request)
             ->shouldBeArray();
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             UtilsUri::withParams(
                 new Uri('http://from'),
                 ['ticket' => 'ST-TICKET-INVALID']
@@ -200,7 +201,7 @@ class CasSpec extends ObjectBehavior
             ->during('authenticate', [$request]);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             UtilsUri::withParams(
                 new Uri('http://from'),
                 ['ticket' => 'PT-TICKET-VALID']
@@ -211,14 +212,14 @@ class CasSpec extends ObjectBehavior
             ->authenticate($request)
             ->shouldBeArray();
 
-        $request = new ServerRequest('GET', new Uri('http://from'));
+        $request = new ServerRequest(Method::GET, new Uri('http://from'));
 
         $this
             ->shouldThrow(Exception::class)
             ->during('authenticate', [$request]);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             UtilsUri::withParams(
                 new Uri('http://from'),
                 ['ticket' => 'ST-ticket-pgt']
@@ -230,7 +231,7 @@ class CasSpec extends ObjectBehavior
             ->shouldBeArray();
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             UtilsUri::withParams(
                 new Uri('http://from'),
                 ['ticket' => 'ST-ticket-pgt-pgtiou-not-found']
@@ -242,7 +243,7 @@ class CasSpec extends ObjectBehavior
             ->during('authenticate', [$request]);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             UtilsUri::withParams(
                 new Uri('http://from'),
                 ['ticket' => 'ST-ticket-pgt-pgtiou-pgtid-null']
@@ -261,9 +262,6 @@ class CasSpec extends ObjectBehavior
             'protocol' => [
                 'login' => [
                     'path' => '/login',
-                    'allowed_parameters' => [
-                        'coin',
-                    ],
                 ],
             ],
         ]);
@@ -275,25 +273,25 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://foo'
         );
 
         $this
             ->login($request)
             ->getHeaders()
-            ->shouldReturn(['Location' => ['/login']]);
+            ->shouldReturn(['Location' => ['/login?service=http%3A%2F%2Ffoo']]);
     }
 
     public function it_can_check_if_the_request_needs_authentication()
     {
-        $request = new ServerRequest('GET', 'http://from/');
+        $request = new ServerRequest(Method::GET, 'http://from/');
 
         $this
             ->supportAuthentication($request)
             ->shouldReturn(false);
 
-        $request = new ServerRequest('GET', 'http://from/?ticket=ticket');
+        $request = new ServerRequest(Method::GET, 'http://from/?ticket=ticket');
 
         $this
             ->supportAuthentication($request)
@@ -310,7 +308,7 @@ class CasSpec extends ObjectBehavior
         ];
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             $from
         );
 
@@ -323,7 +321,7 @@ class CasSpec extends ObjectBehavior
         ];
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             $from . '?gateway=false'
         );
 
@@ -357,7 +355,7 @@ class CasSpec extends ObjectBehavior
             'ticket' => 'ticket',
         ];
 
-        $request = new ServerRequest('GET', 'error');
+        $request = new ServerRequest(Method::GET, 'error');
 
         $this
             ->shouldThrow(Exception::class)
@@ -367,7 +365,7 @@ class CasSpec extends ObjectBehavior
     public function it_can_do_a_request_to_validate_a_ticket()
     {
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_do_a_request_to_validate_a_ticket/no-ticket')
         );
 
@@ -376,7 +374,7 @@ class CasSpec extends ObjectBehavior
             ->during('requestTicketValidation', [$request]);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/?ticket=ST-TICKET-VALID')
         );
 
@@ -385,7 +383,7 @@ class CasSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/?ticket=PT-TICKET-VALID')
         );
 
@@ -394,7 +392,7 @@ class CasSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from?ticket=EMPTY-BODY')
         );
 
@@ -405,13 +403,13 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_handle_proxy_callback_request()
     {
-        $request = new ServerRequest('GET', 'http://local/proxycallback?pgtId=pgtId&pgtIou=false');
+        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId&pgtIou=false');
 
         $this
             ->shouldThrow(Exception::class)
             ->during('handleProxyCallback', [$request]);
 
-        $request = new ServerRequest('GET', 'http://local/proxycallback?pgtId=pgtId&pgtIou=pgtIou');
+        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId&pgtIou=pgtIou');
 
         $this
             ->handleProxyCallback($request)
@@ -422,7 +420,7 @@ class CasSpec extends ObjectBehavior
             ->getStatusCode()
             ->shouldReturn(200);
 
-        $request = new ServerRequest('GET', 'http://local/proxycallback?pgtId=pgtId');
+        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId');
 
         $this
             ->handleProxyCallback($request)
@@ -433,7 +431,7 @@ class CasSpec extends ObjectBehavior
             ->getStatusCode()
             ->shouldReturn(500);
 
-        $request = new ServerRequest('GET', 'http://local/proxycallback?pgtIou=pgtIou');
+        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtIou=pgtIou');
 
         $this
             ->handleProxyCallback($request)
@@ -444,7 +442,7 @@ class CasSpec extends ObjectBehavior
             ->getStatusCode()
             ->shouldReturn(500);
 
-        $request = new ServerRequest('GET', 'http://local/proxycallback');
+        $request = new ServerRequest(Method::GET, 'http://local/proxycallback');
 
         $this
             ->handleProxyCallback($request)
@@ -455,7 +453,7 @@ class CasSpec extends ObjectBehavior
             ->getStatusCode()
             ->shouldReturn(200);
 
-        $request = new ServerRequest('GET', 'http://local/proxycallback?pgtId=pgtId&pgtIou=pgtIou');
+        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId&pgtIou=pgtIou');
 
         $this->cache
             ->getItem('false')
@@ -473,7 +471,7 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_login()
     {
-        $request = new ServerRequest('GET', 'http://local/', ['referer' => 'http://google.com/']);
+        $request = new ServerRequest(Method::GET, 'http://local/', ['referer' => 'http://google.com/']);
 
         $this
             ->login($request)
@@ -484,14 +482,14 @@ class CasSpec extends ObjectBehavior
             ->getStatusCode()
             ->shouldReturn(302);
 
-        $request = new ServerRequest('GET', 'http://local/');
+        $request = new ServerRequest(Method::GET, 'http://local/');
 
         $this
             ->login($request)
             ->getHeader('Location')
             ->shouldReturn(['http://local/cas/login?service=http%3A%2F%2Flocal%2F']);
 
-        $request = new ServerRequest('GET', 'http://local/');
+        $request = new ServerRequest(Method::GET, 'http://local/');
 
         $parameters = [
             'foo' => 'bar',
@@ -501,7 +499,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?service=http%3A%2F%2Ffoo.bar%2F']);
+            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Ffoo.bar%2F']);
 
         $parameters = [
             'custom' => 'foo',
@@ -512,7 +510,7 @@ class CasSpec extends ObjectBehavior
             ->getHeader('Location')
             ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F']);
 
-        $request = new ServerRequest('GET', 'http://local/', ['referer' => 'http://referer/']);
+        $request = new ServerRequest(Method::GET, 'http://local/', ['referer' => 'http://referer/']);
 
         $parameters = [
             'foo' => 'bar',
@@ -522,7 +520,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?service=http%3A%2F%2Ffoo.bar%2F']);
+            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Ffoo.bar%2F']);
 
         $parameters = [
             'custom' => 'foo',
@@ -546,7 +544,7 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_logout()
     {
-        $request = new ServerRequest('GET', 'http://local/');
+        $request = new ServerRequest(Method::GET, 'http://local/');
 
         $this
             ->logout($request)
@@ -581,7 +579,7 @@ class CasSpec extends ObjectBehavior
             ->getHeader('Location')
             ->shouldReturn(['http://local/cas/logout?custom=bar&service=http%3A%2F%2Fcustom.local%2F']);
 
-        $request = new ServerRequest('GET', 'http://local/', ['referer' => 'http://referer/']);
+        $request = new ServerRequest(Method::GET, 'http://local/', ['referer' => 'http://referer/']);
 
         $parameters = [
             'custom' => 'bar',
@@ -619,7 +617,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_parse_a_bad_proxy_request_response')
         );
 
@@ -636,7 +634,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_parse_a_good_proxy_request_response')
         );
 
@@ -652,10 +650,6 @@ class CasSpec extends ObjectBehavior
             'protocol' => [
                 'serviceValidate' => [
                     'path' => 'http://local/cas/serviceValidate',
-                    'allowed_parameters' => [
-                        'service',
-                        'ticket',
-                    ],
                     'default_parameters' => [
                         'format' => 'JSON',
                     ],
@@ -669,7 +663,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_parse_json_in_a_response')
         );
 
@@ -680,7 +674,7 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_renew_login()
     {
-        $request = new ServerRequest('GET', 'http://local/');
+        $request = new ServerRequest(Method::GET, 'http://local/');
 
         $parameters = [
             'renew' => true,
@@ -691,7 +685,7 @@ class CasSpec extends ObjectBehavior
             ->getHeader('Location')
             ->shouldReturn(['http://local/cas/login?renew=true&service=http%3A%2F%2Flocal%2F']);
 
-        $request = new ServerRequest('GET', 'http://local/?renew=false');
+        $request = new ServerRequest(Method::GET, 'http://local/?renew=false');
 
         $this
             ->shouldThrow(Exception::class)
@@ -706,7 +700,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/it_can_request_a_proxy_ticket'
         );
 
@@ -715,7 +709,7 @@ class CasSpec extends ObjectBehavior
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/TestClientException'
         );
 
@@ -731,13 +725,6 @@ class CasSpec extends ObjectBehavior
             'protocol' => [
                 'proxyValidate' => [
                     'path' => 'http://local/cas/proxyValidate',
-                    'allowed_parameters' => [
-                        'service',
-                        'ticket',
-                        'http_code',
-                        'invalid_xml',
-                        'unrelated_xml',
-                    ],
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
@@ -751,7 +738,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'POST',
+            Method::POST,
             'http://from/it_can_validate_a_bad_proxy_ticket'
         );
 
@@ -768,7 +755,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'POST',
+            Method::POST,
             'http://from/it_can_validate_a_bad_service_validate_request'
         );
 
@@ -784,13 +771,6 @@ class CasSpec extends ObjectBehavior
             'protocol' => [
                 'proxyValidate' => [
                     'path' => 'http://local/cas/proxyValidate',
-                    'allowed_parameters' => [
-                        'service',
-                        'ticket',
-                        'http_code',
-                        'invalid_xml',
-                        'unrelated_xml',
-                    ],
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
@@ -837,7 +817,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_validate_a_good_proxy_ticket')
         );
 
@@ -855,7 +835,7 @@ class CasSpec extends ObjectBehavior
             ->shouldReturnAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_validate_a_good_proxy_ticket/2')
         );
 
@@ -871,15 +851,6 @@ class CasSpec extends ObjectBehavior
             'protocol' => [
                 'serviceValidate' => [
                     'path' => 'http://local/cas/serviceValidate',
-                    'allowed_parameters' => [
-                        'service',
-                        'ticket',
-                        'http_code',
-                        'invalid_xml',
-                        'with_pgt',
-                        'pgt_valid',
-                        'pgt_is_not_string',
-                    ],
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
@@ -922,7 +893,7 @@ class CasSpec extends ObjectBehavior
         $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_validate_a_good_service_validate_request')
         );
 
@@ -934,7 +905,7 @@ class CasSpec extends ObjectBehavior
     public function it_can_validate_a_service_ticket()
     {
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_validate_a_service_ticket')
         );
 
@@ -952,7 +923,7 @@ class CasSpec extends ObjectBehavior
             ->shouldReturnAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_validate_a_service_ticket/404')
         );
 
@@ -963,25 +934,25 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_validate_any_type_of_ticket()
     {
-        $request = new ServerRequest('GET', 'http://from?ticket=ST-TICKET-VALID');
+        $request = new ServerRequest(Method::GET, 'http://from?ticket=ST-TICKET-VALID');
 
         $this
             ->requestTicketValidation($request)
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
-        $request = new ServerRequest('GET', 'http://from?ticket=PT-TICKET-INVALID');
+        $request = new ServerRequest(Method::GET, 'http://from?ticket=PT-TICKET-INVALID');
 
         $this
             ->shouldThrow(Exception::class)
             ->during('requestTicketValidation', [$request]);
 
-        $request = new ServerRequest('GET', 'http://from/it_can_validate_any_type_of_ticket/ticket-is-available-but-invalid');
+        $request = new ServerRequest(Method::GET, 'http://from/it_can_validate_any_type_of_ticket/ticket-is-available-but-invalid');
 
         $this
             ->shouldThrow(CasExceptionInterface::class)
             ->during('requestTicketValidation', [$request, ['ticket' => 'ticket-invalid']]);
 
-        $request = new ServerRequest('GET', 'http://from/it_can_validate_any_type_of_ticket/ticket-is-unavailable');
+        $request = new ServerRequest(Method::GET, 'http://from/it_can_validate_any_type_of_ticket/ticket-is-unavailable');
 
         $this
             ->shouldThrow(CasExceptionInterface::class)

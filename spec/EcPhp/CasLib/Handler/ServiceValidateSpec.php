@@ -13,6 +13,7 @@ namespace spec\EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Handler\ServiceValidate;
 use EcPhp\CasLib\Response\CasResponseBuilder;
+use Ergebnis\Http\Method;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -30,7 +31,7 @@ class ServiceValidateSpec extends ObjectBehavior
 {
     public function it_can_detect_when_no_credentials()
     {
-        $request = new ServerRequest('GET', 'http://from');
+        $request = new ServerRequest(Method::GET, 'http://from');
 
         $this
             ->shouldThrow(Exception::class)
@@ -76,7 +77,7 @@ class ServiceValidateSpec extends ObjectBehavior
         );
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             new Uri('http://from/it_can_get_credentials_with_pgtUrl')
         );
 
@@ -88,7 +89,7 @@ class ServiceValidateSpec extends ObjectBehavior
     public function it_can_get_credentials_without_pgtUrl()
     {
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/it_can_get_credentials_without_pgtUrl'
         );
 

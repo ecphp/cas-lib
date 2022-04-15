@@ -9,9 +9,8 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Response;
+namespace EcPhp\CasLib\Contract\Response;
 
-use EcPhp\CasLib\Contract\Response\CasResponseInterface;
 use EcPhp\CasLib\Exception\CasResponseBuilderException;
 use Psr\Http\Message\ResponseInterface;
 

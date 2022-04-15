@@ -9,8 +9,9 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Redirect;
+namespace EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Handler\HandlerInterface;
 use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\RequestInterface;
@@ -19,7 +20,7 @@ use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
 
-final class Login extends Redirect implements RedirectInterface
+final class Login extends Handler implements HandlerInterface
 {
     public function handle(RequestInterface $request): ResponseInterface
     {
@@ -27,11 +28,18 @@ final class Login extends Redirect implements RedirectInterface
             ->formatProtocolParameters(
                 $this->getParameters($request)
             );
-        $validatedParameters = $this->validate($request, $parameters);
 
         return $this
-            ->createRedirectResponse(
-                $this->getUri($request, $validatedParameters)
+            ->getPsr17()
+            ->createResponse(302)
+            ->withHeader(
+                'Location',
+                (string) $this
+                    ->buildUri(
+                        $request->getUri(),
+                        'login',
+                        $this->validate($request, $parameters)
+                    )
             );
     }
 
@@ -59,20 +67,6 @@ final class Login extends Redirect implements RedirectInterface
         ];
 
         return $protocolProperties;
-    }
-
-    /**
-     * @param string[] $parameters
-     */
-    private function getUri(
-        RequestInterface $request,
-        array $parameters = []
-    ): UriInterface {
-        return $this->buildUri(
-            $request->getUri(),
-            'login',
-            $parameters
-        );
     }
 
     /**

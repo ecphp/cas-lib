@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Handler\HandlerInterface;
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use Psr\Http\Message\ResponseInterface;

@@ -14,6 +14,7 @@ namespace spec\tests\EcPhp\CasLib;
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate;
 use EcPhp\CasLib\Response\CasResponseBuilder;
+use Ergebnis\Http\Method;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
@@ -41,7 +42,7 @@ class CasSpec extends ObjectBehavior
         ));
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/it_can_test_the_proxy_mode_with_pgtUrl'
         );
 
@@ -67,7 +68,7 @@ class CasSpec extends ObjectBehavior
         ));
 
         $request = new ServerRequest(
-            'GET',
+            Method::GET,
             'http://from/it_can_test_the_proxy_mode_without_pgtUrl'
         );
 

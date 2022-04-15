@@ -9,10 +9,8 @@
 
 declare(strict_types=1);
 
-namespace EcPhp\CasLib\Redirect;
+namespace EcPhp\CasLib\Contract\Handler;
 
-use EcPhp\CasLib\Handler\HandlerInterface;
-
-interface RedirectInterface extends HandlerInterface
+interface ServiceValidateHandlerInterface extends HandlerInterface
 {
 }
