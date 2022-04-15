@@ -28,4 +28,11 @@ final class CasHandlerException extends Exception implements CasExceptionInterfa
             'Unable to get the Login response, gateway and renew parameter cannot be set together.'
         );
     }
+
+    public static function serviceValidateValidationFailed(): self
+    {
+        return new self(
+            'CAS Service Validation failed.'
+        );
+    }
 }

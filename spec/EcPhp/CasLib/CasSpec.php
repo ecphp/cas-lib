@@ -757,7 +757,7 @@ class CasSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('requestProxyValidate', [$request]);
+            ->during('requestServiceValidate', [$request]);
     }
 
     public function it_can_validate_a_bad_service_validate_request(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem)
@@ -842,16 +842,16 @@ class CasSpec extends ObjectBehavior
         );
 
         $this
-            ->requestProxyValidate($request)
+            ->requestServiceValidate($request)
             ->shouldReturnAnInstanceOf(ResponseInterface::class);
 
         $this
-            ->requestProxyValidate($request)
+            ->requestServiceValidate($request)
             ->getStatusCode()
             ->shouldReturn(200);
 
         $this
-            ->requestProxyValidate($request)
+            ->requestServiceValidate($request)
             ->shouldReturnAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
@@ -860,7 +860,7 @@ class CasSpec extends ObjectBehavior
         );
 
         $this
-            ->requestProxyValidate($request)
+            ->requestServiceValidate($request)
             ->shouldBeAnInstanceOf(ResponseInterface::class);
     }
 
@@ -939,16 +939,16 @@ class CasSpec extends ObjectBehavior
         );
 
         $this
-            ->requestProxyValidate($request)
+            ->requestServiceValidate($request)
             ->shouldReturnAnInstanceOf(ResponseInterface::class);
 
         $this
-            ->requestProxyValidate($request)
+            ->requestServiceValidate($request)
             ->getStatusCode()
             ->shouldReturn(200);
 
         $this
-            ->requestProxyValidate($request)
+            ->requestServiceValidate($request)
             ->shouldReturnAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
@@ -958,7 +958,7 @@ class CasSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('requestProxyValidate', [$request]);
+            ->during('requestServiceValidate', [$request]);
     }
 
     public function it_can_validate_any_type_of_ticket()

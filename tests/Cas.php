@@ -60,13 +60,6 @@ final class Cas implements CasInterface
         return $this->cas->requestProxyTicket($request, $parameters);
     }
 
-    public function requestProxyValidate(
-        ServerRequestInterface $request,
-        array $parameters = []
-    ): ResponseInterface {
-        return $this->cas->requestProxyValidate($request, $parameters);
-    }
-
     public function requestServiceValidate(
         ServerRequestInterface $request,
         array $parameters = []

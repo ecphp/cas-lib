@@ -76,17 +76,6 @@ interface CasInterface extends MiddlewareInterface
     ): ResponseInterface;
 
     /**
-     * Request a proxy validation.
-     *
-     * @param array[]|string[] $parameters
-     *   The parameters related to the service.
-     */
-    public function requestProxyValidate(
-        ServerRequestInterface $request,
-        array $parameters = []
-    ): ResponseInterface;
-
-    /**
      * Request a service validation.
      *
      * @param array[]|string[] $parameters

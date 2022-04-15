@@ -13,13 +13,11 @@ namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Exception\CasException;
 use Exception;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
 use Throwable;
 
-final class Proxy extends Service implements HandlerInterface
+final class Proxy extends Handler implements HandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -36,20 +34,5 @@ final class Proxy extends Service implements HandlerInterface
         }
 
         return $response;
-    }
-
-    protected function getProtocolProperties(UriInterface $uri): array
-    {
-        return $this->getProperties()['protocol']['proxy'] ?? [];
-    }
-
-    protected function getUri(RequestInterface $request): UriInterface
-    {
-        return $this
-            ->buildUri(
-                $request->getUri(),
-                'proxy',
-                $this->formatProtocolParameters($this->getParameters($request))
-            );
     }
 }

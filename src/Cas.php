@@ -15,7 +15,6 @@ use EcPhp\CasLib\Configuration\PropertiesInterface;
 use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Handler\ProxyCallback;
-use EcPhp\CasLib\Handler\ProxyValidate;
 use EcPhp\CasLib\Handler\ServiceValidate;
 use EcPhp\CasLib\Redirect\Login;
 use EcPhp\CasLib\Redirect\Logout;
@@ -160,24 +159,6 @@ final class Cas implements CasInterface
             );
     }
 
-    public function requestProxyValidate(
-        ServerRequestInterface $request,
-        array $parameters = []
-    ): ResponseInterface {
-        return $this
-            ->process(
-                $request,
-                new ProxyValidate(
-                    $parameters,
-                    $this->cache,
-                    $this->casResponseBuilder,
-                    $this->client,
-                    $this->properties,
-                    $this->psr17,
-                )
-            );
-    }
-
     public function requestServiceValidate(
         ServerRequestInterface $request,
         array $parameters = []
@@ -213,9 +194,7 @@ final class Cas implements CasInterface
 
         $parameters += ['ticket' => $ticket];
 
-        return true === $this->proxyMode()
-            ? $this->requestProxyValidate($request, $parameters)
-            : $this->requestServiceValidate($request, $parameters);
+        return $this->requestServiceValidate($request, $parameters);
     }
 
     public function supportAuthentication(
@@ -223,10 +202,5 @@ final class Cas implements CasInterface
         array $parameters = []
     ): bool {
         return array_key_exists('ticket', $parameters) || Uri::hasParams($request->getUri(), 'ticket');
-    }
-
-    private function proxyMode(): bool
-    {
-        return isset($this->properties['protocol']['serviceValidate']['default_parameters']['pgtUrl']);
     }
 }

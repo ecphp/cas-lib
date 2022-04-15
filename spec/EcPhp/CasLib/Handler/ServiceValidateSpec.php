@@ -9,29 +9,38 @@
 
 declare(strict_types=1);
 
-namespace spec\tests\EcPhp\CasLib\Handler;
+namespace spec\EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Handler\ServiceValidate;
 use EcPhp\CasLib\Response\CasResponseBuilder;
 use Exception;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
+use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\ResponseInterface;
+use spec\EcPhp\CasLib\Cas;
 use spec\EcPhp\CasLib\Cas as CasSpecUtils;
 use Symfony\Component\HttpClient\Psr18Client;
-use tests\EcPhp\CasLib\Handler\ProxyValidate;
 
-class ProxyValidateSpec extends ObjectBehavior
+class ServiceValidateSpec extends ObjectBehavior
 {
-    public function it_can_check_the_visibility_of_some_methods(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem)
+    public function it_can_detect_when_no_credentials()
+    {
+        $request = new ServerRequest('GET', 'http://from');
+
+        $this
+            ->shouldThrow(Exception::class)
+            ->during('handle', [$request]);
+    }
+
+    public function it_can_get_credentials_with_pgtUrl(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem)
     {
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
 
         $cacheItem
             ->set('pgtId')
@@ -43,7 +52,7 @@ class ProxyValidateSpec extends ObjectBehavior
 
         $cacheItem
             ->get()
-            ->willReturn('pgtId');
+            ->willReturn('pgtIou');
 
         $cache
             ->save($cacheItem)
@@ -61,32 +70,36 @@ class ProxyValidateSpec extends ObjectBehavior
             [],
             $cache,
             new CasResponseBuilder(),
-            $client,
-            CasSpecUtils::getTestProperties(),
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            Cas::getTestPropertiesWithPgtUrl(),
             $psr17
         );
 
-        $this
-            ->getClient()
-            ->shouldBeAnInstanceOf(ClientInterface::class);
+        $request = new ServerRequest(
+            'GET',
+            new Uri('http://from/it_can_get_credentials_with_pgtUrl')
+        );
 
         $this
-            ->getCache()
-            ->shouldBeAnInstanceOf(CacheItemPoolInterface::class);
+            ->handle($request)
+            ->shouldImplement(ResponseInterface::class);
     }
 
-    public function it_can_detect_when_no_credentials()
+    public function it_can_get_credentials_without_pgtUrl()
     {
-        $request = new ServerRequest('GET', 'http://from/it_can_detect_when_no_credentials/error500');
+        $request = new ServerRequest(
+            'GET',
+            'http://from/it_can_get_credentials_without_pgtUrl'
+        );
 
         $this
-            ->shouldThrow(Exception::class)
-            ->during('handle', [$request]);
+            ->handle($request)
+            ->shouldImplement(ResponseInterface::class);
     }
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(ProxyValidate::class);
+        $this->shouldHaveType(ServiceValidate::class);
     }
 
     public function let(CacheItemPoolInterface $cache)
@@ -99,7 +112,7 @@ class ProxyValidateSpec extends ObjectBehavior
             $cache,
             new CasResponseBuilder(),
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
-            CasSpecUtils::getTestProperties(),
+            Cas::getTestProperties(),
             $psr17
         );
     }
