@@ -14,6 +14,7 @@ namespace spec\EcPhp\CasLib;
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
 use EcPhp\CasLib\Exception\CasException;
+use EcPhp\CasLib\Exception\CasExceptionInterface;
 use EcPhp\CasLib\Response\CasResponseBuilder;
 use EcPhp\CasLib\Utils\Uri as UtilsUri;
 use Exception;
@@ -131,7 +132,14 @@ class CasSpec extends ObjectBehavior
 
         $this
             ->authenticate($request)
-            ->shouldBeArray();
+            ->shouldBeEqualTo([
+                'serviceResponse' => [
+                    'authenticationSuccess' => [
+                        'user' => 'username',
+                        'proxyGrantingTicket' => 'pgtId',
+                    ],
+                ],
+            ]);
 
         $request = new ServerRequest('GET', UtilsUri::withParams(new Uri('http://from'), ['ticket' => 'ST-ticket-pgt-pgtiou-not-found']));
 
@@ -967,10 +975,16 @@ class CasSpec extends ObjectBehavior
             ->shouldThrow(Exception::class)
             ->during('requestTicketValidation', [$request]);
 
-        $request = new ServerRequest('GET', 'http://from');
+        $request = new ServerRequest('GET', 'http://from/it_can_validate_any_type_of_ticket/ticket-is-available-but-invalid');
 
         $this
-            ->shouldThrow(Exception::class)
+            ->shouldThrow(CasExceptionInterface::class)
+            ->during('requestTicketValidation', [$request, ['ticket' => 'ticket-invalid']]);
+
+        $request = new ServerRequest('GET', 'http://from/it_can_validate_any_type_of_ticket/ticket-is-unavailable');
+
+        $this
+            ->shouldThrow(CasExceptionInterface::class)
             ->during('requestTicketValidation', [$request]);
     }
 

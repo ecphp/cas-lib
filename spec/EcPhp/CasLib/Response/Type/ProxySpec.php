@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Introspection;
+namespace spec\EcPhp\CasLib\Response\Type;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -23,11 +23,9 @@ class ProxySpec extends ObjectBehavior
 
         $body = <<< 'EOF'
             <?xml version="1.0" encoding="utf-8"?>
-            <cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas"
-                                 server="ECAS MOCKUP version 4.6.0.20924 - 09/02/2016 - 14:37"
-                                 date="2019-10-18T12:17:53.069+02:00" version="4.5">
+            <cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas">
             	<cas:proxySuccess>
-            		<cas:proxyTicket>PT-214-A3OoEPNr4Q9kNNuYzmfN8azU31aDUsuW8nk380k7wDExT5PFJpxR1TrNI3q3VGzyDdi0DpZ1LKb8IhPKZKQvavW-8hnfexYjmLCx7qWNsLib1W-DCzzoLVTosAUFzP3XDn5dNzoNtxIXV9KSztF9fYhwHvU0</cas:proxyTicket>
+            		<cas:proxyTicket>PGT-TICKET</cas:proxyTicket>
             	</cas:proxySuccess>
             </cas:serviceResponse>
             EOF;
@@ -39,24 +37,20 @@ class ProxySpec extends ObjectBehavior
         $parsed = [
             'serviceResponse' => [
                 'proxySuccess' => [
-                    'proxyTicket' => 'PT-214-A3OoEPNr4Q9kNNuYzmfN8azU31aDUsuW8nk380k7wDExT5PFJpxR1TrNI3q3VGzyDdi0DpZ1LKb8IhPKZKQvavW-8hnfexYjmLCx7qWNsLib1W-DCzzoLVTosAUFzP3XDn5dNzoNtxIXV9KSztF9fYhwHvU0',
+                    'proxyTicket' => 'PGT-TICKET',
                 ],
             ],
         ];
 
         $this
-            ->beConstructedWith($parsed, 'XML', $response);
+            ->beConstructedWith($response);
 
         $this
             ->getProxyTicket()
-            ->shouldReturn('PT-214-A3OoEPNr4Q9kNNuYzmfN8azU31aDUsuW8nk380k7wDExT5PFJpxR1TrNI3q3VGzyDdi0DpZ1LKb8IhPKZKQvavW-8hnfexYjmLCx7qWNsLib1W-DCzzoLVTosAUFzP3XDn5dNzoNtxIXV9KSztF9fYhwHvU0');
+            ->shouldReturn('PGT-TICKET');
 
         $this
-            ->getFormat()
-            ->shouldReturn('XML');
-
-        $this
-            ->getResponse()
-            ->shouldReturn($response);
+            ->toArray()
+            ->shouldReturn($parsed);
     }
 }

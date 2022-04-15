@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Introspection;
+namespace spec\EcPhp\CasLib\Response\Type;
 
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
@@ -18,7 +18,19 @@ class ProxyFailureSpec extends ObjectBehavior
 {
     public function it_can_detect_a_proxy_failure_response()
     {
-        $response = (new Response(200));
+        $body = [
+            'serviceResponse' => [
+                'proxyFailure' => "unrecognized pgt: 'PGT-123'",
+            ],
+        ];
+
+        $response = new Response(
+            200,
+            [
+                'Content-Type' => 'application/json',
+            ],
+            json_encode($body)
+        );
 
         $parsed = [
             'serviceResponse' => [
@@ -27,14 +39,14 @@ class ProxyFailureSpec extends ObjectBehavior
         ];
 
         $this
-            ->beConstructedWith($parsed, 'XML', $response);
+            ->beConstructedWith($response);
 
         $this
             ->getMessage()
             ->shouldReturn("unrecognized pgt: 'PGT-123'");
 
         $this
-            ->getResponse()
-            ->shouldReturn($response);
+            ->toArray()
+            ->shouldReturn($parsed);
     }
 }

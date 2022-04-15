@@ -59,6 +59,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
+                case 'http://from/it_can_validate_any_type_of_ticket/ticket-is-available-but-invalid':
                 case 'http://from/it_can_validate_a_bad_service_validate_request':
                 case 'http://from/?ticket=PT-TICKET-INVALID':
                 case 'http://from/?ticket=ST-TICKET-INVALID':

@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-namespace spec\EcPhp\CasLib\Introspection;
+namespace spec\EcPhp\CasLib\Response\Type;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -21,54 +21,44 @@ class ServiceValidateSpec extends ObjectBehavior
     {
         $psr17Factory = new Psr17Factory();
 
-        $body = <<< 'EOF'
-            Useless stuff here.
-            EOF;
+        $bodyArray = [
+            'serviceResponse' => [
+                'authenticationSuccess' => [
+                    'user' => 'user',
+                    'proxyGrantingTicket' => 'proxyGrantingTicket',
+                    'proxies' => [
+                        'proxy' => [
+                            'http://proxy1',
+                            'http://proxy2',
+                        ],
+                    ],
+                    'extendedAttributes' => [
+                        'extendedAttribute' => [
+                            'attributeValue' => [
+                                0 => 'rex',
+                                1 => 'snoopy',
+                            ],
+                            '@attributes' => [
+                                'name' => 'http://stork.eu/motherInLawDogName',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $response = (new Response(200))
-            ->withHeader('Content-Type', 'application/xml')
-            ->withBody($psr17Factory->createStream($body));
-
-        $credentials = [
-            'user' => 'user',
-            'proxyGrantingTicket' => 'proxyGrantingTicket',
-            'proxies' => [
-                'proxy' => [
-                    'http://proxy1',
-                    'http://proxy2',
-                ],
-            ],
-            'extendedAttributes' => [
-                'extendedAttribute' => [
-                    'attributeValue' => [
-                        0 => 'rex',
-                        1 => 'snoopy',
-                    ],
-                    '@attributes' => [
-                        'name' => 'http://stork.eu/motherInLawDogName',
-                    ],
-                ],
-            ],
-        ];
-
-        $parsed = [
-            'serviceResponse' => [
-                'authenticationSuccess' => $credentials,
-            ],
-        ];
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($psr17Factory->createStream(json_encode($bodyArray)));
 
         $this
-            ->beConstructedWith($parsed, 'XML', $response);
+            ->beConstructedWith($response);
 
         $this
             ->getCredentials()
             ->shouldReturn(
-                $credentials
+                $bodyArray['serviceResponse']['authenticationSuccess']
             );
-
-        $this
-            ->getFormat()
-            ->shouldReturn('XML');
 
         $this
             ->getProxies()
@@ -80,12 +70,8 @@ class ServiceValidateSpec extends ObjectBehavior
             ]);
 
         $this
-            ->getResponse()
-            ->shouldReturn($response);
-
-        $this
-            ->getParsedResponse()
-            ->shouldReturn($parsed);
+            ->toArray()
+            ->shouldReturn($bodyArray);
     }
 
     public function it_can_detect_a_service_validate_response()
@@ -105,11 +91,6 @@ class ServiceValidateSpec extends ObjectBehavior
             ->withHeader('Content-Type', 'application/xml')
             ->withBody($psr17Factory->createStream($body));
 
-        $credentials = [
-            'user' => 'user',
-            'proxyGrantingTicket' => 'proxyGrantingTicket',
-        ];
-
         $parsed = [
             'serviceResponse' => [
                 'authenticationSuccess' => [
@@ -120,22 +101,18 @@ class ServiceValidateSpec extends ObjectBehavior
         ];
 
         $this
-            ->beConstructedWith($parsed, 'XML', $response);
+            ->beConstructedWith($response);
 
         $this
-            ->getCredentials()
-            ->shouldReturn($credentials);
-
-        $this
-            ->getFormat()
-            ->shouldReturn('XML');
+            ->toArray()
+            ->shouldReturn($parsed);
 
         $this
             ->getProxies()
             ->shouldReturn([]);
 
         $this
-            ->getResponse()
-            ->shouldReturn($response);
+            ->toArray()
+            ->shouldReturn($parsed);
     }
 }
