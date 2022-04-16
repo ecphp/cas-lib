@@ -46,8 +46,8 @@ final class Response
 
         $header = substr($response->getHeaderLine('Content-Type'), 0, 16);
 
-        switch ($header) {
-            case 'application/json':
+        switch (true) {
+            case 0 === strpos($header, 'application/json'):
                 try {
                     $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
                 } catch (Throwable $exception) {
@@ -56,7 +56,8 @@ final class Response
 
                 return $json;
 
-            case 'application/xml':
+            case 0 === strpos($header, 'text/html'):
+            case 0 === strpos($header, 'application/xml'):
                 set_error_handler(
                     static function ($errno, $errstr, $errfile, $errline): void {
                         throw CasException::unableToLoadXml(

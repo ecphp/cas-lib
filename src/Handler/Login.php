@@ -29,17 +29,19 @@ final class Login extends Handler implements HandlerInterface
                 $this->getParameters($request)
             );
 
+        $url = (string) $this
+            ->buildUri(
+                $request->getUri(),
+                'login',
+                $this->validate($request, $parameters)
+            );
+
         return $this
             ->getPsr17()
             ->createResponse(302)
             ->withHeader(
                 'Location',
-                (string) $this
-                    ->buildUri(
-                        $request->getUri(),
-                        'login',
-                        $this->validate($request, $parameters)
-                    )
+                $url
             );
     }
 

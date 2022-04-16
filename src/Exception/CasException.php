@@ -25,7 +25,11 @@ final class CasException extends Exception implements CasExceptionInterface
 
     public static function errorWhileDoingRequest(Throwable $previous)
     {
-        return new self('Error while doing request', 0, $previous);
+        return new self(
+            sprintf('Error while doing request: %s', $previous->getMessage()),
+            0,
+            $previous
+        );
     }
 
     public static function missingResponseContentTypeHeader(): self
@@ -38,7 +42,7 @@ final class CasException extends Exception implements CasExceptionInterface
     public static function unableToAuthenticate(?Throwable $previous = null)
     {
         return new self(
-            'Authentication failure: ' . $previous->getMessage(),
+            sprintf('Authentication failure: %s', $previous->getMessage()),
             0,
             $previous
         );

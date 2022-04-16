@@ -12,29 +12,66 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Handler\ServiceValidateHandlerInterface;
+use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
 use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasHandlerException;
-use Exception;
-use Psr\Http\Client\ClientExceptionInterface;
+use EcPhp\CasLib\Utils\Uri;
+use Ergebnis\Http\Method;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 final class ServiceValidate extends Handler implements ServiceValidateHandlerInterface
 {
+    private const PROXYVALIDATE = 'proxyValidate';
+
+    private const SERVICEVALIDATE = 'serviceValidate';
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $properties = $this->getProperties();
+
+        $type = $properties['protocol']['serviceValidate']['default_parameters']['pgtUrl'] ?? false
+            ? self::PROXYVALIDATE
+            : self::SERVICEVALIDATE;
+
+        $parameters = ['service' => (string) $request->getUri()]
+            + Uri::getParams($request->getUri())
+            + ($properties['protocol'][$type]['default_parameters'] ?? []);
+
+        $request = $this
+            ->getPsr17()
+            ->createRequest(
+                Method::GET,
+                $this
+                    ->buildUri(
+                        $request->getUri(),
+                        $type,
+                        $this->formatProtocolParameters($parameters)
+                    )
+            );
+
         try {
-            $response = $this->getClient()->sendRequest($request);
-        } catch (ClientExceptionInterface $exception) {
+            $response = $this
+                ->getClient()
+                ->sendRequest($request);
+        } catch (Throwable $exception) {
             throw CasException::errorWhileDoingRequest($exception);
         }
 
         $response = $this->getCasResponseBuilder()->fromResponse($response);
 
+        if ($response instanceof AuthenticationFailure) {
+            throw CasHandlerException::authenticationFailure($response);
+        }
+
         if (false === ($response instanceof TypeServiceValidate)) {
-            throw CasHandlerException::serviceValidateValidationFailed();
+            throw CasHandlerException::serviceValidateValidationFailed($response);
+        }
+
+        if (self::SERVICEVALIDATE === $type) {
+            return $response;
         }
 
         try {
@@ -49,7 +86,7 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
             ->hasItem($proxyGrantingTicket);
 
         if (false === $hasPgtIou) {
-            throw new Exception('PGT not found in the cache.');
+            throw CasHandlerException::serviceValidatePGTNotFound();
         }
 
         try {
@@ -57,11 +94,11 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
                 ->getCache()
                 ->getItem($proxyGrantingTicket);
         } catch (Throwable $exception) {
-            throw new Exception('Unable to get PGT from cache', 0, $exception);
+            throw CasHandlerException::serviceValidateUnableToGetPGTFromCache($exception);
         }
 
         if (null === $pgtId->get()) {
-            throw new Exception('Invalid PGT ID value.');
+            throw CasHandlerException::serviceValidateInvalidPGTIdValue();
         }
 
         return $response

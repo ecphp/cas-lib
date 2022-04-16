@@ -27,17 +27,22 @@ class CasSpec extends ObjectBehavior
 {
     public function it_can_test_the_proxy_mode_with_pgtUrl()
     {
-        $properties = CasSpecUtils::getTestPropertiesWithPgtUrl();
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
-
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
+        $cache = new ArrayAdapter();
+
+        $cacheItem = $cache->getItem('pgtIou');
+        $cacheItem->set('pgtId');
+
+        $cache
+            ->save($cacheItem);
+
         $this->beConstructedWith(new Cas(
-            $properties,
-            $client,
+            CasSpecUtils::getTestPropertiesWithPgtUrl(),
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
-            new ArrayAdapter(),
+            $cache,
             new CasResponseBuilder()
         ));
 
@@ -53,15 +58,12 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_test_the_proxy_mode_without_pgtUrl()
     {
-        $properties = CasSpecUtils::getTestProperties();
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
-
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $this->beConstructedWith(new Cas(
-            $properties,
-            $client,
+            CasSpecUtils::getTestProperties(),
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             new ArrayAdapter(),
             new CasResponseBuilder()

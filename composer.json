@@ -15,6 +15,7 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
+        "ergebnis/http-method": "^2.2",
         "league/uri-components": "^2",
         "openlss/lib-array2xml": "^1.0",
         "psr/cache": "^1.0.1 || ^2 || ^3",
@@ -30,7 +31,6 @@
     "require-dev": {
         "ext-xdebug": "*",
         "ecphp/php-conventions": "^1",
-        "ergebnis/http-method": "^2.2",
         "friends-of-phpspec/phpspec-code-coverage": "^6.0.0",
         "infection/infection": "^0.23 || ^0.24",
         "infection/phpspec-adapter": "^0.1.2",
