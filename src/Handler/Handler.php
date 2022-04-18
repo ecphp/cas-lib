@@ -14,10 +14,10 @@ namespace EcPhp\CasLib\Handler;
 use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
 use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Utils\Uri;
+use Exception;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
@@ -55,37 +55,31 @@ abstract class Handler
         $this->psr17 = $psr17;
     }
 
-    /**
-     * @param mixed[]|string[]|UriInterface[] $query
-     */
-    protected function buildUri(UriInterface $from, string $name, array $query = []): UriInterface
-    {
-        $query = $query + Uri::getParams($from);
+    protected function buildUri(
+        UriInterface $from,
+        string $type,
+        array $queryParams = []
+    ): UriInterface {
         $properties = $this->getProperties();
+
+        $queryParams += Uri::getParams($from);
         $baseUrl = parse_url($properties['base_url']);
 
         if (false === $baseUrl) {
-            $baseUrl = ['path' => ''];
-            $properties['base_url'] = '';
+            throw new Exception(
+                sprintf('Unable to parse URL: %s', $properties['base_url'])
+            );
         }
 
-        $baseUrl += ['path' => ''];
-
-        if (true === array_key_exists('service', $query)) {
-            $query['service'] = (string) $query['service'];
+        if (true === array_key_exists('service', $queryParams)) {
+            $queryParams['service'] = (string) $queryParams['service'];
         }
-
-        // Filter out empty $query parameters
-        $query = array_filter(
-            $query,
-            static fn ($item): bool => [] === $item ? false : ('' !== $item)
-        );
 
         return $this
             ->getPsr17()
             ->createUri($properties['base_url'])
-            ->withPath($baseUrl['path'] . $properties['protocol'][$name]['path'])
-            ->withQuery(http_build_query($query))
+            ->withPath(sprintf('%s%s', $baseUrl['path'], $properties['protocol'][$type]['path']))
+            ->withQuery(http_build_query($queryParams))
             ->withFragment($from->getFragment());
     }
 
@@ -110,6 +104,8 @@ abstract class Handler
             );
         }
 
+        ksort($parameters);
+
         return $parameters;
     }
 
@@ -131,24 +127,14 @@ abstract class Handler
     /**
      * @return array[]
      */
-    protected function getParameters(RequestInterface $request): array
+    protected function getParameters(): array
     {
-        return $this->parameters + ($this->getProtocolProperties($request->getUri())['default_parameters'] ?? []);
+        return $this->parameters;
     }
 
     protected function getProperties(): PropertiesInterface
     {
         return $this->properties;
-    }
-
-    /**
-     * Get the scoped properties of the protocol endpoint.
-     *
-     * @return array[]
-     */
-    protected function getProtocolProperties(UriInterface $uri): array
-    {
-        return [];
     }
 
     protected function getPsr17(): Psr17Interface

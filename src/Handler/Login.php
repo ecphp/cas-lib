@@ -16,7 +16,6 @@ use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
 
@@ -24,16 +23,21 @@ final class Login extends Handler implements HandlerInterface
 {
     public function handle(RequestInterface $request): ResponseInterface
     {
-        $parameters = $this
-            ->formatProtocolParameters(
-                $this->getParameters($request)
-            );
+        $parameters = $this->getParameters();
+        $parameters += Uri::getParams($request->getUri());
+        $parameters += $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGIN]['default_parameters'] ?? [];
+        $parameters += [
+            'service' => (string) $request->getUri(),
+        ];
+        $parameters = $this->formatProtocolParameters($parameters);
 
-        $url = (string) $this
+        $this->validate($request, $parameters);
+
+        $uri = $this
             ->buildUri(
                 $request->getUri(),
-                'login',
-                $this->validate($request, $parameters)
+                HandlerInterface::TYPE_LOGIN,
+                $parameters
             );
 
         return $this
@@ -41,34 +45,8 @@ final class Login extends Handler implements HandlerInterface
             ->createResponse(302)
             ->withHeader(
                 'Location',
-                $url
+                (string) $uri
             );
-    }
-
-    protected function formatProtocolParameters(array $parameters): array
-    {
-        $parameters = parent::formatProtocolParameters($parameters);
-
-        foreach (['gateway', 'renew'] as $queryParameter) {
-            if (false === array_key_exists($queryParameter, $parameters)) {
-                continue;
-            }
-
-            $parameters[$queryParameter] = 'true';
-        }
-
-        return $parameters;
-    }
-
-    protected function getProtocolProperties(UriInterface $uri): array
-    {
-        $protocolProperties = $this->getProperties()['protocol']['login'] ?? [];
-
-        $protocolProperties['default_parameters'] += [
-            'service' => (string) $uri,
-        ];
-
-        return $protocolProperties;
     }
 
     /**
@@ -79,7 +57,7 @@ final class Login extends Handler implements HandlerInterface
     private function validate(
         RequestInterface $request,
         array $parameters
-    ): array {
+    ): void {
         $uri = $request->getUri();
 
         $renew = $parameters['renew'] ?? false;
@@ -98,7 +76,5 @@ final class Login extends Handler implements HandlerInterface
                 throw CasHandlerException::loginInvalidParameters();
             }
         }
-
-        return $parameters;
     }
 }

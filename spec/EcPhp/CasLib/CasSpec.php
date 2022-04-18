@@ -15,11 +15,11 @@ use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
 use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasExceptionInterface;
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Response\CasResponseBuilder;
 use EcPhp\CasLib\Utils\Uri as UtilsUri;
 use Ergebnis\Http\Method;
 use Exception;
-use InvalidArgumentException;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
@@ -106,18 +106,6 @@ class CasSpec extends ObjectBehavior
 
         $request = new ServerRequest(
             Method::GET,
-            UtilsUri::withParams(
-                new Uri('http://from'),
-                ['ticket' => 'PT-TICKET-VALID']
-            )
-        );
-
-        $this
-            ->authenticate($request)
-            ->shouldBeArray();
-
-        $request = new ServerRequest(
-            Method::GET,
             new Uri('http://from')
         );
 
@@ -191,7 +179,7 @@ class CasSpec extends ObjectBehavior
 
         $request = new ServerRequest(
             Method::GET,
-            'http://from?ticket=PT-TICKET-VALID'
+            'http://from?ticket=ST-TICKET-VALID'
         );
 
         $this
@@ -226,7 +214,7 @@ class CasSpec extends ObjectBehavior
             Method::GET,
             UtilsUri::withParams(
                 new Uri('http://from'),
-                ['ticket' => 'PT-TICKET-VALID']
+                ['ticket' => 'ST-TICKET-VALID']
             )
         );
 
@@ -285,34 +273,6 @@ class CasSpec extends ObjectBehavior
         $this
             ->shouldThrow(Exception::class)
             ->during('authenticate', [$request]);
-    }
-
-    public function it_can_be_constructed_without_base_url(CacheItemPoolInterface $cache)
-    {
-        $properties = new CasProperties([
-            'base_url' => '//////',
-            'protocol' => [
-                'login' => [
-                    'path' => '/login',
-                ],
-            ],
-        ]);
-
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
-        $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-
-        $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
-
-        $request = new ServerRequest(
-            Method::GET,
-            'http://foo'
-        );
-
-        $this
-            ->login($request)
-            ->getHeaders()
-            ->shouldReturn(['Location' => ['/login?service=http%3A%2F%2Ffoo']]);
     }
 
     public function it_can_check_if_the_request_needs_authentication()
@@ -419,15 +379,6 @@ class CasSpec extends ObjectBehavior
 
         $request = new ServerRequest(
             Method::GET,
-            new Uri('http://from?ticket=PT-TICKET-VALID')
-        );
-
-        $this
-            ->requestTicketValidation($request)
-            ->shouldBeAnInstanceOf(ResponseInterface::class);
-
-        $request = new ServerRequest(
-            Method::GET,
             new Uri('http://from?ticket=EMPTY-BODY')
         );
 
@@ -438,70 +389,55 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_handle_proxy_callback_request()
     {
-        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId&pgtIou=false');
+        $request = new ServerRequest(
+            Method::GET,
+            'http://local/proxycallback?pgtId=pgtId&pgtIou=pgtIou'
+        );
+
+        $this
+            ->handleProxyCallback($request)
+            ->shouldReturnAnInstanceOf(ResponseInterface::class);
+
+        $this
+            ->handleProxyCallback($request)
+            ->getStatusCode()
+            ->shouldReturn(200);
+
+        $request = new ServerRequest(
+            Method::GET,
+            'http://local/proxycallback?pgtId=pgtId&pgtIou=false'
+        );
 
         $this
             ->shouldThrow(Exception::class)
             ->during('handleProxyCallback', [$request]);
 
-        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId&pgtIou=pgtIou');
+        $request = new ServerRequest(
+            Method::GET,
+            'http://local/proxycallback?pgtId=pgtId'
+        );
 
         $this
-            ->handleProxyCallback($request)
-            ->shouldReturnAnInstanceOf(ResponseInterface::class);
+            ->shouldThrow(Exception::class)
+            ->during('handleProxyCallback', [$request]);
+
+        $request = new ServerRequest(
+            Method::GET,
+            'http://local/proxycallback?pgtIou=pgtIou'
+        );
 
         $this
-            ->handleProxyCallback($request)
-            ->getStatusCode()
-            ->shouldReturn(200);
+            ->shouldThrow(Exception::class)
+            ->during('handleProxyCallback', [$request]);
 
-        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId');
-
-        $this
-            ->handleProxyCallback($request)
-            ->shouldReturnAnInstanceOf(ResponseInterface::class);
+        $request = new ServerRequest(
+            Method::GET,
+            'http://local/proxycallback'
+        );
 
         $this
-            ->handleProxyCallback($request)
-            ->getStatusCode()
-            ->shouldReturn(500);
-
-        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtIou=pgtIou');
-
-        $this
-            ->handleProxyCallback($request)
-            ->shouldReturnAnInstanceOf(ResponseInterface::class);
-
-        $this
-            ->handleProxyCallback($request)
-            ->getStatusCode()
-            ->shouldReturn(500);
-
-        $request = new ServerRequest(Method::GET, 'http://local/proxycallback');
-
-        $this
-            ->handleProxyCallback($request)
-            ->shouldReturnAnInstanceOf(ResponseInterface::class);
-
-        $this
-            ->handleProxyCallback($request)
-            ->getStatusCode()
-            ->shouldReturn(200);
-
-        $request = new ServerRequest(Method::GET, 'http://local/proxycallback?pgtId=pgtId&pgtIou=pgtIou');
-
-        $this->cache
-            ->getItem('false')
-            ->willThrow(new InvalidArgumentException('foo'));
-
-        $this
-            ->handleProxyCallback($request)
-            ->shouldReturnAnInstanceOf(ResponseInterface::class);
-
-        $this
-            ->handleProxyCallback($request)
-            ->getStatusCode()
-            ->shouldReturn(200);
+            ->shouldThrow(Exception::class)
+            ->during('handleProxyCallback', [$request]);
     }
 
     public function it_can_login()
@@ -801,8 +737,14 @@ class CasSpec extends ObjectBehavior
         );
 
         $this
-            ->shouldThrow(Exception::class)
-            ->during('requestServiceValidate', [$request]);
+            ->shouldThrow(CasHandlerException::class)
+            ->during(
+                'requestServiceValidate',
+                [
+                    $request,
+                    ['ticket' => 'ST-TICKET-INVALID'],
+                ]
+            );
     }
 
     public function it_can_validate_a_service_ticket()
@@ -843,7 +785,7 @@ class CasSpec extends ObjectBehavior
             ->requestTicketValidation($request)
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
-        $request = new ServerRequest(Method::GET, 'http://from?ticket=PT-TICKET-INVALID');
+        $request = new ServerRequest(Method::GET, 'http://from?ticket=ST-TICKET-INVALID');
 
         $this
             ->shouldThrow(Exception::class)
@@ -860,6 +802,33 @@ class CasSpec extends ObjectBehavior
         $this
             ->shouldThrow(CasExceptionInterface::class)
             ->during('requestTicketValidation', [$request]);
+    }
+
+    public function it_cannot_be_constructed_without_base_url(CacheItemPoolInterface $cache)
+    {
+        $properties = new CasProperties([
+            'base_url' => '//////',
+            'protocol' => [
+                'login' => [
+                    'path' => '/login',
+                ],
+            ],
+        ]);
+
+        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
+        $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+
+        $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
+
+        $request = new ServerRequest(
+            Method::GET,
+            'http://foo'
+        );
+
+        $this
+            ->shouldThrow(Exception::class)
+            ->during('login', [$request]);
     }
 
     public function it_is_initializable()

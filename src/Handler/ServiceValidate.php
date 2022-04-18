@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Handler\HandlerInterface;
 use EcPhp\CasLib\Contract\Handler\ServiceValidateHandlerInterface;
 use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
@@ -22,34 +23,35 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
+// phpcs:disable Generic.Files.LineLength.TooLong
+
 final class ServiceValidate extends Handler implements ServiceValidateHandlerInterface
 {
-    private const PROXYVALIDATE = 'proxyValidate';
-
-    private const SERVICEVALIDATE = 'serviceValidate';
-
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $properties = $this->getProperties();
 
-        $type = $properties['protocol']['serviceValidate']['default_parameters']['pgtUrl'] ?? false
-            ? self::PROXYVALIDATE
-            : self::SERVICEVALIDATE;
+        $type = $properties['protocol'][HandlerInterface::TYPE_SERVICE_VALIDATE]['default_parameters']['pgtUrl'] ?? false
+            ? HandlerInterface::TYPE_PROXY_VALIDATE
+            : HandlerInterface::TYPE_SERVICE_VALIDATE;
 
-        $parameters = ['service' => (string) $request->getUri()]
-            + Uri::getParams($request->getUri())
-            + ($properties['protocol'][$type]['default_parameters'] ?? []);
+        $parameters = $this->getParameters();
+        $parameters += Uri::getParams($request->getUri());
+        $parameters += $properties['protocol'][$type]['default_parameters'] ?? [];
+        $parameters += ['service' => (string) $request->getUri()];
+
+        $uri = $this
+            ->buildUri(
+                $request->getUri(),
+                $type,
+                $this->formatProtocolParameters($parameters)
+            );
 
         $request = $this
             ->getPsr17()
             ->createRequest(
                 Method::GET,
-                $this
-                    ->buildUri(
-                        $request->getUri(),
-                        $type,
-                        $this->formatProtocolParameters($parameters)
-                    )
+                $uri
             );
 
         try {
@@ -70,7 +72,7 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
             throw CasHandlerException::serviceValidateValidationFailed($response);
         }
 
-        if (self::SERVICEVALIDATE === $type) {
+        if (HandlerInterface::TYPE_SERVICE_VALIDATE === $type) {
             return $response;
         }
 

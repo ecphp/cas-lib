@@ -15,4 +15,13 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 interface HandlerInterface extends RequestHandlerInterface
 {
+    public const TYPE_LOGIN = 'login';
+
+    public const TYPE_LOGOUT = 'logout';
+
+    public const TYPE_PROXY = 'proxy';
+
+    public const TYPE_PROXY_VALIDATE = 'proxyValidate';
+
+    public const TYPE_SERVICE_VALIDATE = 'serviceValidate';
 }

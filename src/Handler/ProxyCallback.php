@@ -22,26 +22,21 @@ final class ProxyCallback extends Handler implements HandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $response = $this
-            ->getPsr17()
-            ->createResponse(200);
-
-        // POST parameters prevails over GET parameters.
-        $parameters = $this->getParameters($request) +
-            (array) $request->getBody() +
-            Uri::getParams($request->getUri()) +
-            ['pgtId' => null, 'pgtIou' => null];
+        $parameters = $this->getParameters();
+        $parameters += Uri::getParams($request->getUri());
+        $parameters += (array) $request->getBody();
+        $parameters += ['pgtId' => null, 'pgtIou' => null];
 
         if (null === $parameters['pgtId'] && null === $parameters['pgtIou']) {
-            return $response;
+            throw new Exception('No PGT ID or PGT IOU.');
         }
 
         if (null === $parameters['pgtIou']) {
-            return $response->withStatus(500);
+            throw new Exception('PGT IOU is null.');
         }
 
         if (null === $parameters['pgtId']) {
-            return $response->withStatus(500);
+            throw new Exception('PGT ID is null.');
         }
 
         try {
@@ -49,7 +44,11 @@ final class ProxyCallback extends Handler implements HandlerInterface
                 ->getCache()
                 ->getItem($parameters['pgtIou']);
         } catch (Throwable $exception) {
-            throw new Exception('Unable to get item from cache.', 0, $exception);
+            throw new Exception(
+                'Unable to get item from cache.',
+                0,
+                $exception
+            );
         }
 
         $this
@@ -60,6 +59,8 @@ final class ProxyCallback extends Handler implements HandlerInterface
                     ->expiresAfter(300)
             );
 
-        return $response;
+        return $this
+            ->getPsr17()
+            ->createResponse();
     }
 }
