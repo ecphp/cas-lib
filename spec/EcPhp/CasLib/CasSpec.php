@@ -436,8 +436,13 @@ class CasSpec extends ObjectBehavior
         );
 
         $this
-            ->shouldThrow(Exception::class)
-            ->during('handleProxyCallback', [$request]);
+            ->handleProxyCallback($request)
+            ->shouldReturnAnInstanceOf(ResponseInterface::class);
+
+        $this
+            ->handleProxyCallback($request)
+            ->getStatusCode()
+            ->shouldReturn(200);
     }
 
     public function it_can_login()

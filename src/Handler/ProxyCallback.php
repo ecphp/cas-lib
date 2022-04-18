@@ -32,6 +32,9 @@ final class ProxyCallback extends Handler implements HandlerInterface
         $parameters += ['pgtId' => null, 'pgtIou' => null];
 
         if (null === $parameters['pgtId'] && null === $parameters['pgtIou']) {
+            // We cannot return an exception here because prior sending the
+            // PGT ID and PGTIOU, a request is made by the CAS server in order
+            // to check the existence of the proxy callback endpoint.
             return $response;
         }
 
