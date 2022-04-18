@@ -22,13 +22,17 @@ final class ProxyCallback extends Handler implements HandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $response = $this
+            ->getPsr17()
+            ->createResponse();
+
         $parameters = $this->getParameters();
         $parameters += Uri::getParams($request->getUri());
         $parameters += (array) $request->getBody();
         $parameters += ['pgtId' => null, 'pgtIou' => null];
 
         if (null === $parameters['pgtId'] && null === $parameters['pgtIou']) {
-            throw new Exception('No PGT ID or PGT IOU.');
+            return $response;
         }
 
         if (null === $parameters['pgtIou']) {
@@ -59,8 +63,6 @@ final class ProxyCallback extends Handler implements HandlerInterface
                     ->expiresAfter(300)
             );
 
-        return $this
-            ->getPsr17()
-            ->createResponse();
+        return $response;
     }
 }
