@@ -373,9 +373,15 @@ class CasSpec extends ObjectBehavior
             new Uri('http://from?ticket=ST-TICKET-VALID')
         );
 
-        $this
-            ->requestTicketValidation($request)
+        $response = $this
+            ->requestTicketValidation($request);
+
+        $response
             ->shouldBeAnInstanceOf(ResponseInterface::class);
+
+        $response
+            ->shouldThrow(Exception::class)
+            ->during('getProxyGrantingTicket', [$request]);
 
         $request = new ServerRequest(
             Method::GET,
@@ -820,11 +826,16 @@ class CasSpec extends ObjectBehavior
             ],
         ]);
 
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
+        $this->beConstructedWith(
+            $properties,
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder()
+        );
 
         $request = new ServerRequest(
             Method::GET,

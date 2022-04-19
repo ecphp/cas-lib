@@ -114,5 +114,82 @@ class ServiceValidateSpec extends ObjectBehavior
         $this
             ->toArray()
             ->shouldReturn($parsed);
+
+        $this
+            ->getBody()
+            ->__toString()
+            ->shouldReturn($body);
+
+        $this
+            ->getHeader('Content-Type')
+            ->shouldReturn(['application/xml']);
+
+        $this
+            ->withHeader('Content-Type', 'application/html')
+            ->getHeader('Content-Type')
+            ->shouldReturn(['application/html']);
+
+        $this
+            ->getHeaderLine('Content-Type')
+            ->shouldReturn('application/xml');
+
+        $this
+            ->getHeaders()
+            ->shouldReturn([
+                'Content-Type' => [
+                    'application/xml',
+                ],
+            ]);
+
+        $this
+            ->getProtocolVersion()
+            ->shouldReturn('1.1');
+
+        $this
+            ->getReasonPhrase()
+            ->shouldReturn('OK');
+
+        $this
+            ->getStatusCode()
+            ->shouldReturn(200);
+
+        $this
+            ->hasHeader('Content-Type')
+            ->shouldReturn(true);
+
+        $this
+            ->hasHeader('foobar')
+            ->shouldReturn(false);
+
+        $this
+            ->withAddedHeader('foobar', 'barfoo')
+            ->hasHeader('foobar')
+            ->shouldReturn(true);
+
+        $this
+            ->withBody($psr17Factory->createStream('foobar'))
+            ->getBody()
+            ->__toString()
+            ->shouldReturn('foobar');
+
+        $this
+            ->withoutHeader('Content-Type')
+            ->hasHeader('Content-Type')
+            ->shouldReturn(false);
+
+        $this
+            ->withProtocolVersion('2.0')
+            ->getProtocolVersion()
+            ->shouldReturn('2.0');
+
+        $this
+            ->withStatus(500, 'foo')
+            ->getStatusCode()
+            ->shouldReturn(500);
+
+        $this
+            ->withStatus(500, 'foo')
+            ->getReasonPhrase()
+            ->shouldReturn('foo');
     }
 }

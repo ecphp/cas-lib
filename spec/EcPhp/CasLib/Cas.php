@@ -31,6 +31,8 @@ class Cas extends ObjectBehavior
             ];
 
             switch ($url) {
+                case 'http://local/cas/proxyValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_get_credentials_with_pgtUrl%2Fmissing_pgt':
+                case 'http://from/it_can_detect_a_wrong_proxy_response':
                 case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom&ticket=ST-TICKET-VALID':
                 case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_test_the_proxy_mode_without_pgtUrl&ticket=ST-TICKET-VALID':
                 case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_get_credentials_without_pgtUrl':
@@ -90,6 +92,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
+                case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_detect_when_response_type_is_invalid&ticket=ST-TICKET-VALID':
                 case 'http://from/it_can_request_a_proxy_ticket':
                 case 'http://from/it_can_parse_a_good_proxy_request_response':
                     $body = <<< 'EOF'

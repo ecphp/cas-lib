@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Handler;
 
-use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Handler\Proxy;
+use EcPhp\CasLib\Response\CasResponseBuilder;
 use Ergebnis\Http\Method;
 use Exception;
 use loophp\psr17\Psr17Interface;
@@ -27,7 +27,10 @@ class ProxySpec extends ObjectBehavior
 {
     public function it_can_detect_a_wrong_proxy_response()
     {
-        $request = new ServerRequest(Method::GET, 'http://from');
+        $request = new ServerRequest(
+            Method::GET,
+            'http://from/it_can_detect_a_wrong_proxy_response'
+        );
 
         $this
             ->shouldThrow(Exception::class)
@@ -48,12 +51,12 @@ class ProxySpec extends ObjectBehavior
         $this->shouldHaveType(Proxy::class);
     }
 
-    public function let(CacheItemPoolInterface $cache, Psr17Interface $psr17, CasResponseBuilderInterface $casResponseBuilder)
+    public function let(CacheItemPoolInterface $cache, Psr17Interface $psr17)
     {
         $this->beConstructedWith(
             [],
             $cache,
-            $casResponseBuilder,
+            new CasResponseBuilder(),
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             Cas::getTestProperties(),
             $psr17

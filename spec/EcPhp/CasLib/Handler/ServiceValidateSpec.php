@@ -38,6 +38,18 @@ class ServiceValidateSpec extends ObjectBehavior
             ->during('handle', [$request]);
     }
 
+    public function it_can_detect_when_response_type_is_invalid()
+    {
+        $request = new ServerRequest(
+            Method::GET,
+            'http://from/it_can_detect_when_response_type_is_invalid?ticket=ST-TICKET-VALID'
+        );
+
+        $this
+            ->shouldThrow(Exception::class)
+            ->during('handle', [$request]);
+    }
+
     public function it_can_get_credentials_with_pgtUrl(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem)
     {
         $psr17Factory = new Psr17Factory();
@@ -84,6 +96,15 @@ class ServiceValidateSpec extends ObjectBehavior
         $this
             ->handle($request)
             ->shouldImplement(ResponseInterface::class);
+
+        $request = new ServerRequest(
+            Method::GET,
+            new Uri('http://from/it_can_get_credentials_with_pgtUrl/missing_pgt')
+        );
+
+        $this
+            ->handle($request)
+            ->shouldReturnAnInstanceOf(ResponseInterface::class);
     }
 
     public function it_can_get_credentials_without_pgtUrl()

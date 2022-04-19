@@ -77,6 +77,19 @@ class ResponseSpec extends ObjectBehavior
             ]);
     }
 
+    public function it_throws_when_body_is_empty()
+    {
+        $response = new Response(
+            200,
+            [],
+            ''
+        );
+
+        $this
+            ->shouldThrow(CasExceptionInterface::class)
+            ->during('toArray', [$response]);
+    }
+
     public function it_throws_when_content_type_header_is_missing()
     {
         $body = <<< 'EOF'
