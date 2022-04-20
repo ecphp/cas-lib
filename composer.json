@@ -17,6 +17,7 @@
         "ext-simplexml": "*",
         "ergebnis/http-method": "^2.2",
         "league/uri-components": "^2",
+        "loophp/psr17": "^1.0",
         "openlss/lib-array2xml": "^1.0",
         "psr/cache": "^1.0.1 || ^2 || ^3",
         "psr/http-client": "^1.0",
@@ -34,7 +35,6 @@
         "friends-of-phpspec/phpspec-code-coverage": "^6.0.0",
         "infection/infection": "^0.23 || ^0.24",
         "infection/phpspec-adapter": "^0.1.2",
-        "loophp/psr17": "^1.0",
         "nyholm/psr7": "^1.4",
         "phpspec/phpspec": "^7",
         "phpstan/phpstan-strict-rules": "^1",
@@ -45,7 +45,6 @@
         "psr/http-server-handler-implementation": "^1.0"
     },
     "suggest": {
-        "loophp/psr17": "Provides a PSR17 synthetic implementation",
         "nyholm/psr7": "A super lightweight PSR-7 implementation"
     },
     "autoload": {
