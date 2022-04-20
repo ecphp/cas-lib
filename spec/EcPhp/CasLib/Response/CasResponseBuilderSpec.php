@@ -16,6 +16,10 @@ use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Contract\Response\Type\Proxy;
 use EcPhp\CasLib\Contract\Response\Type\ProxyFailure;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate;
+use EcPhp\CasLib\Response\Factory\AuthenticationFailureFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFailureFactory;
+use EcPhp\CasLib\Response\Factory\ServiceValidateFactory;
 use Exception;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -297,5 +301,16 @@ class CasResponseBuilderSpec extends ObjectBehavior
     public function it_is_initializable()
     {
         $this->shouldHaveType(CasResponseBuilderInterface::class);
+    }
+
+    public function let()
+    {
+        $this
+            ->beConstructedWith(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            );
     }
 }

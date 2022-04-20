@@ -13,15 +13,8 @@ namespace EcPhp\CasLib\Response;
 
 use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Contract\Response\CasResponseInterface;
-use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure as TypeAuthenticationFailure;
-use EcPhp\CasLib\Contract\Response\Type\Proxy as TypeProxy;
-use EcPhp\CasLib\Contract\Response\Type\ProxyFailure as TypeProxyFailure;
-use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
+use EcPhp\CasLib\Contract\Response\Factory\CasResponseFactoryInterface;
 use EcPhp\CasLib\Exception\CasResponseBuilderException;
-use EcPhp\CasLib\Response\Type\AuthenticationFailure;
-use EcPhp\CasLib\Response\Type\Proxy;
-use EcPhp\CasLib\Response\Type\ProxyFailure;
-use EcPhp\CasLib\Response\Type\ServiceValidate;
 use EcPhp\CasLib\Utils\Response as ResponseUtils;
 use Psr\Http\Message\ResponseInterface;
 
@@ -31,24 +24,24 @@ use function array_key_exists;
 
 final class CasResponseBuilder implements CasResponseBuilderInterface
 {
-    public function createAuthenticationFailure(ResponseInterface $response): TypeAuthenticationFailure
-    {
-        return new AuthenticationFailure($response);
-    }
+    private CasResponseFactoryInterface $authenticationFailureFactory;
 
-    public function createProxyFailure(ResponseInterface $response): TypeProxyFailure
-    {
-        return new ProxyFailure($response);
-    }
+    private CasResponseFactoryInterface $proxyFactory;
 
-    public function createProxySuccess(ResponseInterface $response): TypeProxy
-    {
-        return new Proxy($response);
-    }
+    private CasResponseFactoryInterface $proxyFailureFactory;
 
-    public function createServiceValidate(ResponseInterface $response): TypeServiceValidate
-    {
-        return new ServiceValidate($response);
+    private CasResponseFactoryInterface $serviceValidateFactory;
+
+    public function __construct(
+        CasResponseFactoryInterface $authenticationFailureFactory,
+        CasResponseFactoryInterface $proxyFactory,
+        CasResponseFactoryInterface $proxyFailureFactory,
+        CasResponseFactoryInterface $serviceValidateFactory
+    ) {
+        $this->authenticationFailureFactory = $authenticationFailureFactory;
+        $this->proxyFactory = $proxyFactory;
+        $this->proxyFailureFactory = $proxyFailureFactory;
+        $this->serviceValidateFactory = $serviceValidateFactory;
     }
 
     public function fromResponse(ResponseInterface $response): CasResponseInterface
@@ -64,19 +57,19 @@ final class CasResponseBuilder implements CasResponseBuilderInterface
         }
 
         if (array_key_exists('authenticationFailure', $data['serviceResponse'])) {
-            return $this->createAuthenticationFailure($response);
+            return $this->authenticationFailureFactory->decorate($response);
         }
 
         if (array_key_exists('proxyFailure', $data['serviceResponse'])) {
-            return $this->createProxyFailure($response);
+            return $this->proxyFailureFactory->decorate($response);
         }
 
         if (array_key_exists('authenticationSuccess', $data['serviceResponse'])) {
-            return $this->createServiceValidate($response);
+            return $this->serviceValidateFactory->decorate($response);
         }
 
         if (array_key_exists('proxySuccess', $data['serviceResponse'])) {
-            return $this->createProxySuccess($response);
+            return $this->proxyFactory->decorate($response);
         }
 
         throw CasResponseBuilderException::unknownResponseType();

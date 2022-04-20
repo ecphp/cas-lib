@@ -13,6 +13,10 @@ namespace spec\EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Response\CasResponseBuilder;
+use EcPhp\CasLib\Response\Factory\AuthenticationFailureFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFailureFactory;
+use EcPhp\CasLib\Response\Factory\ServiceValidateFactory;
 use Ergebnis\Http\Method;
 use Exception;
 use loophp\psr17\Psr17Interface;
@@ -56,7 +60,12 @@ class ProxySpec extends ObjectBehavior
         $this->beConstructedWith(
             [],
             $cache,
-            new CasResponseBuilder(),
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            ),
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             Cas::getTestProperties(),
             $psr17

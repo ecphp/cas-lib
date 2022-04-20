@@ -17,6 +17,10 @@ use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasExceptionInterface;
 use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Response\CasResponseBuilder;
+use EcPhp\CasLib\Response\Factory\AuthenticationFailureFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFailureFactory;
+use EcPhp\CasLib\Response\Factory\ServiceValidateFactory;
 use EcPhp\CasLib\Utils\Uri as UtilsUri;
 use Ergebnis\Http\Method;
 use Exception;
@@ -59,7 +63,12 @@ class CasSpec extends ObjectBehavior
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             $cache,
-            new CasResponseBuilder()
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
         );
 
         $request = new ServerRequest(
@@ -165,7 +174,12 @@ class CasSpec extends ObjectBehavior
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             $cache,
-            new CasResponseBuilder()
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
         );
 
         $request = new ServerRequest(
@@ -339,11 +353,21 @@ class CasSpec extends ObjectBehavior
             ],
         ]);
 
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
+        $this->beConstructedWith(
+            $properties,
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
+        );
 
         $parameters = [
             'service' => 'service',
@@ -593,10 +617,21 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_parse_a_bad_proxy_request_response(CacheItemPoolInterface $cache)
     {
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
+
+        $this->beConstructedWith(
+            CasSpecUtils::getTestProperties(),
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
+        );
 
         $request = new ServerRequest(
             Method::GET,
@@ -610,10 +645,21 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_parse_a_good_proxy_request_response(CacheItemPoolInterface $cache)
     {
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
+
+        $this->beConstructedWith(
+            CasSpecUtils::getTestProperties(),
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
+        );
 
         $request = new ServerRequest(
             Method::GET,
@@ -639,10 +685,21 @@ class CasSpec extends ObjectBehavior
             ],
         ]);
 
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
+
+        $this->beConstructedWith(
+            $properties,
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
+        );
 
         $request = new ServerRequest(
             Method::GET,
@@ -676,10 +733,21 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_request_a_proxy_ticket(CacheItemPoolInterface $cache)
     {
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->beConstructedWith(CasSpecUtils::getTestProperties(), $client, $psr17, $cache, new CasResponseBuilder());
+
+        $this->beConstructedWith(
+            CasSpecUtils::getTestProperties(),
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
+        );
 
         $request = new ServerRequest(
             Method::GET,
@@ -714,10 +782,21 @@ class CasSpec extends ObjectBehavior
             ],
         ]);
 
-        $client = new Psr18Client(CasSpecUtils::getHttpClientMock());
         $psr17Factory = new Psr17Factory();
         $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-        $this->beConstructedWith($properties, $client, $psr17, $cache, new CasResponseBuilder());
+
+        $this->beConstructedWith(
+            $properties,
+            new Psr18Client(CasSpecUtils::getHttpClientMock()),
+            $psr17,
+            $cache,
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
+        );
 
         $request = new ServerRequest(
             Method::POST,
@@ -739,7 +818,12 @@ class CasSpec extends ObjectBehavior
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             $cache,
-            new CasResponseBuilder()
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
         );
 
         $request = new ServerRequest(
@@ -834,7 +918,12 @@ class CasSpec extends ObjectBehavior
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             $cache,
-            new CasResponseBuilder()
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
         );
 
         $request = new ServerRequest(
@@ -917,7 +1006,12 @@ class CasSpec extends ObjectBehavior
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             $cache,
-            new CasResponseBuilder()
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
         );
     }
 }

@@ -14,6 +14,10 @@ namespace spec\tests\EcPhp\CasLib;
 use EcPhp\CasLib\Cas;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate;
 use EcPhp\CasLib\Response\CasResponseBuilder;
+use EcPhp\CasLib\Response\Factory\AuthenticationFailureFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFailureFactory;
+use EcPhp\CasLib\Response\Factory\ServiceValidateFactory;
 use Ergebnis\Http\Method;
 use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -43,7 +47,12 @@ class CasSpec extends ObjectBehavior
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             $cache,
-            new CasResponseBuilder()
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
         ));
 
         $request = new ServerRequest(
@@ -66,7 +75,12 @@ class CasSpec extends ObjectBehavior
             new Psr18Client(CasSpecUtils::getHttpClientMock()),
             $psr17,
             new ArrayAdapter(),
-            new CasResponseBuilder()
+            new CasResponseBuilder(
+                new AuthenticationFailureFactory(),
+                new ProxyFactory(),
+                new ProxyFailureFactory(),
+                new ServiceValidateFactory()
+            )
         ));
 
         $request = new ServerRequest(
