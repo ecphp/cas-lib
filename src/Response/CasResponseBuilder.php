@@ -13,7 +13,10 @@ namespace EcPhp\CasLib\Response;
 
 use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Contract\Response\CasResponseInterface;
-use EcPhp\CasLib\Contract\Response\Factory\CasResponseFactoryInterface;
+use EcPhp\CasLib\Contract\Response\Factory\AuthenticationFailureFactory;
+use EcPhp\CasLib\Contract\Response\Factory\ProxyFactory;
+use EcPhp\CasLib\Contract\Response\Factory\ProxyFailureFactory;
+use EcPhp\CasLib\Contract\Response\Factory\ServiceValidateFactory;
 use EcPhp\CasLib\Exception\CasResponseBuilderException;
 use EcPhp\CasLib\Utils\Response as ResponseUtils;
 use Psr\Http\Message\ResponseInterface;
@@ -24,19 +27,19 @@ use function array_key_exists;
 
 final class CasResponseBuilder implements CasResponseBuilderInterface
 {
-    private CasResponseFactoryInterface $authenticationFailureFactory;
+    private AuthenticationFailureFactory $authenticationFailureFactory;
 
-    private CasResponseFactoryInterface $proxyFactory;
+    private ProxyFactory $proxyFactory;
 
-    private CasResponseFactoryInterface $proxyFailureFactory;
+    private ProxyFailureFactory $proxyFailureFactory;
 
-    private CasResponseFactoryInterface $serviceValidateFactory;
+    private ServiceValidateFactory $serviceValidateFactory;
 
     public function __construct(
-        CasResponseFactoryInterface $authenticationFailureFactory,
-        CasResponseFactoryInterface $proxyFactory,
-        CasResponseFactoryInterface $proxyFailureFactory,
-        CasResponseFactoryInterface $serviceValidateFactory
+        AuthenticationFailureFactory $authenticationFailureFactory,
+        ProxyFactory $proxyFactory,
+        ProxyFailureFactory $proxyFailureFactory,
+        ServiceValidateFactory $serviceValidateFactory
     ) {
         $this->authenticationFailureFactory = $authenticationFailureFactory;
         $this->proxyFactory = $proxyFactory;

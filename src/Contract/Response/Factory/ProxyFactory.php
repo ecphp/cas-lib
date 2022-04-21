@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Contract\Response\Factory;
 
-use EcPhp\CasLib\Contract\Response\CasResponseInterface;
+use EcPhp\CasLib\Contract\Response\Type\Proxy;
 use Psr\Http\Message\ResponseInterface;
 
-interface CasResponseFactoryInterface
+interface ProxyFactory
 {
-    public function decorate(ResponseInterface $response): CasResponseInterface;
+    public function decorate(ResponseInterface $response): Proxy;
 }

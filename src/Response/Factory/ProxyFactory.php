@@ -11,14 +11,14 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Response\Factory;
 
-use EcPhp\CasLib\Contract\Response\CasResponseInterface;
-use EcPhp\CasLib\Contract\Response\Factory\CasResponseFactoryInterface;
+use EcPhp\CasLib\Contract\Response\Factory\ProxyFactory as ProxyFactoryInterface;
+use EcPhp\CasLib\Contract\Response\Type\Proxy as ProxyInterface;
 use EcPhp\CasLib\Response\Type\Proxy;
 use Psr\Http\Message\ResponseInterface;
 
-final class ProxyFactory implements CasResponseFactoryInterface
+final class ProxyFactory implements ProxyFactoryInterface
 {
-    public function decorate(ResponseInterface $response): CasResponseInterface
+    public function decorate(ResponseInterface $response): ProxyInterface
     {
         return new Proxy($response);
     }
