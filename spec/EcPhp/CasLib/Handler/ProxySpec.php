@@ -19,7 +19,8 @@ use EcPhp\CasLib\Response\Factory\ProxyFailureFactory;
 use EcPhp\CasLib\Response\Factory\ServiceValidateFactory;
 use Ergebnis\Http\Method;
 use Exception;
-use loophp\psr17\Psr17Interface;
+use loophp\psr17\Psr17;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemPoolInterface;
@@ -55,8 +56,18 @@ class ProxySpec extends ObjectBehavior
         $this->shouldHaveType(Proxy::class);
     }
 
-    public function let(CacheItemPoolInterface $cache, Psr17Interface $psr17)
+    public function let(CacheItemPoolInterface $cache)
     {
+        $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17(
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory
+        );
+
         $this->beConstructedWith(
             [],
             $cache,

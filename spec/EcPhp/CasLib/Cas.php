@@ -92,6 +92,7 @@ class Cas extends ObjectBehavior
 
                     break;
 
+                case 'http://local/cas/proxy?service=service-valid':
                 case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_detect_when_response_type_is_invalid&ticket=ST-TICKET-VALID':
                 case 'http://from/it_can_request_a_proxy_ticket':
                 case 'http://from/it_can_parse_a_good_proxy_request_response':

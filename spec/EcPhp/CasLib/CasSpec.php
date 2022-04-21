@@ -615,62 +615,6 @@ class CasSpec extends ObjectBehavior
             ->shouldReturnAnInstanceOf(ResponseInterface::class);
     }
 
-    public function it_can_parse_a_bad_proxy_request_response(CacheItemPoolInterface $cache)
-    {
-        $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-
-        $this->beConstructedWith(
-            CasSpecUtils::getTestProperties(),
-            new Psr18Client(CasSpecUtils::getHttpClientMock()),
-            $psr17,
-            $cache,
-            new CasResponseBuilder(
-                new AuthenticationFailureFactory(),
-                new ProxyFactory(),
-                new ProxyFailureFactory(),
-                new ServiceValidateFactory()
-            )
-        );
-
-        $request = new ServerRequest(
-            Method::GET,
-            new Uri('http://from/it_can_parse_a_bad_proxy_request_response')
-        );
-
-        $this
-            ->shouldThrow(Exception::class)
-            ->during('requestProxyTicket', [$request]);
-    }
-
-    public function it_can_parse_a_good_proxy_request_response(CacheItemPoolInterface $cache)
-    {
-        $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-
-        $this->beConstructedWith(
-            CasSpecUtils::getTestProperties(),
-            new Psr18Client(CasSpecUtils::getHttpClientMock()),
-            $psr17,
-            $cache,
-            new CasResponseBuilder(
-                new AuthenticationFailureFactory(),
-                new ProxyFactory(),
-                new ProxyFailureFactory(),
-                new ServiceValidateFactory()
-            )
-        );
-
-        $request = new ServerRequest(
-            Method::GET,
-            new Uri('http://from/it_can_parse_a_good_proxy_request_response')
-        );
-
-        $this
-            ->requestProxyTicket($request)
-            ->shouldBeAnInstanceOf(ResponseInterface::class);
-    }
-
     public function it_can_parse_json_in_a_response(CacheItemPoolInterface $cache)
     {
         $properties = new CasProperties([
@@ -751,21 +695,21 @@ class CasSpec extends ObjectBehavior
 
         $request = new ServerRequest(
             Method::GET,
-            'http://from/it_can_request_a_proxy_ticket'
+            new Uri('http://from/it_can_request_a_proxy_ticket')
         );
 
         $this
-            ->requestProxyTicket($request)
+            ->requestProxyTicket($request, ['service' => 'service-valid'])
             ->shouldBeAnInstanceOf(ResponseInterface::class);
 
         $request = new ServerRequest(
             Method::GET,
-            'http://from/TestClientException'
+            new Uri('http://from/it_can_request_a_proxy_ticket')
         );
 
         $this
             ->shouldThrow(Exception::class)
-            ->during('requestProxyTicket', [$request]);
+            ->during('requestProxyTicket', [$request, ['service' => 'service-invalid']]);
     }
 
     public function it_can_validate_a_bad_proxy_ticket(CacheItemPoolInterface $cache)
@@ -783,7 +727,14 @@ class CasSpec extends ObjectBehavior
         ]);
 
         $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+        $psr17 = new Psr17(
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory,
+            $psr17Factory
+        );
 
         $this->beConstructedWith(
             $properties,
