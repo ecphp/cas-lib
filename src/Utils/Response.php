@@ -57,6 +57,7 @@ final class Response
                 return $json;
 
             case 0 === strpos($header, 'text/html'):
+            case 0 === strpos($header, 'text/xml'):
             case 0 === strpos($header, 'application/xml'):
                 set_error_handler(
                     static function ($errno, $errstr, $errfile, $errline): void {
