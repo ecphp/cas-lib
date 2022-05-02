@@ -132,7 +132,7 @@ class UriSpec extends ObjectBehavior
 
         $this
             ->getParam($uri, 'param3')
-            ->shouldBeNull();
+            ->shouldReturn('');
 
         $this
             ->getParam($uri, 'param3', 'foo')

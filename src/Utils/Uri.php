@@ -11,26 +11,64 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Utils;
 
+use InvalidArgumentException;
 use League\Uri\Components\Query;
 use Psr\Http\Message\UriInterface;
+use Throwable;
+use TypeError;
 
 final class Uri
 {
-    public static function getParam(UriInterface $uri, string $param, ?string $default = null): ?string
-    {
+    /**
+     * Get a parameter from the URI query string.
+     *
+     * @param UriInterface $uri
+     *   The URI.
+     * @param string $param
+     *   The parameter key.
+     * @param string $default
+     *   The default value if the parameter doesn't exist.
+     *
+     * @return string
+     *   The value of the parameter to get.
+     */
+    public static function getParam(
+        UriInterface $uri,
+        string $param,
+        string $default = ''
+    ): string {
         return self::getParams($uri)[$param] ?? $default;
     }
 
     /**
+     * Get the parameters from the URI query string.
+     *
+     * @param UriInterface $uri
+     *   The URI.
+     *
      * @return string[]
+     *   The parameters, as "key/value" pairs.
      */
     public static function getParams(UriInterface $uri): array
     {
-        return iterator_to_array(Query::createFromUri($uri)->pairs());
+        $pairs = [];
+
+        try {
+            $pairs = Query::createFromUri($uri)->pairs();
+        } catch (Throwable $exception) {
+            // Ignore the exception.
+        }
+
+        return iterator_to_array($pairs);
     }
 
     /**
+     * Check wether an URI has the requested parameters.
+     *
+     * @param UriInterface $uri
+     *   The URI.
      * @param string ...$keys
+     *   The parameter keys to check.
      */
     public static function hasParams(UriInterface $uri, string ...$keys): bool
     {
@@ -40,16 +78,18 @@ final class Uri
     /**
      * Remove one or more parameters from an URI.
      *
-     * @param \Psr\Http\Message\UriInterface $uri
+     * @param UriInterface $uri
      *   The URI.
      * @param string ...$keys
      *   The parameter(s) to remove.
      *
-     * @return \Psr\Http\Message\UriInterface
+     * @return UriInterface
      *   A new URI without the parameter(s) to remove.
      */
-    public static function removeParams(UriInterface $uri, string ...$keys): UriInterface
-    {
+    public static function removeParams(
+        UriInterface $uri,
+        string ...$keys
+    ): UriInterface {
         return $uri
             ->withQuery(
                 http_build_query(
@@ -61,6 +101,24 @@ final class Uri
             );
     }
 
+    /**
+     * Add a parameter to an URI.
+     *
+     * @param UriInterface $uri
+     *   The URI.
+     * @param string $key
+     *   The key of the parameter to add to the URI.
+     * @param string $value
+     *   The value of the parameter to add to the URI.
+     * @param bool $force
+     *   If true, overwrite any existing parameter from the URI.
+     *
+     * @throws TypeError
+     * @throws InvalidArgumentException
+     *
+     * @return UriInterface
+     *   A new URI with the added parameter.
+     */
     public static function withParam(
         UriInterface $uri,
         string $key,
@@ -77,13 +135,29 @@ final class Uri
     }
 
     /**
+     * Add parameters to an URI.
+     *
+     * @param UriInterface $uri
+     *   The URI.
      * @param string[] $params
+     *   The set of parameters to add.
+     * @param bool $force
+     *   If true, overwrite any existing parameter from the URI.
+     *
+     * @throws TypeError
+     * @throws InvalidArgumentException
+     *
+     * @return UriInterface
+     *   A new URI with the added parameters.
      */
     public static function withParams(
         UriInterface $uri,
         array $params,
         bool $force = true
     ): UriInterface {
+        // Reduce operation
+        // Cannot use `array_reduce` because it
+        // doesn't pass the key to the callback.
         foreach ($params as $key => $value) {
             $uri = self::withParam($uri, $key, $value, $force);
         }
