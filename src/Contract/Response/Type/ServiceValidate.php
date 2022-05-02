@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Contract\Response\Type;
 
 use EcPhp\CasLib\Contract\Response\CasResponseInterface;
+use Exception;
 
 interface ServiceValidate extends CasResponseInterface
 {
@@ -19,5 +20,8 @@ interface ServiceValidate extends CasResponseInterface
 
     public function getProxies(): array;
 
+    /**
+     * @throws Exception
+     */
     public function getProxyGrantingTicket(): string;
 }

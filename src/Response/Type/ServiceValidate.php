@@ -42,7 +42,8 @@ final class ServiceValidate extends CasResponse implements ServiceValidateInterf
         );
 
         if (false === $proxyGrantingTicket) {
-            throw new Exception('Missing PGT in ServiceValidate Response.');
+            // TODO: Create a CasResponseException class.
+            throw new Exception('Service validate response: Missing proxy granting ticket key in CAS response body.');
         }
 
         return $credentials['proxyGrantingTicket'];

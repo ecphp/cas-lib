@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Exception\CasExceptionInterface;
 use EcPhp\CasLib\Handler\ServiceValidate;
 use EcPhp\CasLib\Response\CasResponseBuilder;
 use EcPhp\CasLib\Response\Factory\AuthenticationFailureFactory;
@@ -112,8 +113,8 @@ class ServiceValidateSpec extends ObjectBehavior
         );
 
         $this
-            ->handle($request)
-            ->shouldReturnAnInstanceOf(ResponseInterface::class);
+            ->shouldThrow(CasExceptionInterface::class)
+            ->during('handle', [$request]);
     }
 
     public function it_can_get_credentials_without_pgtUrl()

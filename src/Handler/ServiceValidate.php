@@ -15,7 +15,6 @@ use EcPhp\CasLib\Contract\Handler\HandlerInterface;
 use EcPhp\CasLib\Contract\Handler\ServiceValidateHandlerInterface;
 use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
-use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
 use Ergebnis\Http\Method;
@@ -40,18 +39,16 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
         $parameters += $properties['protocol'][$type]['default_parameters'] ?? [];
         $parameters += ['service' => (string) $request->getUri()];
 
-        $uri = $this
-            ->buildUri(
-                $request->getUri(),
-                $type,
-                $this->formatProtocolParameters($parameters)
-            );
-
         $request = $this
             ->getPsr17()
             ->createRequest(
                 Method::GET,
-                $uri
+                $this
+                    ->buildUri(
+                        $request->getUri(),
+                        $type,
+                        $this->formatProtocolParameters($parameters)
+                    )
             );
 
         try {
@@ -59,7 +56,7 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
                 ->getClient()
                 ->sendRequest($request);
         } catch (Throwable $exception) {
-            throw CasException::errorWhileDoingRequest($exception);
+            throw CasHandlerException::errorWhileDoingRequest($exception);
         }
 
         $response = $this->getCasResponseBuilder()->fromResponse($response);
@@ -80,7 +77,7 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
         try {
             $proxyGrantingTicket = $response->getProxyGrantingTicket();
         } catch (Throwable $exception) {
-            return $response;
+            throw CasHandlerException::missingPGT($exception);
         }
 
         $hasPgtIou = $this

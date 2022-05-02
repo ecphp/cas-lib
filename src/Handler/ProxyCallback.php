@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Handler\HandlerInterface;
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
@@ -39,11 +40,11 @@ final class ProxyCallback extends Handler implements HandlerInterface
         }
 
         if (null === $parameters['pgtIou']) {
-            throw new Exception('PGT IOU is null.');
+            throw CasHandlerException::pgtIouIsNull();
         }
 
         if (null === $parameters['pgtId']) {
-            throw new Exception('PGT ID is null.');
+            throw CasHandlerException::pgtIdIsNull();
         }
 
         try {
@@ -51,11 +52,7 @@ final class ProxyCallback extends Handler implements HandlerInterface
                 ->getCache()
                 ->getItem($parameters['pgtIou']);
         } catch (Throwable $exception) {
-            throw new Exception(
-                'Unable to get item from cache.',
-                0,
-                $exception
-            );
+            throw CasHandlerException::getItemFromCacheFailure($exception);
         }
 
         $this

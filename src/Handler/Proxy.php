@@ -12,10 +12,9 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Handler\HandlerInterface;
-use EcPhp\CasLib\Exception\CasException;
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
 use Ergebnis\Http\Method;
-use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -31,17 +30,16 @@ final class Proxy extends Handler implements HandlerInterface
         $parameters += $properties['protocol'][HandlerInterface::TYPE_PROXY]['default_parameters'] ?? [];
         $parameters += ['service' => (string) $request->getUri()];
 
-        $uri = $this->buildUri(
-            $request->getUri(),
-            HandlerInterface::TYPE_PROXY,
-            $this->formatProtocolParameters($parameters)
-        );
-
         $request = $this
             ->getPsr17()
             ->createRequest(
                 Method::GET,
-                $uri
+                $this
+                    ->buildUri(
+                        $request->getUri(),
+                        HandlerInterface::TYPE_PROXY,
+                        $this->formatProtocolParameters($parameters)
+                    )
             );
 
         try {
@@ -49,13 +47,13 @@ final class Proxy extends Handler implements HandlerInterface
                 ->getClient()
                 ->sendRequest($request);
         } catch (Throwable $exception) {
-            throw CasException::errorWhileDoingRequest($exception);
+            throw CasHandlerException::errorWhileDoingRequest($exception);
         }
 
         $response = $this->getCasResponseBuilder()->fromResponse($response);
 
         if (false === ($response instanceof \EcPhp\CasLib\Contract\Response\Type\Proxy)) {
-            throw new Exception('Invalid response type.');
+            throw CasHandlerException::invalidProxyResponseType($response);
         }
 
         return $response;

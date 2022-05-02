@@ -13,8 +13,8 @@ namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
 use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
-use Exception;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
@@ -66,7 +66,7 @@ abstract class Handler
         $baseUrl = parse_url($properties['base_url']);
 
         if (false === $baseUrl) {
-            throw new Exception(
+            throw new CasHandlerException(
                 sprintf('Unable to parse URL: %s', $properties['base_url'])
             );
         }
