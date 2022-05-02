@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Handler\HandlerInterface;
+use EcPhp\CasLib\Exception\CasExceptionInterface;
 use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\RequestInterface;
@@ -33,26 +34,24 @@ final class Login extends Handler implements HandlerInterface
 
         $this->validate($request, $parameters);
 
-        $uri = $this
-            ->buildUri(
-                $request->getUri(),
-                HandlerInterface::TYPE_LOGIN,
-                $parameters
-            );
-
         return $this
             ->getPsr17()
             ->createResponse(302)
             ->withHeader(
                 'Location',
-                (string) $uri
+                (string) $this
+                    ->buildUri(
+                        $request->getUri(),
+                        HandlerInterface::TYPE_LOGIN,
+                        $parameters
+                    )
             );
     }
 
     /**
      * @param string[] $parameters
      *
-     * @return string[]
+     * @throws CasExceptionInterface
      */
     private function validate(
         RequestInterface $request,

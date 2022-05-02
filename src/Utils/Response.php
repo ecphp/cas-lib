@@ -14,6 +14,7 @@ namespace EcPhp\CasLib\Utils;
 use DOMDocument;
 use DOMXPath;
 use EcPhp\CasLib\Exception\CasException;
+use EcPhp\CasLib\Exception\CasExceptionInterface;
 use ErrorException;
 use LSS\XML2Array;
 use Psr\Http\Message\ResponseInterface;
@@ -28,7 +29,7 @@ use const LIBXML_NSCLEAN;
 final class Response
 {
     /**
-     * @throws CasException
+     * @throws CasExceptionInterface
      *
      * @return mixed[]
      */

@@ -24,19 +24,17 @@ final class Logout extends Handler implements HandlerInterface
         $parameters += Uri::getParams($request->getUri());
         $parameters += $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGOUT]['default_parameters'] ?? [];
 
-        $uri = $this
-            ->buildUri(
-                $request->getUri(),
-                HandlerInterface::TYPE_LOGOUT,
-                $this->formatProtocolParameters($parameters)
-            );
-
         return $this
             ->getPsr17()
             ->createResponse(302)
             ->withHeader(
                 'Location',
-                (string) $uri
+                (string) $this
+                    ->buildUri(
+                        $request->getUri(),
+                        HandlerInterface::TYPE_LOGOUT,
+                        $this->formatProtocolParameters($parameters)
+                    )
             );
     }
 }

@@ -76,8 +76,8 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
             return $response;
         }
 
+        /** @var TypeServiceValidate $response */
         try {
-            /** @var TypeServiceValidate $response */
             $proxyGrantingTicket = $response->getProxyGrantingTicket();
         } catch (Throwable $exception) {
             return $response;

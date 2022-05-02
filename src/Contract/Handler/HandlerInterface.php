@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Contract\Handler;
 
+use EcPhp\CasLib\Exception\CasExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 interface HandlerInterface extends RequestHandlerInterface
@@ -24,4 +27,9 @@ interface HandlerInterface extends RequestHandlerInterface
     public const TYPE_PROXY_VALIDATE = 'proxyValidate';
 
     public const TYPE_SERVICE_VALIDATE = 'serviceValidate';
+
+    /**
+     * @throws CasExceptionInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface;
 }

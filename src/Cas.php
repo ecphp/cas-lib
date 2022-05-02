@@ -31,8 +31,6 @@ use Throwable;
 
 use function array_key_exists;
 
-// phpcs:disable Generic.Files.LineLength.TooLong
-
 final class Cas implements CasInterface
 {
     private CacheItemPoolInterface $cache;
@@ -70,10 +68,15 @@ final class Cas implements CasInterface
         }
 
         try {
-            $credentials = $this
+            $casResponse = $this
                 ->casResponseBuilder
-                ->fromResponse($response)
-                ->toArray();
+                ->fromResponse($response);
+        } catch (Throwable $exception) {
+            throw CasException::unableToAuthenticate($exception);
+        }
+
+        try {
+            $credentials = $casResponse->toArray();
         } catch (Throwable $exception) {
             throw CasException::unableToAuthenticate($exception);
         }

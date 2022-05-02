@@ -15,6 +15,7 @@ use EcPhp\CasLib\Exception\CasExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 interface CasInterface extends MiddlewareInterface
 {
@@ -36,6 +37,8 @@ interface CasInterface extends MiddlewareInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
+     *
+     * @throws CasExceptionInterface
      */
     public function handleProxyCallback(
         ServerRequestInterface $request,
@@ -47,6 +50,8 @@ interface CasInterface extends MiddlewareInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
+     *
+     * @throws CasExceptionInterface
      */
     public function login(
         ServerRequestInterface $request,
@@ -58,6 +63,8 @@ interface CasInterface extends MiddlewareInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
+     *
+     * @throws CasExceptionInterface
      */
     public function logout(
         ServerRequestInterface $request,
@@ -65,10 +72,17 @@ interface CasInterface extends MiddlewareInterface
     ): ResponseInterface;
 
     /**
+     * @throws CasExceptionInterface
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
+
+    /**
      * Request a proxy ticket.
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
+     *
+     * @throws CasExceptionInterface
      */
     public function requestProxyTicket(
         ServerRequestInterface $request,
@@ -80,6 +94,8 @@ interface CasInterface extends MiddlewareInterface
      *
      * @param array[]|string[] $parameters
      *   The parameters related to the service.
+     *
+     * @throws CasExceptionInterface
      */
     public function requestServiceValidate(
         ServerRequestInterface $request,
