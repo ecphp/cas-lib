@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Configuration;
 
+use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
 use ReturnTypeWillChange;
 
 use function array_key_exists;

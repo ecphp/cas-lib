@@ -11,15 +11,14 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
-use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
+use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\UriInterface;
-use Psr\Log\LoggerInterface;
 
 use function array_key_exists;
 
@@ -27,88 +26,60 @@ abstract class Handler
 {
     private CacheItemPoolInterface $cache;
 
-    private LoggerInterface $logger;
+    private CasResponseBuilderInterface $casResponseBuilder;
+
+    private ClientInterface $client;
 
     private array $parameters;
 
     private PropertiesInterface $properties;
 
-    private ResponseFactoryInterface $responseFactory;
-
-    private ServerRequestInterface $serverRequest;
-
-    private StreamFactoryInterface $streamFactory;
-
-    private UriFactoryInterface $uriFactory;
+    private Psr17Interface $psr17;
 
     /**
      * @param array[]|string[] $parameters
      */
     public function __construct(
-        ServerRequestInterface $serverRequest,
         array $parameters,
-        PropertiesInterface $properties,
-        UriFactoryInterface $uriFactory,
-        ResponseFactoryInterface $responseFactory,
-        StreamFactoryInterface $streamFactory,
         CacheItemPoolInterface $cache,
-        LoggerInterface $logger
+        CasResponseBuilderInterface $casResponseBuilder,
+        ClientInterface $client,
+        PropertiesInterface $properties,
+        Psr17Interface $psr17
     ) {
-        $this->serverRequest = $serverRequest;
+        $this->cache = $cache;
+        $this->casResponseBuilder = $casResponseBuilder;
+        $this->client = $client;
         $this->parameters = $parameters;
         $this->properties = $properties;
-        $this->uriFactory = $uriFactory;
-        $this->responseFactory = $responseFactory;
-        $this->streamFactory = $streamFactory;
-        $this->cache = $cache;
-        $this->logger = $logger;
+        $this->psr17 = $psr17;
     }
 
-    /**
-     * @param mixed[]|string[]|UriInterface[] $query
-     */
-    protected function buildUri(UriInterface $from, string $name, array $query = []): UriInterface
-    {
+    protected function buildUri(
+        UriInterface $from,
+        string $type,
+        array $queryParams = []
+    ): UriInterface {
         $properties = $this->getProperties();
 
-        // Remove parameters that are not allowed.
-        $query = array_intersect_key(
-            $query,
-            (array) array_combine(
-                $properties['protocol'][$name]['allowed_parameters'] ?? [],
-                $properties['protocol'][$name]['allowed_parameters'] ?? []
-            )
-        ) + Uri::getParams($from);
-
+        $queryParams += Uri::getParams($from);
         $baseUrl = parse_url($properties['base_url']);
 
         if (false === $baseUrl) {
-            $baseUrl = ['path' => ''];
-            $properties['base_url'] = '';
+            throw new CasHandlerException(
+                sprintf('Unable to parse URL: %s', $properties['base_url'])
+            );
         }
 
-        $baseUrl += ['path' => ''];
-
-        if (true === array_key_exists('service', $query)) {
-            $query['service'] = (string) $query['service'];
+        if (true === array_key_exists('service', $queryParams)) {
+            $queryParams['service'] = (string) $queryParams['service'];
         }
 
-        // Filter out empty $query parameters
-        $query = array_filter(
-            $query,
-            static function ($item): bool {
-                if ([] === $item) {
-                    return false;
-                }
-
-                return '' !== $item;
-            }
-        );
-
-        return $this->getUriFactory()
+        return $this
+            ->getPsr17()
             ->createUri($properties['base_url'])
-            ->withPath($baseUrl['path'] . $properties['protocol'][$name]['path'])
-            ->withQuery(http_build_query($query))
+            ->withPath(sprintf('%s%s', $baseUrl['path'], $properties['protocol'][$type]['path']))
+            ->withQuery(http_build_query($queryParams))
             ->withFragment($from->getFragment());
     }
 
@@ -119,29 +90,21 @@ abstract class Handler
      */
     protected function formatProtocolParameters(array $parameters): array
     {
-        $parameters = array_filter(
-            $parameters
-        );
-
         $parameters = array_map(
-            static function ($parameter) {
-                return true === $parameter ? 'true' : $parameter;
-            },
-            $parameters
+            static fn ($parameter) => true === $parameter ? 'true' : $parameter,
+            array_filter($parameters)
         );
 
         if (true === array_key_exists('service', $parameters)) {
-            $service = $this->getUriFactory()->createUri(
-                $parameters['service']
-            );
-
-            $service = Uri::removeParams(
-                $service,
+            $parameters['service'] = (string) Uri::removeParams(
+                $this
+                    ->getPsr17()
+                    ->createUri($parameters['service']),
                 'ticket'
             );
-
-            $parameters['service'] = (string) $service;
         }
+
+        ksort($parameters);
 
         return $parameters;
     }
@@ -151,9 +114,14 @@ abstract class Handler
         return $this->cache;
     }
 
-    protected function getLogger(): LoggerInterface
+    protected function getCasResponseBuilder(): CasResponseBuilderInterface
     {
-        return $this->logger;
+        return $this->casResponseBuilder;
+    }
+
+    protected function getClient(): ClientInterface
+    {
+        return $this->client;
     }
 
     /**
@@ -161,7 +129,7 @@ abstract class Handler
      */
     protected function getParameters(): array
     {
-        return $this->parameters + ($this->getProtocolProperties()['default_parameters'] ?? []);
+        return $this->parameters;
     }
 
     protected function getProperties(): PropertiesInterface
@@ -169,33 +137,8 @@ abstract class Handler
         return $this->properties;
     }
 
-    /**
-     * Get the scoped properties of the protocol endpoint.
-     *
-     * @return array[]
-     */
-    protected function getProtocolProperties(): array
+    protected function getPsr17(): Psr17Interface
     {
-        return [];
-    }
-
-    protected function getResponseFactory(): ResponseFactoryInterface
-    {
-        return $this->responseFactory;
-    }
-
-    protected function getServerRequest(): ServerRequestInterface
-    {
-        return $this->serverRequest;
-    }
-
-    protected function getStreamFactory(): StreamFactoryInterface
-    {
-        return $this->streamFactory;
-    }
-
-    protected function getUriFactory(): UriFactoryInterface
-    {
-        return $this->uriFactory;
+        return $this->psr17;
     }
 }

@@ -11,25 +11,23 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib;
 
-use EcPhp\CasLib\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Contract\CasInterface;
+use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Exception\CasException;
+use EcPhp\CasLib\Handler\Login;
+use EcPhp\CasLib\Handler\Logout;
+use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Handler\ProxyCallback;
-use EcPhp\CasLib\Introspection\Contract\IntrospectionInterface;
-use EcPhp\CasLib\Introspection\Contract\IntrospectorInterface;
-use EcPhp\CasLib\Redirect\Login;
-use EcPhp\CasLib\Redirect\Logout;
-use EcPhp\CasLib\Service\Proxy;
-use EcPhp\CasLib\Service\ProxyValidate;
-use EcPhp\CasLib\Service\ServiceValidate;
+use EcPhp\CasLib\Handler\ServiceValidate;
 use EcPhp\CasLib\Utils\Uri;
+use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
-use Psr\Log\LoggerInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 use function array_key_exists;
 
@@ -37,318 +35,178 @@ final class Cas implements CasInterface
 {
     private CacheItemPoolInterface $cache;
 
+    private CasResponseBuilderInterface $casResponseBuilder;
+
     private ClientInterface $client;
-
-    private IntrospectorInterface $introspector;
-
-    private LoggerInterface $logger;
 
     private PropertiesInterface $properties;
 
-    private RequestFactoryInterface $requestFactory;
-
-    private ResponseFactoryInterface $responseFactory;
-
-    private ServerRequestInterface $serverRequest;
-
-    private StreamFactoryInterface $streamFactory;
-
-    private UriFactoryInterface $uriFactory;
+    private Psr17Interface $psr17;
 
     public function __construct(
-        ServerRequestInterface $serverRequest,
         PropertiesInterface $properties,
         ClientInterface $client,
-        UriFactoryInterface $uriFactory,
-        ResponseFactoryInterface $responseFactory,
-        RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory,
+        Psr17Interface $psr17,
         CacheItemPoolInterface $cache,
-        LoggerInterface $logger,
-        IntrospectorInterface $introspector
+        CasResponseBuilderInterface $casResponseBuilder
     ) {
-        $this->serverRequest = $serverRequest;
-        $this->properties = $properties;
-        $this->client = $client;
-        $this->uriFactory = $uriFactory;
-        $this->responseFactory = $responseFactory;
-        $this->requestFactory = $requestFactory;
-        $this->streamFactory = $streamFactory;
         $this->cache = $cache;
-        $this->logger = $logger;
-        $this->introspector = $introspector;
+        $this->client = $client;
+        $this->casResponseBuilder = $casResponseBuilder;
+        $this->properties = $properties;
+        $this->psr17 = $psr17;
     }
 
-    public function authenticate(array $parameters = []): ?array
-    {
-        if (null === $response = $this->requestTicketValidation($parameters)) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the request.');
-
-            return null;
+    public function authenticate(
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): array {
+        try {
+            $response = $this->requestTicketValidation($request, $parameters);
+        } catch (Throwable $exception) {
+            throw CasException::unableToAuthenticate($exception);
         }
 
-        return $this->getIntrospector()->detect($response)->getParsedResponse();
-    }
+        try {
+            $casResponse = $this
+                ->casResponseBuilder
+                ->fromResponse($response);
+        } catch (Throwable $exception) {
+            throw CasException::unableToAuthenticate($exception);
+        }
 
-    public function detect(ResponseInterface $response): IntrospectionInterface
-    {
-        return $this->getIntrospector()->detect($response);
-    }
+        try {
+            $credentials = $casResponse->toArray();
+        } catch (Throwable $exception) {
+            throw CasException::unableToAuthenticate($exception);
+        }
 
-    public function getProperties(): PropertiesInterface
-    {
-        return $this->properties;
+        return $credentials;
     }
 
     public function handleProxyCallback(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface {
-        $proxyCallback = new ProxyCallback(
-            $this->getServerRequest(),
-            $parameters,
-            $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
-            $this->getCache(),
-            $this->getLogger()
-        );
-
-        return $response ?? $proxyCallback->handle();
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        return $this
+            ->process(
+                $request,
+                new ProxyCallback(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
-    public function login(array $parameters = []): ?ResponseInterface
-    {
-        $login = new Login(
-            $this->getServerRequest(),
-            $parameters,
-            $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
-            $this->getCache(),
-            $this->getLogger()
-        );
-
-        return $login->handle();
+    public function login(
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        return $this
+            ->process(
+                $request,
+                new Login(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
-    public function logout(array $parameters = []): ?ResponseInterface
-    {
-        $logout = new Logout(
-            $this->getServerRequest(),
-            $parameters,
-            $this->getProperties(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getStreamFactory(),
-            $this->getCache(),
-            $this->getLogger()
-        );
-
-        return $logout->handle();
+    public function logout(
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        return $this
+            ->process(
+                $request,
+                new Logout(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
-    public function requestProxyTicket(array $parameters = [], ?ResponseInterface $response = null): ?ResponseInterface
-    {
-        $proxyRequestService = new Proxy(
-            $this->getServerRequest(),
-            $parameters,
-            $this->getProperties(),
-            $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
-            $this->getCache(),
-            $this->getLogger(),
-            $this->getIntrospector()
-        );
-
-        if (null === $response) {
-            if (null === $response = $proxyRequestService->handle()) {
-                $this
-                    ->getLogger()
-                    ->error('Error during the proxy ticket request.');
-
-                return null;
-            }
-        }
-
-        $credentials = $proxyRequestService->getCredentials($response);
-
-        if (null === $credentials) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the user.');
-        }
-
-        return $credentials;
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
+        return $handler->handle($request);
     }
 
-    public function requestProxyValidate(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface {
-        $proxyValidateService = new ProxyValidate(
-            $this->getServerRequest(),
-            $parameters,
-            $this->getProperties(),
-            $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
-            $this->getCache(),
-            $this->getLogger(),
-            $this->getIntrospector()
-        );
-
-        if (null === $response) {
-            if (null === $response = $proxyValidateService->handle()) {
-                $this
-                    ->getLogger()
-                    ->error('Error during the proxy validate request.');
-
-                return null;
-            }
-        }
-
-        $credentials = $proxyValidateService->getCredentials($response);
-
-        if (null === $credentials) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the user.');
-        }
-
-        return $credentials;
+    public function requestProxyTicket(
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        return $this
+            ->process(
+                $request,
+                new Proxy(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
     public function requestServiceValidate(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface {
-        $serviceValidateService = new ServiceValidate(
-            $this->getServerRequest(),
-            $parameters,
-            $this->getProperties(),
-            $this->getHttpClient(),
-            $this->getUriFactory(),
-            $this->getResponseFactory(),
-            $this->getRequestFactory(),
-            $this->getStreamFactory(),
-            $this->getCache(),
-            $this->getLogger(),
-            $this->getIntrospector()
-        );
-
-        if (null === $response) {
-            if (null === $response = $serviceValidateService->handle()) {
-                $this
-                    ->getLogger()
-                    ->error('Error during the service validate request.');
-
-                return null;
-            }
-        }
-
-        $credentials = $serviceValidateService->getCredentials($response);
-
-        if (null === $credentials) {
-            $this
-                ->getLogger()
-                ->error('Unable to authenticate the user.');
-        }
-
-        return $credentials;
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        return $this
+            ->process(
+                $request,
+                new ServiceValidate(
+                    $parameters,
+                    $this->cache,
+                    $this->casResponseBuilder,
+                    $this->client,
+                    $this->properties,
+                    $this->psr17,
+                )
+            );
     }
 
     public function requestTicketValidation(
-        array $parameters = [],
-        ?ResponseInterface $response = null
-    ): ?ResponseInterface {
-        if (false === $this->supportAuthentication($parameters)) {
-            return null;
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): ResponseInterface {
+        if (false === $this->supportAuthentication($request, $parameters)) {
+            throw CasException::unsupportedRequest();
         }
 
         /** @var string $ticket */
         $ticket = Uri::getParam(
-            $this->getServerRequest()->getUri(),
+            $request->getUri(),
             'ticket',
             ''
         );
 
-        $parameters += ['ticket' => $ticket];
-
-        return true === $this->proxyMode() ?
-            $this->requestProxyValidate($parameters, $response) :
-            $this->requestServiceValidate($parameters, $response);
+        return $this
+            ->requestServiceValidate(
+                $request,
+                $parameters + ['ticket' => $ticket]
+            );
     }
 
-    public function supportAuthentication(array $parameters = []): bool
-    {
-        return array_key_exists('ticket', $parameters) || Uri::hasParams($this->getServerRequest()->getUri(), 'ticket');
-    }
-
-    public function withServerRequest(ServerRequestInterface $serverRequest): CasInterface
-    {
-        $clone = clone $this;
-        $clone->serverRequest = $serverRequest;
-
-        return $clone;
-    }
-
-    private function getCache(): CacheItemPoolInterface
-    {
-        return $this->cache;
-    }
-
-    private function getHttpClient(): ClientInterface
-    {
-        return $this->client;
-    }
-
-    private function getIntrospector(): IntrospectorInterface
-    {
-        return $this->introspector;
-    }
-
-    private function getLogger(): LoggerInterface
-    {
-        return $this->logger;
-    }
-
-    private function getRequestFactory(): RequestFactoryInterface
-    {
-        return $this->requestFactory;
-    }
-
-    private function getResponseFactory(): ResponseFactoryInterface
-    {
-        return $this->responseFactory;
-    }
-
-    private function getServerRequest(): ServerRequestInterface
-    {
-        return $this->serverRequest;
-    }
-
-    private function getStreamFactory(): StreamFactoryInterface
-    {
-        return $this->streamFactory;
-    }
-
-    private function getUriFactory(): UriFactoryInterface
-    {
-        return $this->uriFactory;
-    }
-
-    private function proxyMode(): bool
-    {
-        return isset($this->getProperties()['protocol']['serviceValidate']['default_parameters']['pgtUrl']);
+    public function supportAuthentication(
+        ServerRequestInterface $request,
+        array $parameters = []
+    ): bool {
+        return array_key_exists('ticket', $parameters) || Uri::hasParams($request->getUri(), 'ticket');
     }
 }

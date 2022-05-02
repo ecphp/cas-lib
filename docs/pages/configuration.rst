@@ -7,36 +7,21 @@ Configuration
    protocol:
      login:
        path: /login
-       allowed_parameters:
-         - service
-         - renew
-         - gateway
+       default_parameters:
+         foo: bar
      serviceValidate:
        path: /p3/serviceValidate
-       allowed_parameters:
-         - service
-         - ticket
-         - pgtUrl
-         - renew
-         - format
        default_parameters:
          pgtUrl: https://my-app/casProxyCallback
      logout:
        path: /logout
-       allowed_parameters:
-         - service
        default_parameters:
          service: https://my-app/homepage
      proxy:
        path: /proxy
-       allowed_parameters:
-         - targetService
-         - pgt
+       default_parameters:
+         foo: bar
      proxyValidate:
        path: /proxyValidate
-       allowed_parameters:
-         - service
-         - ticket
-         - pgtUrl
        default_parameters:
          pgtUrl: https://my-app/casProxyCallback

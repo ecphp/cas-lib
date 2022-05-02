@@ -11,24 +11,38 @@ declare(strict_types=1);
 
 namespace spec\EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
 use EcPhp\CasLib\Handler\ProxyCallback;
+use EcPhp\CasLib\Utils\Uri as UtilsUri;
+use Ergebnis\Http\Method;
 use Exception;
+use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\ServerRequest;
+use Nyholm\Psr7\Uri;
 use PhpSpec\ObjectBehavior;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
+use Psr\Http\Client\ClientInterface;
 use spec\EcPhp\CasLib\Cas;
 
 class ProxyCallbackSpec extends ObjectBehavior
 {
-    public function it_can_catch_issue_with_the_cache(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, LoggerInterface $logger)
+    public function it_can_catch_issue_with_the_cache(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
-        $serverRequest = new ServerRequest('GET', 'http://from?pgtId=pgtId&pgtIou=pgtIou');
+        $request = new ServerRequest(
+            Method::GET,
+            UtilsUri::withParams(
+                new Uri('http://from/it_can_catch_issue_with_the_cache'),
+                [
+                    'pgtId' => 'pgtId',
+                    'pgtIou' => 'pgtIou',
+                ]
+            )
+        );
 
         $cacheItem
             ->set('pgtId')
@@ -48,103 +62,31 @@ class ProxyCallbackSpec extends ObjectBehavior
             ->save($cacheItem)
             ->willReturn(true);
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith([], $cache, $casResponseBuilder, $client, Cas::getTestProperties(), $psr17);
 
         $this
-            ->handle();
-
-        $logger
-            ->error($uniqid)
-            ->shouldHaveBeenCalledOnce();
+            ->shouldThrow(Exception::class)
+            ->during('handle', [$request]);
     }
 
-    public function it_can_test_if_the_cache_is_working(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, LoggerInterface $logger)
+    public function it_can_test_if_the_cache_is_working(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem)
     {
+        $request = new ServerRequest(
+            Method::GET,
+            UtilsUri::withParams(
+                new Uri('http://from/it_can_test_if_the_cache_is_working'),
+                [
+                    'pgtId' => 'pgtId',
+                    'pgtIou' => 'pgtIou',
+                ]
+            )
+        );
+
         $this
-            ->handle();
+            ->handle($request);
 
         $cache
             ->save($cacheItem)
-            ->shouldHaveBeenCalledOnce();
-    }
-
-    public function it_can_test_the_logger_when_missing_pgtId(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
-    {
-        $psr17Factory = new Psr17Factory();
-
-        $serverRequest = new ServerRequest('GET', 'http://from?pgtIou=pgtIou');
-
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
-
-        $this
-            ->handle();
-
-        $logger
-            ->debug('Missing proxy callback parameter (pgtId).')
-            ->shouldHaveBeenCalledOnce();
-    }
-
-    public function it_can_test_the_logger_when_missing_pgtIou(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
-    {
-        $psr17Factory = new Psr17Factory();
-
-        $serverRequest = new ServerRequest('GET', 'http://from?pgtId=pgtId');
-
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
-
-        $this
-            ->handle();
-
-        $logger
-            ->debug('Missing proxy callback parameter (pgtIou).')
-            ->shouldHaveBeenCalledOnce();
-    }
-
-    public function it_can_test_the_logger_when_no_parameter_is_in_the_url(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, LoggerInterface $logger)
-    {
-        $psr17Factory = new Psr17Factory();
-
-        $serverRequest = new ServerRequest('GET', 'http://from');
-
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
-
-        $this
-            ->handle();
-
-        $logger
-            ->debug('CAS server just checked the proxy callback endpoint.')
-            ->shouldHaveBeenCalledOnce();
-    }
-
-    public function it_can_test_the_logger_when_parameters_are_in_the_url(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, LoggerInterface $logger)
-    {
-        $psr17Factory = new Psr17Factory();
-
-        $serverRequest = new ServerRequest('GET', 'http://from?pgtId=pgtId&pgtIou=pgtIou');
-
-        $cacheItem
-            ->set('pgtId')
-            ->willReturn($cacheItem);
-
-        $cacheItem
-            ->expiresAfter(300)
-            ->willReturn($cacheItem);
-
-        $cache
-            ->getItem('pgtIou')
-            ->willReturn($cacheItem);
-
-        $cache
-            ->save($cacheItem)
-            ->willReturn(true);
-
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
-
-        $this
-            ->handle();
-
-        $logger
-            ->debug('Storing proxy callback parameters (pgtId and pgtIou).')
             ->shouldHaveBeenCalledOnce();
     }
 
@@ -153,11 +95,10 @@ class ProxyCallbackSpec extends ObjectBehavior
         $this->shouldHaveType(ProxyCallback::class);
     }
 
-    public function let(ServerRequestInterface $serverRequest, CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, LoggerInterface $logger)
+    public function let(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, CasResponseBuilderInterface $casResponseBuilder)
     {
         $psr17Factory = new Psr17Factory();
-
-        $serverRequest = new ServerRequest('GET', 'http://from?pgtId=pgtId&pgtIou=pgtIou');
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
 
         $cacheItem
             ->set('pgtId')
@@ -175,6 +116,6 @@ class ProxyCallbackSpec extends ObjectBehavior
             ->save($cacheItem)
             ->willReturn(true);
 
-        $this->beConstructedWith($serverRequest, [], Cas::getTestProperties(), $psr17Factory, $psr17Factory, $psr17Factory, $cache, $logger);
+        $this->beConstructedWith([], $cache, $casResponseBuilder, $client, Cas::getTestProperties(), $psr17);
     }
 }

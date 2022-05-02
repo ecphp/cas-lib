@@ -11,63 +11,48 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Handler;
 
+use EcPhp\CasLib\Contract\Handler\HandlerInterface;
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 final class ProxyCallback extends Handler implements HandlerInterface
 {
-    public function handle(): ?ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $serverRequest = $this->getServerRequest();
         $response = $this
-            ->getResponseFactory()
-            ->createResponse(200);
+            ->getPsr17()
+            ->createResponse();
 
-        // POST parameters prevails over GET parameters.
-        $parameters = $this->getParameters() +
-            (array) $serverRequest->getParsedBody() +
-            Uri::getParams($serverRequest->getUri()) +
-            ['pgtId' => null, 'pgtIou' => null];
+        $parameters = $this->getParameters();
+        $parameters += Uri::getParams($request->getUri());
+        $parameters += (array) $request->getBody();
+        $parameters += ['pgtId' => null, 'pgtIou' => null];
 
         if (null === $parameters['pgtId'] && null === $parameters['pgtIou']) {
-            $this
-                ->getLogger()
-                ->debug(
-                    'CAS server just checked the proxy callback endpoint.'
-                );
-
+            // We cannot return an exception here because prior sending the
+            // PGT ID and PGTIOU, a request is made by the CAS server in order
+            // to check the existence of the proxy callback endpoint.
             return $response;
         }
 
         if (null === $parameters['pgtIou']) {
-            $this
-                ->getLogger()
-                ->debug(
-                    'Missing proxy callback parameter (pgtIou).'
-                );
-
-            return $response->withStatus(500);
+            throw CasHandlerException::pgtIouIsNull();
         }
 
         if (null === $parameters['pgtId']) {
-            $this
-                ->getLogger()
-                ->debug(
-                    'Missing proxy callback parameter (pgtId).'
-                );
-
-            return $response->withStatus(500);
+            throw CasHandlerException::pgtIdIsNull();
         }
 
         try {
-            $cacheItem = $this->getCache()->getItem($parameters['pgtIou']);
-        } catch (Exception $exception) {
-            $this
-                ->getLogger()
-                ->error($exception->getMessage());
-
-            return $response->withStatus(500);
+            $cacheItem = $this
+                ->getCache()
+                ->getItem($parameters['pgtIou']);
+        } catch (Throwable $exception) {
+            throw CasHandlerException::getItemFromCacheFailure($exception);
         }
 
         $this
@@ -76,12 +61,6 @@ final class ProxyCallback extends Handler implements HandlerInterface
                 $cacheItem
                     ->set($parameters['pgtId'])
                     ->expiresAfter(300)
-            );
-
-        $this
-            ->getLogger()
-            ->debug(
-                'Storing proxy callback parameters (pgtId and pgtIou).'
             );
 
         return $response;

@@ -12,66 +12,56 @@ declare(strict_types=1);
 namespace spec\EcPhp\CasLib;
 
 use EcPhp\CasLib\Configuration\Properties as CasProperties;
+use Exception;
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use tests\EcPhp\CasLib\Exception\TestClientException;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class Cas extends ObjectBehavior
 {
     public static function getHttpClientMock()
     {
-        $callback = static function ($method, $url, $options) {
+        $callback = static function ($method, $url, $options): ResponseInterface {
             $body = '';
-            $info = [];
+            $info = [
+                'response_headers' => [
+                    'Content-Type' => 'application/xml',
+                ],
+            ];
 
             switch ($url) {
-                case 'http://local/cas/serviceValidate?service=service&ticket=ticket':
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket&service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice':
-                case 'http://local/cas/serviceValidate?ticket=PT-ticket&service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice':
-                case 'http://local/cas/serviceValidate?ticket=PT-ticket&service=http%3A%2F%2Ffrom':
-                $body = <<< 'EOF'
-                    <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                     <cas:authenticationSuccess>
-                      <cas:user>username</cas:user>
-                     </cas:authenticationSuccess>
-                    </cas:serviceResponse>
-                    EOF;
+                case 'http://local/cas/proxyValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_get_credentials_with_pgtUrl%2Fmissing_pgt':
+                case 'http://from/it_can_detect_a_wrong_proxy_response':
+                case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom&ticket=ST-TICKET-VALID':
+                case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_test_the_proxy_mode_without_pgtUrl&ticket=ST-TICKET-VALID':
+                case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_get_credentials_without_pgtUrl':
+                case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_validate_a_service_ticket':
+                    $body = <<< 'EOF'
+                            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+                            <cas:authenticationSuccess>
+                            <cas:user>username</cas:user>
+                            </cas:authenticationSuccess>
+                            </cas:serviceResponse>
+                        EOF;
 
-                break;
+                    break;
 
-                case 'http://local/cas/serviceValidate?service=service&ticket=ticket-failure':
+                case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_validate_a_bad_service_validate_request&ticket=ST-TICKET-INVALID':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                         <cas:authenticationFailure>
-                         </cas:authenticationFailure>
+                        <cas:authenticationFailure code="INVALID_REQUEST">
+                        service and ticket parameters are both required
+                        </cas:authenticationFailure>
                         </cas:serviceResponse>
                         EOF;
 
                     break;
 
-                case 'http://local/cas/proxyValidate?service=service&ticket=ticket':
-                case 'http://local/cas/proxyValidate?ticket=PT-ticket&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/proxyValidate?ticket=ST-ticket&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice&ticket=ticket':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice%26renew%3Dtrue&ticket=ticket&renew=true':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice&ticket=ticket':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice%26renew%3Dtrue&ticket=ticket&renew=true':
-                    $body = <<< 'EOF'
-                        <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                         <cas:authenticationSuccess>
-                          <cas:user>username</cas:user>
-                          <cas:proxies>
-                            <cas:proxy>http://app/proxyCallback.php</cas:proxy>
-                          </cas:proxies>
-                         </cas:authenticationSuccess>
-                        </cas:serviceResponse>
-                        EOF;
-
-                    break;
-
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket-pgt&service=http%3A%2F%2Ffrom':
+                case 'http://local/cas/proxyValidate?format=XML&service=http%3A%2F%2Ffrom&ticket=ST-TICKET-VALID':
+                case 'http://local/cas/proxyValidate?format=XML&service=http%3A%2F%2Ffrom&ticket=PT-TICKET-VALID':
+                case 'http://local/cas/proxyValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_test_the_proxy_mode_with_pgtUrl&ticket=ST-TICKET-VALID':
+                case 'http://local/cas/proxyValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_get_credentials_with_pgtUrl':
                     $body = <<< 'EOF'
                         <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
                          <cas:authenticationSuccess>
@@ -83,49 +73,13 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/serviceValidate?ticket=ST-ticket-pgt-pgtiou-not-found&service=http%3A%2F%2Ffrom':
-                    $body = <<< 'EOF'
-                        <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                         <cas:authenticationSuccess>
-                          <cas:user>username</cas:user>
-                          <cas:proxyGrantingTicket>unknownPgtIou</cas:proxyGrantingTicket>
-                         </cas:authenticationSuccess>
-                        </cas:serviceResponse>
-                        EOF;
+                case 'http://local/cas/serviceValidate?format=JSON&service=http%3A%2F%2Ffrom%2Fit_can_parse_json_in_a_response':
+                    $info = [
+                        'response_headers' => [
+                            'Content-Type' => 'application/json',
+                        ],
+                    ];
 
-                    break;
-
-                case 'http://local/cas/proxyValidate?ticket=ST-ticket-pgt-pgtiou-pgtid-null&service=http%3A%2F%2Ffrom':
-                    $body = <<< 'EOF'
-                        <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                         <cas:authenticationSuccess>
-                          <cas:user>username</cas:user>
-                          <cas:proxyGrantingTicket>pgtIouWithPgtIdNull</cas:proxyGrantingTicket>
-                         </cas:authenticationSuccess>
-                        </cas:serviceResponse>
-                        EOF;
-
-                    break;
-
-                case 'http://local/cas/proxyValidate?service=service&ticket=ST-ticket-pgt':
-                case 'http://local/cas/proxyValidate?ticket=ST-ticket-pgt&service=http%3A%2F%2Ffrom':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Ffrom&ticket=PT-ticket':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dhttp%253A%252F%252Ffrom&ticket=PT-ticket-pgt':
-                    $body = <<< 'EOF'
-                        <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
-                         <cas:authenticationSuccess>
-                          <cas:user>username</cas:user>
-                          <cas:proxyGrantingTicket>pgtIou</cas:proxyGrantingTicket>
-                          <cas:proxies>
-                            <cas:proxy>http://app/proxyCallback.php</cas:proxy>
-                          </cas:proxies>
-                         </cas:authenticationSuccess>
-                        </cas:serviceResponse>
-                        EOF;
-
-                    break;
-
-                case 'http://local/cas/serviceValidate?service=http%3A%2F%2Flocal%2Fcas%2FserviceValidate%3Fservice%3Dservice%26format%3DJSON&ticket=ticket&format=JSON':
                     $body = <<< 'EOF'
                         {
                             "serviceResponse": {
@@ -138,7 +92,10 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/proxy?targetService=targetService&pgt=pgt':
+                case 'http://local/cas/proxy?service=service-valid':
+                case 'http://local/cas/serviceValidate?format=XML&service=http%3A%2F%2Ffrom%2Fit_can_detect_when_response_type_is_invalid&ticket=ST-TICKET-VALID':
+                case 'http://from/it_can_request_a_proxy_ticket':
+                case 'http://from/it_can_parse_a_good_proxy_request_response':
                     $body = <<< 'EOF'
                         <?xml version="1.0" encoding="utf-8"?>
                         <cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas"
@@ -152,25 +109,8 @@ class Cas extends ObjectBehavior
 
                     break;
 
-                case 'http://local/cas/proxy?targetService=targetService&pgt=pgt-error-in-getCredentials':
-                    $body = <<< 'EOF'
-                        <?xml version="1.0" encoding="utf-8"?>
-                        <cas:serviceResponse xmlns:cas="https://ecas.ec.europa.eu/cas/schemas"
-                                             server="ECAS MOCKUP version 4.6.0.20924 - 09/02/2016 - 14:37"
-                                             date="2019-10-18T12:17:53.069+02:00" version="4.5">
-                        	<cas:proxyFailure>
-                        	TODO: Find something to put here.
-                            </cas:proxyFailure>
-                        </cas:serviceResponse>
-                        EOF;
-
-                    break;
-
-                case 'http://local/cas/serviceValidate?service=http%3A%2F%2Ffrom&ticket=BAD-http-query':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Ffrom&ticket=BAD-http-query':
-                case 'http://local/cas/proxyValidate?service=http%3A%2F%2Flocal%2Fcas%2FproxyValidate%3Fservice%3Dservice%26error%3DTestClientException&ticket=ticket&error=TestClientException':
-                case 'http://local/cas/proxy?targetService=targetService&pgt=pgt&error=TestClientException':
-                    throw new TestClientException();
+                default:
+                    throw new Exception(sprintf('URL %s is not defined in the HTTP mock client.', $url));
 
                     break;
             }
@@ -188,48 +128,24 @@ class Cas extends ObjectBehavior
             'protocol' => [
                 'login' => [
                     'path' => '/login',
-                    'allowed_parameters' => [
-                        'service',
-                        'custom',
-                        'renew',
-                        'gateway',
-                    ],
                 ],
                 'logout' => [
                     'path' => '/logout',
-                    'allowed_parameters' => [
-                        'service',
-                        'custom',
-                    ],
                 ],
                 'serviceValidate' => [
                     'path' => '/serviceValidate',
-                    'allowed_parameters' => [
-                        'ticket',
-                        'service',
-                        'custom',
-                    ],
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
                 ],
                 'proxyValidate' => [
                     'path' => '/proxyValidate',
-                    'allowed_parameters' => [
-                        'ticket',
-                        'service',
-                        'custom',
-                    ],
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
                 ],
                 'proxy' => [
                     'path' => '/proxy',
-                    'allowed_parameters' => [
-                        'targetService',
-                        'pgt',
-                    ],
                 ],
             ],
         ]);
