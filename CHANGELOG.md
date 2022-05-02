@@ -5,10 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.8](https://github.com/ecphp/cas-lib/compare/1.1.7...1.1.8)
+## [1.1.9](https://github.com/ecphp/cas-lib/compare/1.1.8...1.1.9)
+
+### Merged
+
+- Update phpstan/phpstan-strict-rules requirement from ^0.12 to ^0.12 || ^1.0 [`#29`](https://github.com/ecphp/cas-lib/pull/29)
+- Bump actions/cache from 2.1.7 to 3 [`#31`](https://github.com/ecphp/cas-lib/pull/31)
 
 ### Commits
 
+- chore: Update `composer.json`. [`e76d314`](https://github.com/ecphp/cas-lib/commit/e76d3149a9da442c96c088f7c95b30a17f293cdc)
+- ci: Tests on PHP 7.4, 8.0 and 8.1. [`24e737e`](https://github.com/ecphp/cas-lib/commit/24e737e0efa63b107ff7a6d14162ce070354ffe8)
+- refactor: Add types. [`eaff0e6`](https://github.com/ecphp/cas-lib/commit/eaff0e6957afab9bb7db009bbc83ec49532f4056)
+- chore: Update Psalm configuration file. [`01f9f16`](https://github.com/ecphp/cas-lib/commit/01f9f1670ed1380e6c74d0a989405e974f5040d0)
+- chore: Add `xdebug` extension in `require-dev`. [`2957660`](https://github.com/ecphp/cas-lib/commit/295766021cdedc09a0ea51ac423ceb79c2fa1ff9)
+- Update phpstan/phpstan-strict-rules requirement || ^1.0 [`caa3cca`](https://github.com/ecphp/cas-lib/commit/caa3ccab45e9f163037d2d6ba97b9eedd882ee72)
+
+## [1.1.8](https://github.com/ecphp/cas-lib/compare/1.1.7...1.1.8) - 2022-02-18
+
+### Commits
+
+- docs: Update changelog. [`2307029`](https://github.com/ecphp/cas-lib/commit/230702978257f77ec145150d35841169a19739ec)
 - chore: Relax dependencies. [`8aba637`](https://github.com/ecphp/cas-lib/commit/8aba637c8be0a525b07d4b75bfdb2ecfcb35fee8)
 
 ## [1.1.7](https://github.com/ecphp/cas-lib/compare/1.1.6...1.1.7) - 2022-01-24
