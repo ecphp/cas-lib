@@ -189,17 +189,12 @@ final class Cas implements CasInterface
             throw CasException::unsupportedRequest();
         }
 
-        /** @var string $ticket */
-        $ticket = Uri::getParam(
-            $request->getUri(),
-            'ticket',
-            ''
-        );
-
         return $this
             ->requestServiceValidate(
                 $request,
-                $parameters + ['ticket' => $ticket]
+                $parameters + [
+                    'ticket' => Uri::getParam($request->getUri(), 'ticket'),
+                ]
             );
     }
 
