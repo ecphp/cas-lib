@@ -4,7 +4,7 @@ Requirements
 PHP
 ---
 
-PHP greater than 7.4 is required for this library.
+PHP >= 7.4 is required for this library.
 
 PHP Extensions
 --------------
@@ -24,8 +24,6 @@ class.
 +------------------+-----------+---------------------------------+------------------------+
 | Dependency       | PSR       | Implementations                 | Example package        |
 +==================+===========+=================================+========================+
-| Logger           | `PSR-3`_  | `log-implementation`_           | `monolog/monolog`_     |
-+------------------+-----------+---------------------------------+------------------------+
 | Cache            | `PSR-6`_  | `cache-implementation`_         | `symfony/cache`_       |
 +------------------+-----------+---------------------------------+------------------------+
 | HTTP Message     | `PSR-7`_  | `http-message-implementations`_ | `nyholm/psr7`_         |
@@ -46,7 +44,6 @@ You may use custom code for that, but you can also use any of the following pack
 
 .. _zendframework/zend-httphandlerrunner: https://packagist.org/packages/zendframework/zend-httphandlerrunner
 .. _http-interop/response-sender: https://packagist.org/packages/http-interop/response-sender
-.. _monolog/monolog: https://packagist.org/packages/monolog/monolog
 .. _nyholm/psr7: https://packagist.org/packages/nyholm/psr7
 .. _loophp/psr17: https://packagist.org/packages/loophp/psr17
 .. _symfony/cache: https://packagist.org/packages/symfony/cache
@@ -55,9 +52,7 @@ You may use custom code for that, but you can also use any of the following pack
 .. _http-client-implementations: https://packagist.org/providers/psr/http-client-implementation
 .. _http-factory-implementations: https://packagist.org/providers/psr/http-factory-implementation
 .. _http-message-implementations: https://packagist.org/providers/psr/http-message-implementation
-.. _log-implementation: https://packagist.org/providers/psr/log-implementation
 .. _PSR-17: https://www.php-fig.org/psr/psr-17/
 .. _PSR-18: https://www.php-fig.org/psr/psr-18/
-.. _PSR-3: https://www.php-fig.org/psr/psr-3/
 .. _PSR-6: https://www.php-fig.org/psr/psr-6/
 .. _PSR-7: https://www.php-fig.org/psr/psr-7/

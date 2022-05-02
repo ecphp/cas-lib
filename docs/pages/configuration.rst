@@ -7,6 +7,8 @@ Configuration
    protocol:
      login:
        path: /login
+       default_parameters:
+         foo: bar
      serviceValidate:
        path: /p3/serviceValidate
        default_parameters:
@@ -17,6 +19,8 @@ Configuration
          service: https://my-app/homepage
      proxy:
        path: /proxy
+       default_parameters:
+         foo: bar
      proxyValidate:
        path: /proxyValidate
        default_parameters:
