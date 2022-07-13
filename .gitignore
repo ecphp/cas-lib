@@ -1,4 +1,5 @@
-.idea/
+/.idea/
+/.direnv/
 /vendor
 composer.lock
 grumphp.yml
