@@ -6,7 +6,7 @@ on:
             - master
     pull_request:
 
-name: "Unit tests"
+name: "Continuous Integration"
 
 jobs:
     supported-versions-matrix:
