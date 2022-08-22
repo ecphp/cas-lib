@@ -124,9 +124,6 @@ abstract class Handler
         return $this->client;
     }
 
-    /**
-     * @return array[]
-     */
     protected function getParameters(): array
     {
         return $this->parameters;
