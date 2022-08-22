@@ -156,9 +156,6 @@ abstract class Handler
         return $this->logger;
     }
 
-    /**
-     * @return array[]
-     */
     protected function getParameters(): array
     {
         return $this->parameters + ($this->getProtocolProperties()['default_parameters'] ?? []);
