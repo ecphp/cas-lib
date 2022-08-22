@@ -30,7 +30,7 @@
         "psr/http-server-middleware": "^1.0"
     },
     "require-dev": {
-        "ext-xdebug": "*",
+        "ext-pcov": "*",
         "ecphp/php-conventions": "^1",
         "friends-of-phpspec/phpspec-code-coverage": "^6.0.0",
         "infection/infection": "^0.23 || ^0.24",
