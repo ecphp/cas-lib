@@ -3,9 +3,7 @@ extensions:
   FriendsOfPhpSpec\PhpSpec\CodeCoverage\CodeCoverageExtension:
     format:
       - clover
-      - php
-      - text
     output:
       html: build/coverage
-      clover: build/logs/clover.xml
+      clover: build/logs/coverage/clover.xml
       php: build/coverage.php
