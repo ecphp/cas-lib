@@ -47,7 +47,7 @@ jobs:
               uses: ramsey/composer-install@v2
 
             - name: Run Grumphp
-              run: vendor/bin/grumphp run --tasks=phpspec,infection
+              run: vendor/bin/grumphp run
 
             - name: Send Scrutinizer data
               run: |
