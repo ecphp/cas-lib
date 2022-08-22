@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.9](https://github.com/ecphp/cas-lib/compare/1.1.8...1.1.9)
+## [2.0.0](https://github.com/ecphp/cas-lib/compare/1.1.9...2.0.0)
+
+### Merged
+
+- ci: Update dev workflow. [`#34`](https://github.com/ecphp/cas-lib/pull/34)
+- **Breaking change:** Road to version 2 - Refactor and rewrite most of the library [`#33`](https://github.com/ecphp/cas-lib/pull/33)
+
+### Commits
+
+- Remove obsolete annotation. [`7f837e9`](https://github.com/ecphp/cas-lib/commit/7f837e941b3f1089fbebbc9b05c5e1ae0f9c69b9)
+- ci: Update Scrutinizer configuration. [`84de43b`](https://github.com/ecphp/cas-lib/commit/84de43b2429fa78cdedfeb0bca25814d160d0991)
+- chore: Remove Docker stuff. [`f7d0e9a`](https://github.com/ecphp/cas-lib/commit/f7d0e9a0249f2d72f51b3d12e86815d346dd8f7f)
+
+## [1.1.9](https://github.com/ecphp/cas-lib/compare/1.1.8...1.1.9) - 2022-05-02
 
 ### Merged
 
@@ -14,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: Update changelog. [`643b216`](https://github.com/ecphp/cas-lib/commit/643b216c7461a62aebb1389cbc4741b22089e589)
 - chore: Update `composer.json`. [`e76d314`](https://github.com/ecphp/cas-lib/commit/e76d3149a9da442c96c088f7c95b30a17f293cdc)
 - ci: Tests on PHP 7.4, 8.0 and 8.1. [`24e737e`](https://github.com/ecphp/cas-lib/commit/24e737e0efa63b107ff7a6d14162ce070354ffe8)
 - refactor: Add types. [`eaff0e6`](https://github.com/ecphp/cas-lib/commit/eaff0e6957afab9bb7db009bbc83ec49532f4056)
