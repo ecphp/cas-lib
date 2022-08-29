@@ -1,8 +1,9 @@
-/.idea/
 /.direnv/
+/.idea/
 /vendor
 composer.lock
 grumphp.yml
 phpspec.yml
 /build/
 .php_cs.cache
+.envrc
