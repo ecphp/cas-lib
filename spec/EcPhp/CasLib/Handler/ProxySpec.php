@@ -72,6 +72,7 @@ class ProxySpec extends ObjectBehavior
             [],
             $cache,
             new CasResponseBuilder(
+                $psr17,
                 new AuthenticationFailureFactory(),
                 new ProxyFactory(),
                 new ProxyFailureFactory(),

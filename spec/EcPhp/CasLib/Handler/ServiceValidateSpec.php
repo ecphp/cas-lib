@@ -88,6 +88,7 @@ class ServiceValidateSpec extends ObjectBehavior
             [],
             $cache,
             new CasResponseBuilder(
+                $psr17,
                 new AuthenticationFailureFactory(),
                 new ProxyFactory(),
                 new ProxyFailureFactory(),
@@ -143,6 +144,7 @@ class ServiceValidateSpec extends ObjectBehavior
             [],
             $cache,
             new CasResponseBuilder(
+                $psr17,
                 new AuthenticationFailureFactory(),
                 new ProxyFactory(),
                 new ProxyFailureFactory(),

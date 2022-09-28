@@ -48,6 +48,7 @@ class CasSpec extends ObjectBehavior
             $psr17,
             $cache,
             new CasResponseBuilder(
+                $psr17,
                 new AuthenticationFailureFactory(),
                 new ProxyFactory(),
                 new ProxyFailureFactory(),
@@ -76,6 +77,7 @@ class CasSpec extends ObjectBehavior
             $psr17,
             new ArrayAdapter(),
             new CasResponseBuilder(
+                $psr17,
                 new AuthenticationFailureFactory(),
                 new ProxyFactory(),
                 new ProxyFailureFactory(),

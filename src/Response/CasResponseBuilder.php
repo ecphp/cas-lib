@@ -19,6 +19,7 @@ use EcPhp\CasLib\Contract\Response\Factory\ProxyFailureFactory;
 use EcPhp\CasLib\Contract\Response\Factory\ServiceValidateFactory;
 use EcPhp\CasLib\Exception\CasResponseBuilderException;
 use EcPhp\CasLib\Utils\Response as ResponseUtils;
+use loophp\psr17\Psr17Interface;
 use Psr\Http\Message\ResponseInterface;
 
 use function array_key_exists;
@@ -33,14 +34,18 @@ final class CasResponseBuilder implements CasResponseBuilderInterface
 
     private ProxyFailureFactory $proxyFailureFactory;
 
+    private Psr17Interface $psr17;
+
     private ServiceValidateFactory $serviceValidateFactory;
 
     public function __construct(
+        Psr17Interface $psr17,
         AuthenticationFailureFactory $authenticationFailureFactory,
         ProxyFactory $proxyFactory,
         ProxyFailureFactory $proxyFailureFactory,
         ServiceValidateFactory $serviceValidateFactory
     ) {
+        $this->psr17 = $psr17;
         $this->authenticationFailureFactory = $authenticationFailureFactory;
         $this->proxyFactory = $proxyFactory;
         $this->proxyFailureFactory = $proxyFailureFactory;
@@ -52,6 +57,8 @@ final class CasResponseBuilder implements CasResponseBuilderInterface
         if (200 !== $code = $response->getStatusCode()) {
             throw CasResponseBuilderException::invalidStatusCode($code);
         }
+
+        $response = $response->withBody($this->psr17->createStream((string) $response->getBody()));
 
         $data = (new ResponseUtils())->toArray($response);
 
