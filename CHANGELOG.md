@@ -5,7 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0](https://github.com/ecphp/cas-lib/compare/1.1.9...2.0.0)
+## [2.0.1](https://github.com/ecphp/cas-lib/compare/2.0.0...2.0.1)
+
+### Merged
+
+- chore(deps): Bump actions/checkout from 2.3.4 to 3.0.2 [`#35`](https://github.com/ecphp/cas-lib/pull/35)
+
+### Commits
+
+- fix: make it work for php &gt;= 7.4 [`9085d37`](https://github.com/ecphp/cas-lib/commit/9085d3730db7ef3cbf31c31ff13331c991c5b48a)
+- chore: update infection config [`b285591`](https://github.com/ecphp/cas-lib/commit/b28559110d66558989a492423aed4d1479531f7e)
+- fix: add middleware for http response bodies [`da02b69`](https://github.com/ecphp/cas-lib/commit/da02b691fe0a51a147a48b077b48308e214dd334)
+- chore: update `composer.json` [`e67f640`](https://github.com/ecphp/cas-lib/commit/e67f640496c96f7f5d1fd9cde096234a45582f3d)
+- fix: make sure `Login` parameters are passed to the `service` url, before adding default parameters. [`195d220`](https://github.com/ecphp/cas-lib/commit/195d220ee0e31d1828f45e893ae090b1ef9de8da)
+- fix: make sure `Login` parameters are passed to the `service` url. [`4eebda1`](https://github.com/ecphp/cas-lib/commit/4eebda18304e256341440059680c0fb6aea42fea)
+- refactor: inject `psr17` in `CasResponseBuilder` [`cc9654f`](https://github.com/ecphp/cas-lib/commit/cc9654fb4520fcaa7fb0fa67693bf4d14458f91f)
+- chore: Prettify codebase. [`5035c50`](https://github.com/ecphp/cas-lib/commit/5035c50491b3878f2ee0dd02cdee48ba0dcd905f)
+- ci: Run all tests. [`83d1ff9`](https://github.com/ecphp/cas-lib/commit/83d1ff92af2e4321807e8423de4fce736d18187e)
+- ci: Fix Github workflow name. [`02b4a7c`](https://github.com/ecphp/cas-lib/commit/02b4a7c3d466d310de39215525dd1b7de2ef1e3d)
+
+## [2.0.0](https://github.com/ecphp/cas-lib/compare/1.1.9...2.0.0) - 2022-08-22
 
 ### Merged
 
@@ -14,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: Update changelog. [`3733fc2`](https://github.com/ecphp/cas-lib/commit/3733fc253b175a688a3b7dbec05bb785d85445d7)
 - Remove obsolete annotation. [`7f837e9`](https://github.com/ecphp/cas-lib/commit/7f837e941b3f1089fbebbc9b05c5e1ae0f9c69b9)
 - ci: Update Scrutinizer configuration. [`84de43b`](https://github.com/ecphp/cas-lib/commit/84de43b2429fa78cdedfeb0bca25814d160d0991)
 - chore: Remove Docker stuff. [`f7d0e9a`](https://github.com/ecphp/cas-lib/commit/f7d0e9a0249f2d72f51b3d12e86815d346dd8f7f)
