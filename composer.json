@@ -19,6 +19,7 @@
         "league/uri-components": "^2",
         "loophp/psr17": "^1.0",
         "openlss/lib-array2xml": "^1.0",
+        "php-http/client-common": "^2.6",
         "psr/cache": "^1.0.1 || ^2 || ^3",
         "psr/http-client": "^1.0",
         "psr/http-client-implementation": "^1",
@@ -32,14 +33,14 @@
     "require-dev": {
         "ext-pcov": "*",
         "ecphp/php-conventions": "^1",
-        "friends-of-phpspec/phpspec-code-coverage": "^6.0.0",
-        "infection/infection": "^0.23 || ^0.24",
-        "infection/phpspec-adapter": "^0.1.2",
+        "friends-of-phpspec/phpspec-code-coverage": "^6",
+        "infection/infection": "^0.26",
+        "infection/phpspec-adapter": "^0.2",
         "nyholm/psr7": "^1.4",
         "phpspec/phpspec": "^7",
         "phpstan/phpstan-strict-rules": "^1",
-        "symfony/cache": "^5.2",
-        "symfony/http-client": "^5.2"
+        "symfony/cache": "^5.4 || ^6",
+        "symfony/http-client": "^5.4 || ^6"
     },
     "provide": {
         "psr/http-server-handler-implementation": "^1.0"
