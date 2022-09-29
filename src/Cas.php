@@ -20,7 +20,9 @@ use EcPhp\CasLib\Handler\Logout;
 use EcPhp\CasLib\Handler\Proxy;
 use EcPhp\CasLib\Handler\ProxyCallback;
 use EcPhp\CasLib\Handler\ServiceValidate;
+use EcPhp\CasLib\Middleware\StringBodyResponse;
 use EcPhp\CasLib\Utils\Uri;
+use Http\Client\Common\PluginClient;
 use loophp\psr17\Psr17Interface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Client\ClientInterface;
@@ -51,7 +53,12 @@ final class Cas implements CasInterface
         CasResponseBuilderInterface $casResponseBuilder
     ) {
         $this->cache = $cache;
-        $this->client = $client;
+        // We do this to make sure that the response body can be retrieved
+        // multiple times.
+        $this->client = new PluginClient(
+            $client,
+            [new StringBodyResponse($psr17)]
+        );
         $this->casResponseBuilder = $casResponseBuilder;
         $this->properties = $properties;
         $this->psr17 = $psr17;

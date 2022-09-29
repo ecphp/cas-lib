@@ -58,8 +58,6 @@ final class CasResponseBuilder implements CasResponseBuilderInterface
             throw CasResponseBuilderException::invalidStatusCode($code);
         }
 
-        $response = $response->withBody($this->psr17->createStream((string) $response->getBody()));
-
         $data = (new ResponseUtils())->toArray($response);
 
         if (false === array_key_exists('serviceResponse', $data)) {
