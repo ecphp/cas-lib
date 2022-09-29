@@ -108,7 +108,7 @@ final class Uri
      *   The URI.
      * @param string $key
      *   The key of the parameter to add to the URI.
-     * @param string $value
+     * @param mixed $value
      *   The value of the parameter to add to the URI.
      * @param bool $force
      *   If true, overwrite any existing parameter from the URI.
@@ -122,7 +122,7 @@ final class Uri
     public static function withParam(
         UriInterface $uri,
         string $key,
-        mixed $value,
+        $value,
         bool $force = true
     ): UriInterface {
         $params = self::getParams($uri) + [$key => $value];
