@@ -122,7 +122,7 @@ final class Uri
     public static function withParam(
         UriInterface $uri,
         string $key,
-        string $value,
+        mixed $value,
         bool $force = true
     ): UriInterface {
         $params = self::getParams($uri) + [$key => $value];

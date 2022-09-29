@@ -480,7 +480,11 @@ class CasSpec extends ObjectBehavior
 
     public function it_can_login()
     {
-        $request = new ServerRequest(Method::GET, 'http://local/', ['referer' => 'http://google.com/']);
+        $request = new ServerRequest(
+            Method::GET,
+            'http://local/',
+            ['referer' => 'http://google.com/']
+        );
 
         $this
             ->login($request)
@@ -508,7 +512,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Ffoo.bar%2F']);
+            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Flocal%2F%3Ffoo%3Dbar']);
 
         $parameters = [
             'custom' => 'foo',
@@ -517,7 +521,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F']);
+            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F%3Fcustom%3Dfoo']);
 
         $request = new ServerRequest(Method::GET, 'http://local/', ['referer' => 'http://referer/']);
 
@@ -529,7 +533,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Ffoo.bar%2F']);
+            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Flocal%2F%3Ffoo%3Dbar']);
 
         $parameters = [
             'custom' => 'foo',
@@ -538,7 +542,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F']);
+            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F%3Fcustom%3Dfoo']);
 
         $parameters = [
             'custom' => 'foo',
@@ -548,7 +552,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?custom=foo']);
+            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F%3Fcustom%3Dfoo']);
     }
 
     public function it_can_logout()
