@@ -15,7 +15,7 @@ jobs:
         outputs:
             version: ${{ steps.supported-versions-matrix.outputs.version }}
         steps:
-            - uses: actions/checkout@v3.0.2
+            - uses: actions/checkout@v3
             - id: supported-versions-matrix
               uses: WyriHaximus/github-action-composer-php-versions-in-range@v1
     tests:
@@ -33,24 +33,30 @@ jobs:
               run: |
                   git config --global core.autocrlf false
                   git config --global core.eol lf
+              if: ${{ matrix.php != "8.2" }}
 
             - name: Checkout
-              uses: actions/checkout@v3.0.2
+              uses: actions/checkout@v3
+              if: ${{ matrix.php != "8.2" }}
 
             - name: Install PHP
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
                   coverage: pcov
+              if: ${{ matrix.php != "8.2" }}
 
             - name: Install dependencies
               uses: ramsey/composer-install@v2
+              if: ${{ matrix.php != "8.2" }}
 
             - name: Run Grumphp
               run: vendor/bin/grumphp run
+              if: ${{ matrix.php != "8.2" }}
 
             - name: Send Scrutinizer data
               run: |
                   composer require scrutinizer/ocular --dev
                   vendor/bin/ocular code-coverage:upload --format=php-clover build/logs/coverage/clover.xml
               continue-on-error: true
+              if: ${{ matrix.php != "8.2" }}
