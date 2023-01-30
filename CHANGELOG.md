@@ -5,10 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.2](https://github.com/ecphp/cas-lib/compare/2.0.1...2.0.2)
+## [2.0.3](https://github.com/ecphp/cas-lib/compare/2.0.2...2.0.3)
 
 ### Commits
 
+- fix: fix tests, remove unused dependency [`9273fb0`](https://github.com/ecphp/cas-lib/commit/9273fb00752b40f98892dbd85160a890eb001398)
+
+## [2.0.2](https://github.com/ecphp/cas-lib/compare/2.0.1...2.0.2) - 2023-01-30
+
+### Commits
+
+- docs: Update changelog. [`1de7ea1`](https://github.com/ecphp/cas-lib/commit/1de7ea1173e93d1dcce3c41535223541cc3f7cb2)
 - fix: remove unused dependency [`20d8dd7`](https://github.com/ecphp/cas-lib/commit/20d8dd7cd163551a3b3d0fc5819d6e27db25bf77)
 - chore: update license [`07cf70b`](https://github.com/ecphp/cas-lib/commit/07cf70bfbf9750105b26b3d57b0c9d929ab033fd)
 - chore: update default nix development environment [`3d8ea59`](https://github.com/ecphp/cas-lib/commit/3d8ea59901b3a9d547f3d3a561d8d66998b31ca6)
