@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.1](https://github.com/ecphp/cas-lib/compare/2.0.0...2.0.1)
+## [2.0.2](https://github.com/ecphp/cas-lib/compare/2.0.1...2.0.2)
+
+### Commits
+
+- fix: remove unused dependency [`20d8dd7`](https://github.com/ecphp/cas-lib/commit/20d8dd7cd163551a3b3d0fc5819d6e27db25bf77)
+- chore: update license [`07cf70b`](https://github.com/ecphp/cas-lib/commit/07cf70bfbf9750105b26b3d57b0c9d929ab033fd)
+- chore: update default nix development environment [`3d8ea59`](https://github.com/ecphp/cas-lib/commit/3d8ea59901b3a9d547f3d3a561d8d66998b31ca6)
+
+## [2.0.1](https://github.com/ecphp/cas-lib/compare/2.0.0...2.0.1) - 2022-09-29
 
 ### Merged
 
@@ -13,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: Update CHANGELOG. [`8dfcb24`](https://github.com/ecphp/cas-lib/commit/8dfcb24a4facd23c296683fd363214a4ca5e09fe)
 - fix: make it work for php &gt;= 7.4 [`9085d37`](https://github.com/ecphp/cas-lib/commit/9085d3730db7ef3cbf31c31ff13331c991c5b48a)
 - chore: update infection config [`b285591`](https://github.com/ecphp/cas-lib/commit/b28559110d66558989a492423aed4d1479531f7e)
 - fix: add middleware for http response bodies [`da02b69`](https://github.com/ecphp/cas-lib/commit/da02b691fe0a51a147a48b077b48308e214dd334)
