@@ -21,7 +21,6 @@ use EcPhp\CasLib\Response\Factory\ProxyFactory;
 use EcPhp\CasLib\Response\Factory\ProxyFailureFactory;
 use EcPhp\CasLib\Response\Factory\ServiceValidateFactory;
 use Exception;
-use loophp\psr17\Psr17;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PhpSpec\ObjectBehavior;
@@ -306,12 +305,8 @@ class CasResponseBuilderSpec extends ObjectBehavior
 
     public function let()
     {
-        $psr17Factory = new Psr17Factory();
-        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
-
         $this
             ->beConstructedWith(
-                $psr17,
                 new AuthenticationFailureFactory(),
                 new ProxyFactory(),
                 new ProxyFailureFactory(),
