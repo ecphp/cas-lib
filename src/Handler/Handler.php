@@ -65,6 +65,29 @@ abstract class Handler
     }
 
     /**
+     * This function will aggregate all the input arrays into a single array.
+     *
+     * The rule of concatenation is that the previous array will have precedence
+     * over the current array.
+     *
+     * Therefore: buildParameters([a=>1], [a=>2,b=>3]) will return [a=>1, b=>3]
+     *
+     * @param array<array-key, mixed> ...$parameters
+     *
+     * @return array<array-key, mixed>
+     */
+    protected function buildParameters(array ...$parameters): array
+    {
+        return $this->formatProtocolParameters(
+            array_reduce(
+                $parameters,
+                static fn (array $carry, array $item): array => $carry + $item,
+                []
+            )
+        );
+    }
+
+    /**
      * @param mixed[]|string[]|UriInterface[] $query
      */
     protected function buildUri(UriInterface $from, string $name, array $query = []): UriInterface
@@ -158,7 +181,7 @@ abstract class Handler
 
     protected function getParameters(): array
     {
-        return $this->parameters + ($this->getProtocolProperties()['default_parameters'] ?? []);
+        return $this->parameters;
     }
 
     protected function getProperties(): PropertiesInterface

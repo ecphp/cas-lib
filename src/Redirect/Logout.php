@@ -29,7 +29,12 @@ final class Logout extends Redirect implements RedirectInterface
     private function getUri(): UriInterface
     {
         $serverRequest = $this->getServerRequest()->getUri();
-        $parameters = $this->formatProtocolParameters($this->getParameters());
+
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            $this->getProtocolProperties()['default_parameters'] ?? [],
+            ['service' => (string) $serverRequest],
+        );
 
         return $this->buildUri($serverRequest, 'logout', $parameters);
     }

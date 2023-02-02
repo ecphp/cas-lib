@@ -43,10 +43,15 @@ final class Proxy extends Service implements ServiceInterface
 
     protected function getUri(): UriInterface
     {
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            $this->getProtocolProperties()['default_parameters'] ?? []
+        );
+
         return $this->buildUri(
             $this->getServerRequest()->getUri(),
             'proxy',
-            $this->formatProtocolParameters($this->getParameters())
+            $parameters
         );
     }
 }

@@ -18,22 +18,24 @@ final class ServiceValidate extends Service implements ServiceInterface
 {
     protected function getProtocolProperties(): array
     {
-        $protocolProperties = $this->getProperties()['protocol']['serviceValidate'] ?? [];
-
-        $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
-            'ticket' => Uri::getParam($this->getServerRequest()->getUri(), 'ticket'),
-        ];
-
-        return $protocolProperties;
+        return $this->getProperties()['protocol']['serviceValidate'] ?? [];
     }
 
     protected function getUri(): UriInterface
     {
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            [
+                'service' => (string) $this->getServerRequest()->getUri(),
+                'ticket' => Uri::getParam($this->getServerRequest()->getUri(), 'ticket'),
+            ],
+            $this->getProtocolProperties()['default_parameters'] ?? []
+        );
+
         return $this->buildUri(
             $this->getServerRequest()->getUri(),
             'serviceValidate',
-            $this->formatProtocolParameters($this->getParameters())
+            $parameters
         );
     }
 }
