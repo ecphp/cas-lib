@@ -435,15 +435,6 @@ class CasSpec extends ObjectBehavior
 
         $request = new ServerRequest(
             Method::GET,
-            'http://local/proxycallback?pgtId=pgtId&pgtIou=false'
-        );
-
-        $this
-            ->shouldThrow(Exception::class)
-            ->during('handleProxyCallback', [$request]);
-
-        $request = new ServerRequest(
-            Method::GET,
             'http://local/proxycallback?pgtId=pgtId'
         );
 
@@ -509,7 +500,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Flocal%2F%3Ffoo%3Dbar']);
+            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Ffoo.bar%2F']);
 
         $parameters = [
             'custom' => 'foo',
@@ -518,7 +509,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F%3Fcustom%3Dfoo']);
+            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F']);
 
         $request = new ServerRequest(Method::GET, 'http://local/', ['referer' => 'http://referer/']);
 
@@ -530,7 +521,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Flocal%2F%3Ffoo%3Dbar']);
+            ->shouldReturn(['http://local/cas/login?foo=bar&service=http%3A%2F%2Ffoo.bar%2F']);
 
         $parameters = [
             'custom' => 'foo',
@@ -539,7 +530,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F%3Fcustom%3Dfoo']);
+            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F']);
 
         $parameters = [
             'custom' => 'foo',
@@ -549,7 +540,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->login($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/login?custom=foo&service=http%3A%2F%2Flocal%2F%3Fcustom%3Dfoo']);
+            ->shouldReturn(['http://local/cas/login?custom=foo']);
     }
 
     public function it_can_logout()
@@ -568,7 +559,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->logout($request)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/logout']);
+            ->shouldReturn(['http://local/cas/logout?service=http%3A%2F%2Flocal%2F']);
 
         $parameters = [
             'custom' => 'bar',
@@ -577,7 +568,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->logout($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/logout?custom=bar']);
+            ->shouldReturn(['http://local/cas/logout?custom=bar&service=http%3A%2F%2Flocal%2F']);
 
         $parameters = [
             'custom' => 'bar',
@@ -598,7 +589,7 @@ class CasSpec extends ObjectBehavior
         $this
             ->logout($request, $parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/logout?custom=bar']);
+            ->shouldReturn(['http://local/cas/logout?custom=bar&service=http%3A%2F%2Flocal%2F']);
 
         $parameters = [
             'custom' => 'bar',
@@ -915,10 +906,6 @@ class CasSpec extends ObjectBehavior
         $cacheItemPgtIou
             ->get()
             ->willReturn('pgtIou');
-
-        $cache
-            ->getItem('false')
-            ->willThrow(Exception::class);
 
         $cache
             ->hasItem('unknownPgtIou')

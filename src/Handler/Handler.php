@@ -55,6 +55,29 @@ abstract class Handler
         $this->psr17 = $psr17;
     }
 
+    /**
+     * This function will aggregate all the input arrays into a single array.
+     *
+     * The rule of concatenation is that the previous array will have precedence
+     * over the current array.
+     *
+     * Therefore: buildParameters([a=>1], [a=>2,b=>3]) will return [a=>1, b=>3]
+     *
+     * @param array<array-key, mixed> ...$parameters
+     *
+     * @return array<array-key, mixed>
+     */
+    protected function buildParameters(array ...$parameters): array
+    {
+        return $this->formatParameters(
+            array_reduce(
+                $parameters,
+                static fn (array $carry, array $item): array => $carry + $item,
+                []
+            )
+        );
+    }
+
     protected function buildUri(
         UriInterface $from,
         string $type,
@@ -81,32 +104,6 @@ abstract class Handler
             ->withPath(sprintf('%s%s', $baseUrl['path'], $properties['protocol'][$type]['path']))
             ->withQuery(http_build_query($queryParams))
             ->withFragment($from->getFragment());
-    }
-
-    /**
-     * @param array[]|bool[]|string[] $parameters
-     *
-     * @return string[]
-     */
-    protected function formatProtocolParameters(array $parameters): array
-    {
-        $parameters = array_map(
-            static fn ($parameter) => true === $parameter ? 'true' : $parameter,
-            array_filter($parameters)
-        );
-
-        if (true === array_key_exists('service', $parameters)) {
-            $parameters['service'] = (string) Uri::removeParams(
-                $this
-                    ->getPsr17()
-                    ->createUri($parameters['service']),
-                'ticket'
-            );
-        }
-
-        ksort($parameters);
-
-        return $parameters;
     }
 
     protected function getCache(): CacheItemPoolInterface
@@ -137,5 +134,31 @@ abstract class Handler
     protected function getPsr17(): Psr17Interface
     {
         return $this->psr17;
+    }
+
+    /**
+     * @param array[]|bool[]|string[] $parameters
+     *
+     * @return string[]
+     */
+    private function formatParameters(array $parameters): array
+    {
+        $parameters = array_map(
+            static fn ($parameter) => true === $parameter ? 'true' : $parameter,
+            array_filter($parameters)
+        );
+
+        if (true === array_key_exists('service', $parameters)) {
+            $parameters['service'] = (string) Uri::removeParams(
+                $this
+                    ->getPsr17()
+                    ->createUri($parameters['service']),
+                'ticket'
+            );
+        }
+
+        ksort($parameters);
+
+        return $parameters;
     }
 }

@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Handler\HandlerInterface;
-use EcPhp\CasLib\Utils\Uri;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -20,9 +19,11 @@ final class Logout extends Handler implements HandlerInterface
 {
     public function handle(RequestInterface $request): ResponseInterface
     {
-        $parameters = $this->getParameters();
-        $parameters += Uri::getParams($request->getUri());
-        $parameters += $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGOUT]['default_parameters'] ?? [];
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGOUT]['default_parameters'] ?? [],
+            ['service' => (string) $request->getUri()],
+        );
 
         return $this
             ->getPsr17()
@@ -33,7 +34,7 @@ final class Logout extends Handler implements HandlerInterface
                     ->buildUri(
                         $request->getUri(),
                         HandlerInterface::TYPE_LOGOUT,
-                        $this->formatProtocolParameters($parameters)
+                        $parameters
                     )
             );
     }

@@ -24,25 +24,11 @@ final class Login extends Handler implements HandlerInterface
 {
     public function handle(RequestInterface $request): ResponseInterface
     {
-        $parameters = $this->getParameters();
-        $parameters += Uri::getParams($request->getUri());
-
-        // Add the query parameter to the service.
-        // Investigate if this is really needed.
-        // We do it here before adding the default parameters.
-        $parameters['service'] = (string) Uri::withParams(
-            $request->getUri(),
-            array_diff_key(
-                $parameters,
-                [
-                    'service' => null,
-                    'renew' => null,
-                ]
-            )
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGIN]['default_parameters'] ?? [],
+            ['service' => (string) $request->getUri()],
         );
-
-        $parameters += $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGIN]['default_parameters'] ?? [];
-        $parameters = $this->formatProtocolParameters($parameters);
 
         $this->validate($request, $parameters);
 
