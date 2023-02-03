@@ -16,7 +16,6 @@ use EcPhp\CasLib\Contract\Handler\ServiceValidateHandlerInterface;
 use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
 use EcPhp\CasLib\Exception\CasHandlerException;
-use EcPhp\CasLib\Utils\Uri;
 use Ergebnis\Http\Method;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,10 +33,11 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
             ? HandlerInterface::TYPE_PROXY_VALIDATE
             : HandlerInterface::TYPE_SERVICE_VALIDATE;
 
-        $parameters = $this->getParameters();
-        $parameters += Uri::getParams($request->getUri());
-        $parameters += $properties['protocol'][$type]['default_parameters'] ?? [];
-        $parameters += ['service' => (string) $request->getUri()];
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            $properties['protocol'][$type]['default_parameters'] ?? [],
+            ['service' => (string) $request->getUri()],
+        );
 
         $request = $this
             ->getPsr17()
@@ -47,7 +47,7 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
                     ->buildUri(
                         $request->getUri(),
                         $type,
-                        $this->formatProtocolParameters($parameters)
+                        $parameters
                     )
             );
 

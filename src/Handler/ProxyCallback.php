@@ -19,31 +19,36 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
+use function array_key_exists;
+
 final class ProxyCallback extends Handler implements HandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            Uri::getParams($request->getUri()),
+        );
+
         $response = $this
             ->getPsr17()
             ->createResponse();
 
-        $parameters = $this->getParameters();
-        $parameters += Uri::getParams($request->getUri());
-        $parameters += (array) $request->getBody();
-        $parameters += ['pgtId' => null, 'pgtIou' => null];
+        $hasPgtId = array_key_exists('pgtId', $parameters);
+        $hasPgtIou = array_key_exists('pgtIou', $parameters);
 
-        if (null === $parameters['pgtId'] && null === $parameters['pgtIou']) {
+        if (false === $hasPgtId && false === $hasPgtIou) {
             // We cannot return an exception here because prior sending the
             // PGT ID and PGTIOU, a request is made by the CAS server in order
             // to check the existence of the proxy callback endpoint.
             return $response;
         }
 
-        if (null === $parameters['pgtIou']) {
+        if (false === $hasPgtIou) {
             throw CasHandlerException::pgtIouIsNull();
         }
 
-        if (null === $parameters['pgtId']) {
+        if (false === $hasPgtId) {
             throw CasHandlerException::pgtIdIsNull();
         }
 

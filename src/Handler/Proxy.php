@@ -13,7 +13,6 @@ namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Handler\HandlerInterface;
 use EcPhp\CasLib\Exception\CasHandlerException;
-use EcPhp\CasLib\Utils\Uri;
 use Ergebnis\Http\Method;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,12 +22,11 @@ final class Proxy extends Handler implements HandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $properties = $this->getProperties();
-
-        $parameters = $this->getParameters();
-        $parameters += Uri::getParams($request->getUri());
-        $parameters += $properties['protocol'][HandlerInterface::TYPE_PROXY]['default_parameters'] ?? [];
-        $parameters += ['service' => (string) $request->getUri()];
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            $this->getProperties()['protocol'][HandlerInterface::TYPE_PROXY]['default_parameters'] ?? [],
+            ['service' => (string) $request->getUri()],
+        );
 
         $request = $this
             ->getPsr17()
@@ -38,7 +36,7 @@ final class Proxy extends Handler implements HandlerInterface
                     ->buildUri(
                         $request->getUri(),
                         HandlerInterface::TYPE_PROXY,
-                        $this->formatProtocolParameters($parameters)
+                        $parameters
                     )
             );
 
