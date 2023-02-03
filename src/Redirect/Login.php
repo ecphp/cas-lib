@@ -21,7 +21,12 @@ final class Login extends Redirect implements RedirectInterface
 {
     public function handle(): ?ResponseInterface
     {
-        $parameters = $this->formatProtocolParameters($this->getParameters());
+        $parameters = $this->buildParameters(
+            $this->getParameters(),
+            $this->getProtocolProperties()['default_parameters'] ?? [],
+            ['service' => (string) $this->getServerRequest()->getUri()],
+        );
+        $parameters = $this->formatProtocolParameters($parameters);
         $validatedParameters = $this->validate($parameters);
 
         if (null === $validatedParameters) {
@@ -58,13 +63,7 @@ final class Login extends Redirect implements RedirectInterface
 
     protected function getProtocolProperties(): array
     {
-        $protocolProperties = $this->getProperties()['protocol']['login'] ?? [];
-
-        $protocolProperties['default_parameters'] += [
-            'service' => (string) $this->getServerRequest()->getUri(),
-        ];
-
-        return $protocolProperties;
+        return $this->getProperties()['protocol']['login'] ?? [];
     }
 
     /**

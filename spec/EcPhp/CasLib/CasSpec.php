@@ -850,7 +850,7 @@ class CasSpec extends ObjectBehavior
             ->withServerRequest($request)
             ->logout()
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/logout']);
+            ->shouldReturn(['http://local/cas/logout?service=http%3A%2F%2Flocal%2F']);
 
         $parameters = [
             'custom' => 'bar',
@@ -860,7 +860,7 @@ class CasSpec extends ObjectBehavior
             ->withServerRequest($request)
             ->logout($parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/logout?custom=bar']);
+            ->shouldReturn(['http://local/cas/logout?custom=bar&service=http%3A%2F%2Flocal%2F']);
 
         $parameters = [
             'custom' => 'bar',
@@ -883,7 +883,7 @@ class CasSpec extends ObjectBehavior
             ->withServerRequest($request)
             ->logout($parameters)
             ->getHeader('Location')
-            ->shouldReturn(['http://local/cas/logout?custom=bar']);
+            ->shouldReturn(['http://local/cas/logout?custom=bar&service=http%3A%2F%2Flocal%2F']);
 
         $parameters = [
             'custom' => 'bar',
