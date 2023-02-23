@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.4](https://code.europa.eu/ecphp/cas-lib/compare/2.0.3...2.0.4)
+## [2.0.5](https://code.europa.eu/ecphp/cas-lib/compare/2.0.4...2.0.5)
+
+### Commits
+
+- chore: add missing `psr/cache-implementation` virtual package [`ada3ee9`](https://code.europa.eu/ecphp/cas-lib/commit/ada3ee965722d7234faf44d89d46ebb436cd3ba5)
+
+## [2.0.4](https://code.europa.eu/ecphp/cas-lib/compare/2.0.3...2.0.4) - 2023-02-03
 
 ### Merged
 
@@ -13,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: Update changelog. [`0e89696`](https://code.europa.eu/ecphp/cas-lib/commit/0e89696180b9f049c6944b224f70119e80abb071)
 - style: prettify README [`2e1532c`](https://code.europa.eu/ecphp/cas-lib/commit/2e1532c883e051a004c572cab2d596637ea05328)
 - chore: fix `README` badge [`3184fa4`](https://code.europa.eu/ecphp/cas-lib/commit/3184fa435088a57968d3b73daa461128e70dcf56)
 - run prettier to autofix codestyle [`f2f7732`](https://code.europa.eu/ecphp/cas-lib/commit/f2f7732e25ba3b7bca2f41d4f887bf63263e5f99)
@@ -57,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ci: Run all tests. [`83d1ff9`](https://code.europa.eu/ecphp/cas-lib/commit/83d1ff92af2e4321807e8423de4fce736d18187e)
 - ci: Fix Github workflow name. [`02b4a7c`](https://code.europa.eu/ecphp/cas-lib/commit/02b4a7c3d466d310de39215525dd1b7de2ef1e3d)
 
-## [2.0.0](https://code.europa.eu/ecphp/cas-lib/compare/1.1.9...2.0.0) - 2022-08-22
+## [2.0.0](https://code.europa.eu/ecphp/cas-lib/compare/1.2.0...2.0.0) - 2022-08-22
 
 ### Merged
 
@@ -70,6 +77,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove obsolete annotation. [`7f837e9`](https://code.europa.eu/ecphp/cas-lib/commit/7f837e941b3f1089fbebbc9b05c5e1ae0f9c69b9)
 - ci: Update Scrutinizer configuration. [`84de43b`](https://code.europa.eu/ecphp/cas-lib/commit/84de43b2429fa78cdedfeb0bca25814d160d0991)
 - chore: Remove Docker stuff. [`f7d0e9a`](https://code.europa.eu/ecphp/cas-lib/commit/f7d0e9a0249f2d72f51b3d12e86815d346dd8f7f)
+
+## [1.2.0](https://code.europa.eu/ecphp/cas-lib/compare/1.1.9...1.2.0) - 2023-02-03
+
+### Merged
+
+- fix: make sure handlers `parameters` are correctly handled [`#41`](https://code.europa.eu/ecphp/cas-lib/pull/41)
+- ci: Update dev workflow. [`#34`](https://code.europa.eu/ecphp/cas-lib/pull/34)
+
+### Commits
+
+- docs: Update changelog. [`26cf7db`](https://code.europa.eu/ecphp/cas-lib/commit/26cf7db1c6ac296aea1ad0feb90c6a58d56bdfd0)
+- chore: fix `README` badge [`29c0425`](https://code.europa.eu/ecphp/cas-lib/commit/29c042511670a14d927e4182c88cbf8e67f0c035)
+- chore: update license [`f958de1`](https://code.europa.eu/ecphp/cas-lib/commit/f958de1e6df8c3ab8d899742d06dcf06511cb4f5)
+- Remove obsolete annotation. [`7e19167`](https://code.europa.eu/ecphp/cas-lib/commit/7e19167f73504b53a0b1e4b266e037e33d17e99d)
+- ci: Update Scrutinizer configuration. [`5a51803`](https://code.europa.eu/ecphp/cas-lib/commit/5a5180357b6fa38c8856320f7a43b4010d5bc661)
+- chore: Remove Docker stuff. [`6003b4b`](https://code.europa.eu/ecphp/cas-lib/commit/6003b4b8244c7df4cb4ee1c343198ef43455f030)
 
 ## [1.1.9](https://code.europa.eu/ecphp/cas-lib/compare/1.1.8...1.1.9) - 2022-05-02
 
