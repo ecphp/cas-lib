@@ -25,42 +25,42 @@ abstract class CasResponse implements CasResponseInterface
         $this->response = $response;
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->response->getBody();
     }
 
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         return $this->response->getHeader($name);
     }
 
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return $this->response->getHeaderLine($name);
     }
 
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->response->getHeaders();
     }
 
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->response->getProtocolVersion();
     }
 
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->response->getReasonPhrase();
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->response->getStatusCode();
     }
 
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return $this->response->hasHeader($name);
     }
@@ -70,7 +70,7 @@ abstract class CasResponse implements CasResponseInterface
         return (new ResponseUtils())->toArray($this->response);
     }
 
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withAddedHeader($name, $value);
@@ -78,7 +78,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withBody($body);
@@ -86,7 +86,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withHeader($name, $value);
@@ -94,7 +94,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withoutHeader($name)
+    public function withoutHeader($name): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withoutHeader($name);
@@ -102,7 +102,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withProtocolVersion($version);
@@ -110,7 +110,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withStatus($code, $reasonPhrase);
