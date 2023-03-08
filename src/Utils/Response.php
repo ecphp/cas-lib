@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Utils;
 
 use DOMDocument;
+use DOMElement;
 use DOMXPath;
 use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasExceptionInterface;
+use Error;
 use ErrorException;
 use LSS\XML2Array;
 use Psr\Http\Message\ResponseInterface;
@@ -55,7 +57,7 @@ final class Response
                     throw CasException::unableToConvertResponseFromJson($exception);
                 }
 
-                return $json;
+                return (array) $json;
 
             case 0 === strpos($header, 'text/html'):
             case 0 === strpos($header, 'text/xml'):
@@ -93,7 +95,17 @@ final class Response
     {
         $query = sprintf('//*[namespace::%s and not(../namespace::%s)]', $namespace, $namespace);
 
-        foreach ((new DOMXPath($doc))->query($query) as $node) {
+        $nodes = (new DOMXPath($doc))->query($query);
+
+        if (false === $nodes) {
+            throw new Error('The DOM query expression is malformed or the contextnode is invalid.');
+        }
+
+        foreach ($nodes as $node) {
+            if (!($node instanceof DOMElement)) {
+                continue;
+            }
+
             $node->removeAttributeNS($node->lookupNamespaceURI($namespace), $namespace);
         }
     }

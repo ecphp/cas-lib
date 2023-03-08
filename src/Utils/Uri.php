@@ -46,7 +46,7 @@ final class Uri
      * @param UriInterface $uri
      *   The URI.
      *
-     * @return string[]
+     * @return array<string, string|null>
      *   The parameters, as "key/value" pairs.
      */
     public static function getParams(UriInterface $uri): array
@@ -59,7 +59,13 @@ final class Uri
             // Ignore the exception.
         }
 
-        return iterator_to_array($pairs);
+        $associatedPairs = [];
+
+        foreach ($pairs as $key => $value) {
+            $associatedPairs[$key] = $value;
+        }
+
+        return $associatedPairs;
     }
 
     /**

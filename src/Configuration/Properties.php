@@ -19,12 +19,12 @@ use function array_key_exists;
 final class Properties implements PropertiesInterface
 {
     /**
-     * @var array<string, mixed>
+     * @var array<array-key, mixed>
      */
     private array $properties;
 
     /**
-     * @param array<string, mixed> $properties
+     * @param array<array-key, mixed> $properties
      */
     public function __construct(array $properties)
     {

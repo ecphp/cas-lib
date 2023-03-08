@@ -21,6 +21,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
+use function is_string;
 
 abstract class Handler
 {
@@ -101,7 +102,7 @@ abstract class Handler
         return $this
             ->getPsr17()
             ->createUri($properties['base_url'])
-            ->withPath(sprintf('%s%s', $baseUrl['path'], $properties['protocol'][$type]['path']))
+            ->withPath(sprintf('%s%s', $baseUrl['path'] ?? '', $properties['protocol'][$type]['path']))
             ->withQuery(http_build_query($queryParams))
             ->withFragment($from->getFragment());
     }
@@ -139,7 +140,7 @@ abstract class Handler
     /**
      * @param array[]|bool[]|string[] $parameters
      *
-     * @return string[]
+     * @return string[]|array[]
      */
     private function formatParameters(array $parameters): array
     {
@@ -148,7 +149,7 @@ abstract class Handler
             array_filter($parameters)
         );
 
-        if (true === array_key_exists('service', $parameters)) {
+        if (true === array_key_exists('service', $parameters) && is_string($parameters['service'])) {
             $parameters['service'] = (string) Uri::removeParams(
                 $this
                     ->getPsr17()

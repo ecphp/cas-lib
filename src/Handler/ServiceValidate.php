@@ -29,7 +29,7 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
     {
         $properties = $this->getProperties();
 
-        $type = $properties['protocol'][HandlerInterface::TYPE_SERVICE_VALIDATE]['default_parameters']['pgtUrl'] ?? false
+        $type = isset($properties['protocol'][HandlerInterface::TYPE_SERVICE_VALIDATE]['default_parameters']['pgtUrl'])
             ? HandlerInterface::TYPE_PROXY_VALIDATE
             : HandlerInterface::TYPE_SERVICE_VALIDATE;
 
