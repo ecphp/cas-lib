@@ -60,13 +60,17 @@ final class ProxyCallback extends Handler implements HandlerInterface
             throw CasHandlerException::getItemFromCacheFailure($exception);
         }
 
-        $this
+        $isSaved = $this
             ->getCache()
             ->save(
                 $cacheItem
                     ->set($parameters['pgtId'])
                     ->expiresAfter(300)
             );
+
+        if (false === $isSaved) {
+            throw CasHandlerException::unableToSaveItemInCache();
+        }
 
         return $response;
     }

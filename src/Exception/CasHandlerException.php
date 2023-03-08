@@ -126,4 +126,11 @@ final class CasHandlerException extends Exception implements CasExceptionInterfa
             )
         );
     }
+
+    public static function unableToSaveItemInCache(): self
+    {
+        return new self(
+            'CAS Proxy callback failure. The cache service was unable to save the PGT ID.'
+        );
+    }
 }

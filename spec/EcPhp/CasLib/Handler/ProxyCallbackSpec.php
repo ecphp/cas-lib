@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace spec\EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Response\CasResponseBuilderInterface;
+use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Handler\ProxyCallback;
 use EcPhp\CasLib\Utils\Uri as UtilsUri;
 use Ergebnis\Http\Method;
@@ -65,7 +66,7 @@ class ProxyCallbackSpec extends ObjectBehavior
         $this->beConstructedWith([], $cache, $casResponseBuilder, $client, Cas::getTestProperties(), $psr17);
 
         $this
-            ->shouldThrow(Exception::class)
+            ->shouldThrow(CasHandlerException::class)
             ->during('handle', [$request]);
     }
 
@@ -93,6 +94,52 @@ class ProxyCallbackSpec extends ObjectBehavior
     public function it_is_initializable()
     {
         $this->shouldHaveType(ProxyCallback::class);
+    }
+
+    public function it_throws_when_cache_is_unable_to_save_pgtId(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, CasResponseBuilderInterface $casResponseBuilder)
+    {
+        $psr17Factory = new Psr17Factory();
+        $psr17 = new Psr17($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
+
+        $cacheItem
+            ->set('pgtId')
+            ->willReturn($cacheItem);
+
+        $cacheItem
+            ->expiresAfter(300)
+            ->willReturn($cacheItem);
+
+        $cache
+            ->getItem('pgtIou')
+            ->willReturn($cacheItem);
+
+        $cache
+            ->save($cacheItem)
+            ->willThrow(CasHandlerException::unableToSaveItemInCache());
+
+        $request = new ServerRequest(
+            Method::GET,
+            UtilsUri::withParams(
+                new Uri('http://from/it_can_catch_issue_with_the_cache'),
+                [
+                    'pgtId' => 'pgtId',
+                    'pgtIou' => 'pgtIou',
+                ]
+            )
+        );
+
+        $this->beConstructedWith(
+            [],
+            $cache,
+            $casResponseBuilder,
+            $client,
+            Cas::getTestProperties(),
+            $psr17
+        );
+
+        $this
+            ->shouldThrow(CasHandlerException::class)
+            ->during('handle', [$request]);
     }
 
     public function let(CacheItemPoolInterface $cache, CacheItemInterface $cacheItem, ClientInterface $client, CasResponseBuilderInterface $casResponseBuilder)
