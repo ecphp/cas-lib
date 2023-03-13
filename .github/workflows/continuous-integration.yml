@@ -52,12 +52,6 @@ jobs:
               env:
                   PHP_CS_FIXER_IGNORE_ENV: 1
 
-            - name: Send Scrutinizer data
-              run: |
-                  wget https://scrutinizer-ci.com/ocular.phar
-                  php ocular.phar code-coverage:upload --format=php-clover build/logs/coverage/clover.xml
-              continue-on-error: true
-
             - name: Send PSALM data
               run: vendor/bin/psalm --shepherd --stats src/
               continue-on-error: true
