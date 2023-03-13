@@ -56,3 +56,7 @@ jobs:
                   composer require scrutinizer/ocular --dev
                   vendor/bin/ocular code-coverage:upload --format=php-clover build/logs/coverage/clover.xml
               continue-on-error: true
+
+            - name: Send PSALM data
+              run: vendor/bin/psalm --shepherd --stats src/
+              continue-on-error: true
