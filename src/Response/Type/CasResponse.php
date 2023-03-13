@@ -70,7 +70,7 @@ abstract class CasResponse implements CasResponseInterface
         return (new ResponseUtils())->toArray($this->response);
     }
 
-    public function withAddedHeader($name, $value): CasResponseInterface
+    public function withAddedHeader($name, $value): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withAddedHeader($name, $value);
@@ -78,7 +78,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withBody(StreamInterface $body): CasResponseInterface
+    public function withBody(StreamInterface $body): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withBody($body);
@@ -86,7 +86,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withHeader($name, $value): CasResponseInterface
+    public function withHeader($name, $value): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withHeader($name, $value);
@@ -94,7 +94,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withoutHeader($name): CasResponseInterface
+    public function withoutHeader($name): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withoutHeader($name);
@@ -102,7 +102,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withProtocolVersion($version): CasResponseInterface
+    public function withProtocolVersion($version): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withProtocolVersion($version);
@@ -110,7 +110,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withStatus($code, $reasonPhrase = ''): CasResponseInterface
+    public function withStatus($code, $reasonPhrase = ''): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withStatus($code, $reasonPhrase);
