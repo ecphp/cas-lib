@@ -10,15 +10,10 @@
         "single-sign-on"
     ],
     "require": {
-        "php": ">= 7.4",
-        "ext-dom": "*",
-        "ext-json": "*",
-        "ext-libxml": "*",
-        "ext-simplexml": "*",
+        "php": ">= 8.1",
         "ergebnis/http-method": "^2.2",
         "league/uri-components": "^2",
         "loophp/psr17": "^1.0",
-        "openlss/lib-array2xml": "^1.0",
         "php-http/client-common": "^2.6",
         "psr/cache": "^1.0.1 || ^2 || ^3",
         "psr/cache-implementation": "^1",
@@ -32,7 +27,11 @@
         "psr/http-server-middleware": "^1.0"
     },
     "require-dev": {
+        "ext-json": "*",
         "ext-pcov": "*",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "ext-xsl": "*",
         "ecphp/php-conventions": "^1",
         "friends-of-phpspec/phpspec-code-coverage": "^6",
         "infection/infection": "^0.26",
@@ -41,12 +40,19 @@
         "phpspec/phpspec": "^7",
         "phpstan/phpstan-strict-rules": "^1",
         "symfony/cache": "^5.4 || ^6",
-        "symfony/http-client": "^5.4 || ^6"
+        "symfony/http-client": "^5.4 || ^6",
+        "veewee/xml": "^2.6",
+        "symfony/var-dumper": "^6.2"
     },
     "provide": {
         "psr/http-server-handler-implementation": "^1.0"
     },
     "suggest": {
+        "ext-json": "If you want to support CAS using JSON format",
+        "veewee/xml": "If you want to support CAS using XML format",
+        "ext-libxml": "If you want to support CAS using XML format",
+        "ext-simplexml": "If you want to support CAS using XML format",
+        "ext-xsl": "If you want to support CAS using XML format",
         "nyholm/psr7": "A super lightweight PSR-7 implementation"
     },
     "autoload": {

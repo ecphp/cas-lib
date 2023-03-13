@@ -48,28 +48,10 @@ final class CasException extends Exception implements CasExceptionInterface
         );
     }
 
-    public static function unableToConvertResponseFromJson(Throwable $previous): self
+    public static function unableToConvertResponse(string $header, Throwable $previous): self
     {
         return new self(
-            'Unable to convert JSON Response to array.',
-            0,
-            $previous
-        );
-    }
-
-    public static function unableToConvertResponseFromXml(Throwable $previous): self
-    {
-        return new self(
-            'Unable to convert XML Response to array.',
-            0,
-            $previous
-        );
-    }
-
-    public static function unableToLoadXml(Throwable $previous): self
-    {
-        return new self(
-            'Unable to load the body of the XML Response.',
+            sprintf('Unable to convert response (%s) to array.', $header),
             0,
             $previous
         );

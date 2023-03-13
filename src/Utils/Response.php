@@ -11,22 +11,16 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Utils;
 
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
 use EcPhp\CasLib\Exception\CasException;
 use EcPhp\CasLib\Exception\CasExceptionInterface;
-use Error;
-use ErrorException;
-use LSS\XML2Array;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use VeeWee\Xml\Dom\Traverser\Visitor\RemoveNamespaces;
+
+use function VeeWee\Xml\Dom\Configurator\traverse;
+use function VeeWee\Xml\Encoding\xml_decode;
 
 use const JSON_THROW_ON_ERROR;
-use const LIBXML_NOBLANKS;
-use const LIBXML_NOCDATA;
-use const LIBXML_NONET;
-use const LIBXML_NSCLEAN;
 
 final class Response
 {
@@ -49,64 +43,18 @@ final class Response
 
         $header = substr($response->getHeaderLine('Content-Type'), 0, 16);
 
-        switch (true) {
-            case 0 === strpos($header, 'application/json'):
-                try {
-                    $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-                } catch (Throwable $exception) {
-                    throw CasException::unableToConvertResponseFromJson($exception);
-                }
-
-                return (array) $json;
-
-            case 0 === strpos($header, 'text/html'):
-            case 0 === strpos($header, 'text/xml'):
-            case 0 === strpos($header, 'application/xml'):
-                set_error_handler(
-                    static function ($errno, $errstr, $errfile, $errline): void {
-                        throw CasException::unableToLoadXml(
-                            new ErrorException($errstr, 0, $errno, $errfile, $errline)
-                        );
-                    }
-                );
-                $dom = new DOMDocument();
-                $dom
-                    ->loadXML(
-                        $body,
-                        LIBXML_NSCLEAN | LIBXML_NOCDATA | LIBXML_NOBLANKS | LIBXML_NONET
-                    );
-                restore_error_handler();
-
-                $this->removeDomNamespace($dom, 'cas');
-
-                try {
-                    $data = XML2Array::createArray($dom);
-                } catch (Throwable $exception) {
-                    throw CasException::unableToConvertResponseFromXml($exception);
-                }
-
-                return $data;
+        try {
+            $response = match (true) {
+                str_starts_with($header, 'application/json') => (array) json_decode($body, true, 512, JSON_THROW_ON_ERROR),
+                str_starts_with($header, 'text/html'),
+                str_starts_with($header, 'text/xml'),
+                str_starts_with($header, 'application/xml') => xml_decode($body, traverse(new RemoveNamespaces())),
+                default => throw CasException::unsupportedResponseFormat($header)
+            };
+        } catch (Throwable $exception) {
+            throw CasException::unableToConvertResponse($header, $exception);
         }
 
-        throw CasException::unsupportedResponseFormat($header);
-    }
-
-    private function removeDomNamespace(DOMDocument $doc, string $namespace): void
-    {
-        $query = sprintf('//*[namespace::%s and not(../namespace::%s)]', $namespace, $namespace);
-
-        $nodes = (new DOMXPath($doc))->query($query);
-
-        if (false === $nodes) {
-            throw new Error('The DOM query expression is malformed or the contextnode is invalid.');
-        }
-
-        foreach ($nodes as $node) {
-            if (!($node instanceof DOMElement)) {
-                continue;
-            }
-
-            $node->removeAttributeNS($node->lookupNamespaceURI($namespace), $namespace);
-        }
+        return $response;
     }
 }
