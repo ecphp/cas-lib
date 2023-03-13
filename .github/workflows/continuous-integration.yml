@@ -42,7 +42,7 @@ jobs:
               with:
                   php-version: ${{ matrix.php }}
                   coverage: pcov
-                  extensions: xsl
+                  extensions: xsl, sodium
 
             - name: Install dependencies
               uses: ramsey/composer-install@v2
