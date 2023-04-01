@@ -16,7 +16,7 @@
         "loophp/psr17": "^1.0",
         "php-http/client-common": "^2.6",
         "psr/cache": "^1.0.1 || ^2 || ^3",
-        "psr/cache-implementation": "^1",
+        "psr/cache-implementation": "^1 || ^2",
         "psr/http-client": "^1.0",
         "psr/http-client-implementation": "^1",
         "psr/http-factory": "^1.0.1",
