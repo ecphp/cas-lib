@@ -18,33 +18,23 @@ use EcPhp\CasLib\Contract\Response\Factory\ProxyFactory;
 use EcPhp\CasLib\Contract\Response\Factory\ProxyFailureFactory;
 use EcPhp\CasLib\Contract\Response\Factory\ServiceValidateFactory;
 use EcPhp\CasLib\Exception\CasResponseBuilderException;
+use EcPhp\CasLib\Response\Factory\AuthenticationFailureFactory as FactoryAuthenticationFailureFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFactory as FactoryProxyFactory;
+use EcPhp\CasLib\Response\Factory\ProxyFailureFactory as FactoryProxyFailureFactory;
+use EcPhp\CasLib\Response\Factory\ServiceValidateFactory as FactoryServiceValidateFactory;
 use EcPhp\CasLib\Utils\Response as ResponseUtils;
 use Psr\Http\Message\ResponseInterface;
 
 use function array_key_exists;
 
-// phpcs:disable Generic.Files.LineLength.TooLong
-
 final class CasResponseBuilder implements CasResponseBuilderInterface
 {
-    private AuthenticationFailureFactory $authenticationFailureFactory;
-
-    private ProxyFactory $proxyFactory;
-
-    private ProxyFailureFactory $proxyFailureFactory;
-
-    private ServiceValidateFactory $serviceValidateFactory;
-
     public function __construct(
-        AuthenticationFailureFactory $authenticationFailureFactory,
-        ProxyFactory $proxyFactory,
-        ProxyFailureFactory $proxyFailureFactory,
-        ServiceValidateFactory $serviceValidateFactory
+        private readonly AuthenticationFailureFactory $authenticationFailureFactory = new FactoryAuthenticationFailureFactory(),
+        private readonly ProxyFactory $proxyFactory = new FactoryProxyFactory(),
+        private readonly ProxyFailureFactory $proxyFailureFactory = new FactoryProxyFailureFactory(),
+        private readonly ServiceValidateFactory $serviceValidateFactory = new FactoryServiceValidateFactory()
     ) {
-        $this->authenticationFailureFactory = $authenticationFailureFactory;
-        $this->proxyFactory = $proxyFactory;
-        $this->proxyFailureFactory = $proxyFailureFactory;
-        $this->serviceValidateFactory = $serviceValidateFactory;
     }
 
     public function fromResponse(ResponseInterface $response): CasResponseInterface

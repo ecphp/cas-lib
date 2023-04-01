@@ -21,8 +21,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-// phpcs:disable Generic.Files.LineLength.TooLong
-
 final class ServiceValidate extends Handler implements ServiceValidateHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
