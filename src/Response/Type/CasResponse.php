@@ -30,12 +30,12 @@ abstract class CasResponse implements CasResponseInterface
         return $this->response->getBody();
     }
 
-    public function getHeader($name): array
+    public function getHeader(string $name): array
     {
         return $this->response->getHeader($name);
     }
 
-    public function getHeaderLine($name): string
+    public function getHeaderLine(string $name): string
     {
         return $this->response->getHeaderLine($name);
     }
@@ -60,7 +60,7 @@ abstract class CasResponse implements CasResponseInterface
         return $this->response->getStatusCode();
     }
 
-    public function hasHeader($name): bool
+    public function hasHeader(string $name): bool
     {
         return $this->response->hasHeader($name);
     }
@@ -70,7 +70,7 @@ abstract class CasResponse implements CasResponseInterface
         return (new ResponseUtils())->toArray($this->response);
     }
 
-    public function withAddedHeader($name, $value): static
+    public function withAddedHeader(string $name, $value): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withAddedHeader($name, $value);
@@ -86,7 +86,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withHeader($name, $value): static
+    public function withHeader(string $name, $value): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withHeader($name, $value);
@@ -94,7 +94,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withoutHeader($name): static
+    public function withoutHeader(string $name): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withoutHeader($name);
@@ -102,7 +102,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withProtocolVersion($version): static
+    public function withProtocolVersion(string $version): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withProtocolVersion($version);
@@ -110,7 +110,7 @@ abstract class CasResponse implements CasResponseInterface
         return $clone;
     }
 
-    public function withStatus($code, $reasonPhrase = ''): static
+    public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         $clone = clone $this;
         $clone->response = $this->response->withStatus($code, $reasonPhrase);
