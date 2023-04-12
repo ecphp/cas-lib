@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Handler;
 
 use EcPhp\CasLib\Contract\Handler\HandlerInterface;
+use EcPhp\CasLib\Contract\Handler\LoginHandlerInterface;
 use EcPhp\CasLib\Exception\CasExceptionInterface;
 use EcPhp\CasLib\Exception\CasHandlerException;
 use EcPhp\CasLib\Utils\Uri;
@@ -20,7 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 
 use function array_key_exists;
 
-final class Login extends Handler implements HandlerInterface
+final class Login extends Handler implements LoginHandlerInterface
 {
     public function handle(RequestInterface $request): ResponseInterface
     {
