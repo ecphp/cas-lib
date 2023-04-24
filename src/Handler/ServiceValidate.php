@@ -16,7 +16,6 @@ use EcPhp\CasLib\Contract\Handler\ServiceValidateHandlerInterface;
 use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure;
 use EcPhp\CasLib\Contract\Response\Type\ServiceValidate as TypeServiceValidate;
 use EcPhp\CasLib\Exception\CasHandlerException;
-use EcPhp\CasLib\Utils\Uri;
 use Ergebnis\Http\Method;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
