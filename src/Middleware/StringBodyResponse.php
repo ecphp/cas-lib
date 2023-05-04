@@ -19,11 +19,9 @@ use Psr\Http\Message\ResponseInterface;
 
 final class StringBodyResponse implements Plugin
 {
-    private Psr17Interface $psr17;
-
-    public function __construct(Psr17Interface $psr17)
-    {
-        $this->psr17 = $psr17;
+    public function __construct(
+        private readonly Psr17Interface $psr17
+    ) {
     }
 
     public function handleRequest(RequestInterface $request, callable $next, callable $first): Promise

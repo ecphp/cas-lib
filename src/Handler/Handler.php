@@ -25,35 +25,17 @@ use function is_string;
 
 abstract class Handler
 {
-    private CacheItemPoolInterface $cache;
-
-    private CasResponseBuilderInterface $casResponseBuilder;
-
-    private ClientInterface $client;
-
-    private array $parameters;
-
-    private PropertiesInterface $properties;
-
-    private Psr17Interface $psr17;
-
     /**
      * @param array[]|string[] $parameters
      */
     public function __construct(
-        array $parameters,
-        CacheItemPoolInterface $cache,
-        CasResponseBuilderInterface $casResponseBuilder,
-        ClientInterface $client,
-        PropertiesInterface $properties,
-        Psr17Interface $psr17
+        private readonly array $parameters,
+        private readonly CacheItemPoolInterface $cache,
+        private readonly CasResponseBuilderInterface $casResponseBuilder,
+        private readonly ClientInterface $client,
+        private readonly PropertiesInterface $properties,
+        private readonly Psr17Interface $psr17
     ) {
-        $this->cache = $cache;
-        $this->casResponseBuilder = $casResponseBuilder;
-        $this->client = $client;
-        $this->parameters = $parameters;
-        $this->properties = $properties;
-        $this->psr17 = $psr17;
     }
 
     /**
@@ -87,7 +69,7 @@ abstract class Handler
         $properties = $this->getProperties();
 
         $queryParams += Uri::getParams($from);
-        $baseUrl = parse_url($properties['base_url']);
+        $baseUrl = parse_url((string) $properties['base_url']);
 
         if (false === $baseUrl) {
             throw new CasHandlerException(
