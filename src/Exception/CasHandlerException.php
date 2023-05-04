@@ -18,8 +18,6 @@ use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
-use function get_class;
-
 final class CasHandlerException extends Exception implements CasExceptionInterface
 {
     public static function authenticationFailure(AuthenticationFailure $response): self
@@ -50,7 +48,7 @@ final class CasHandlerException extends Exception implements CasExceptionInterfa
         return new self(
             sprintf(
                 'CAS proxy failure: Invalid response type, %s given while expecting %s.',
-                get_class($response),
+                $response::class,
                 Proxy::class
             )
         );
@@ -121,7 +119,7 @@ final class CasHandlerException extends Exception implements CasExceptionInterfa
         return new self(
             sprintf(
                 'CAS service validation failure: Invalid response type, %s given while expecting %s.',
-                get_class($response),
+                $response::class,
                 ServiceValidate::class
             )
         );

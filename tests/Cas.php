@@ -18,12 +18,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class Cas implements CasInterface
 {
-    private CasInterface $cas;
-
     public function __construct(
-        CasInterface $cas
+        private readonly CasInterface $cas
     ) {
-        $this->cas = $cas;
     }
 
     public function authenticate(ServerRequestInterface $request, array $parameters = []): array

@@ -35,33 +35,21 @@ use function array_key_exists;
 
 final class Cas implements CasInterface
 {
-    private CacheItemPoolInterface $cache;
-
-    private CasResponseBuilderInterface $casResponseBuilder;
-
-    private ClientInterface $client;
-
-    private PropertiesInterface $properties;
-
-    private Psr17Interface $psr17;
+    private readonly ClientInterface $client;
 
     public function __construct(
-        PropertiesInterface $properties,
+        private readonly PropertiesInterface $properties,
         ClientInterface $client,
-        Psr17Interface $psr17,
-        CacheItemPoolInterface $cache,
-        CasResponseBuilderInterface $casResponseBuilder
+        private readonly Psr17Interface $psr17,
+        private readonly CacheItemPoolInterface $cache,
+        private readonly CasResponseBuilderInterface $casResponseBuilder
     ) {
-        $this->cache = $cache;
         // We do this to make sure that the response body can be retrieved
         // multiple times.
         $this->client = new PluginClient(
             $client,
             [new StringBodyResponse($psr17)]
         );
-        $this->casResponseBuilder = $casResponseBuilder;
-        $this->properties = $properties;
-        $this->psr17 = $psr17;
     }
 
     public function authenticate(

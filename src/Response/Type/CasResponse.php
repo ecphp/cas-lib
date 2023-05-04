@@ -18,11 +18,9 @@ use Psr\Http\Message\StreamInterface;
 
 abstract class CasResponse implements CasResponseInterface
 {
-    private ResponseInterface $response;
-
-    public function __construct(ResponseInterface $response)
-    {
-        $this->response = $response;
+    public function __construct(
+        private ResponseInterface $response
+    ) {
     }
 
     public function getBody(): StreamInterface
