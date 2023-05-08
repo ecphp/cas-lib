@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Configuration;
 
 use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
+use Exception;
 
 use function array_key_exists;
 
@@ -51,11 +52,11 @@ final class Properties implements PropertiesInterface
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->properties[$offset] = $value;
+        throw new Exception('Read-only object, setters are disabled.');
     }
 
     public function offsetUnset(mixed $offset): void
     {
-        unset($this->properties[$offset]);
+        throw new Exception('Read-only object, setters are disabled.');
     }
 }
