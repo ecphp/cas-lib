@@ -26,7 +26,7 @@ final class Login extends Handler implements HandlerInterface
     {
         $parameters = $this->buildParameters(
             $this->getParameters(),
-            $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGIN]['default_parameters'] ?? [],
+            $this->getProperties()->jsonSerialize()['protocol'][HandlerInterface::TYPE_LOGIN]['default_parameters'] ?? [],
             ['service' => (string) $request->getUri()],
         );
 

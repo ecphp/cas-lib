@@ -66,7 +66,7 @@ abstract class Handler
         string $type,
         array $queryParams = []
     ): UriInterface {
-        $properties = $this->getProperties();
+        $properties = $this->getProperties()->jsonSerialize();
 
         $queryParams += Uri::getParams($from);
         $baseUrl = parse_url((string) $properties['base_url']);

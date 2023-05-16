@@ -11,15 +11,8 @@ declare(strict_types=1);
 
 namespace EcPhp\CasLib\Contract\Configuration;
 
-use ArrayAccess;
+use JsonSerializable;
 
-/**
- * @template-extends ArrayAccess<string, mixed>
- */
-interface PropertiesInterface extends ArrayAccess
+interface PropertiesInterface extends JsonSerializable
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function all(): array;
 }

@@ -21,7 +21,7 @@ final class Logout extends Handler implements HandlerInterface
     {
         $parameters = $this->buildParameters(
             $this->getParameters(),
-            $this->getProperties()['protocol'][HandlerInterface::TYPE_LOGOUT]['default_parameters'] ?? [],
+            $this->getProperties()->jsonSerialize()['protocol'][HandlerInterface::TYPE_LOGOUT]['default_parameters'] ?? [],
             ['service' => (string) $request->getUri()],
         );
 

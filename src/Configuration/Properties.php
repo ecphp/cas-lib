@@ -12,9 +12,6 @@ declare(strict_types=1);
 namespace EcPhp\CasLib\Configuration;
 
 use EcPhp\CasLib\Contract\Configuration\PropertiesInterface;
-use Exception;
-
-use function array_key_exists;
 
 final class Properties implements PropertiesInterface
 {
@@ -35,28 +32,8 @@ final class Properties implements PropertiesInterface
         }
     }
 
-    public function all(): array
+    public function jsonSerialize(): array
     {
         return $this->properties;
-    }
-
-    public function offsetExists(mixed $offset): bool
-    {
-        return array_key_exists($offset, $this->properties);
-    }
-
-    public function offsetGet(mixed $offset): mixed
-    {
-        return $this->properties[$offset];
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        throw new Exception('Read-only object, setters are disabled.');
-    }
-
-    public function offsetUnset(mixed $offset): void
-    {
-        throw new Exception('Read-only object, setters are disabled.');
     }
 }

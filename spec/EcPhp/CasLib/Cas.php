@@ -153,7 +153,7 @@ class Cas extends ObjectBehavior
 
     public static function getTestPropertiesWithPgtUrl(): CasProperties
     {
-        $properties = self::getTestProperties()->all();
+        $properties = self::getTestProperties()->jsonSerialize();
 
         $properties['protocol']['serviceValidate']['default_parameters']['pgtUrl'] = 'https://from/proxyCallback.php';
 

@@ -25,7 +25,7 @@ final class ServiceValidate extends Handler implements ServiceValidateHandlerInt
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $properties = $this->getProperties();
+        $properties = $this->getProperties()->jsonSerialize();
 
         $type = isset($properties['protocol'][HandlerInterface::TYPE_SERVICE_VALIDATE]['default_parameters']['pgtUrl'])
             ? HandlerInterface::TYPE_PROXY_VALIDATE
