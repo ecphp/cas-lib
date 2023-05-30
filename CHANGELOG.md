@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.6](https://github.com/ecphp/cas-lib/compare/2.0.5...2.0.6)
+## [3.0.0](https://github.com/ecphp/cas-lib/compare/2.0.6...3.0.0)
+
+### Merged
+
+- refactor: use constructor property promotion [`#45`](https://github.com/ecphp/cas-lib/pull/45)
+
+### Commits
+
+- **Breaking change:** refactor: replace `Properties::all()` with `Properties::jsonSerialize()`. [`7f58bb1`](https://github.com/ecphp/cas-lib/commit/7f58bb1e2ec237e9e2b3cdabd4c30f8deed6b957)
+- ci: bump versions [`01242f1`](https://github.com/ecphp/cas-lib/commit/01242f152e1b1e0f89bfe56ea63067b25a74e3a3)
+- chore: bump `infection/infection` [`64df3ab`](https://github.com/ecphp/cas-lib/commit/64df3abd54a734efe8a036190a3429220ce5e2c7)
+- refactor: `Properties` are not readonly [`018e32f`](https://github.com/ecphp/cas-lib/commit/018e32f69e18dab9d6f928632bf0294e117db154)
+- refactor: update `composer.json` [`4e54e5f`](https://github.com/ecphp/cas-lib/commit/4e54e5fb4e39d7dd20061676db6fdced17bdc8e4)
+- Revert "add `LoginHandlerInterface`" [`47eb09c`](https://github.com/ecphp/cas-lib/commit/47eb09c4b5ae8633ab9ef4f3bc96db9b9327dc1c)
+- add `LoginHandlerInterface` [`a0a6702`](https://github.com/ecphp/cas-lib/commit/a0a6702a8a704f3f1028a6d3e442772f5014e0dd)
+- chore: bump `psr/http-message` to `1.1` minimum [`20bac1e`](https://github.com/ecphp/cas-lib/commit/20bac1e9f01246a2bee9f1a24ade9743c656bc38)
+
+## [2.0.6](https://github.com/ecphp/cas-lib/compare/2.0.5...2.0.6) - 2023-04-01
 
 ### Merged
 
@@ -13,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: update changelog [`8a8f987`](https://github.com/ecphp/cas-lib/commit/8a8f987827046197161d9f69d679c1039e962efc)
 - chore: bump `psr/cache-implementation` [`5810b9e`](https://github.com/ecphp/cas-lib/commit/5810b9e54888d33bd7e938f219ab8c09d87aa564)
 - refactor: set default factories [`eef4b5e`](https://github.com/ecphp/cas-lib/commit/eef4b5e5a402cec97b75c664c735f7195d62feeb)
 - chore: remove support of Scrutinizer [`6c6e9c7`](https://github.com/ecphp/cas-lib/commit/6c6e9c7a1b69a39e35611b08b3f97e8deeb29b7d)
