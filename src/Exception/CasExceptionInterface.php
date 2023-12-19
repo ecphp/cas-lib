@@ -13,6 +13,4 @@ namespace EcPhp\CasLib\Exception;
 
 use Throwable;
 
-interface CasExceptionInterface extends Throwable
-{
-}
+interface CasExceptionInterface extends Throwable {}

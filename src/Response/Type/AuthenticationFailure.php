@@ -13,6 +13,4 @@ namespace EcPhp\CasLib\Response\Type;
 
 use EcPhp\CasLib\Contract\Response\Type\AuthenticationFailure as AuthenticationFailureInterface;
 
-final class AuthenticationFailure extends CasResponse implements AuthenticationFailureInterface
-{
-}
+final class AuthenticationFailure extends CasResponse implements AuthenticationFailureInterface {}

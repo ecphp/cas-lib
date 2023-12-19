@@ -35,8 +35,7 @@ abstract class Handler
         private readonly ClientInterface $client,
         private readonly PropertiesInterface $properties,
         private readonly Psr17Interface $psr17
-    ) {
-    }
+    ) {}
 
     /**
      * This function will aggregate all the input arrays into a single array.

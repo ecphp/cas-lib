@@ -13,6 +13,4 @@ namespace EcPhp\CasLib\Contract\Configuration;
 
 use JsonSerializable;
 
-interface PropertiesInterface extends JsonSerializable
-{
-}
+interface PropertiesInterface extends JsonSerializable {}

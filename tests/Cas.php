@@ -20,8 +20,7 @@ final class Cas implements CasInterface
 {
     public function __construct(
         private readonly CasInterface $cas
-    ) {
-    }
+    ) {}
 
     public function authenticate(ServerRequestInterface $request, array $parameters = []): array
     {

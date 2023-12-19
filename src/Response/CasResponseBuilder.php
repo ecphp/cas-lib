@@ -34,8 +34,7 @@ final class CasResponseBuilder implements CasResponseBuilderInterface
         private readonly ProxyFactory $proxyFactory = new FactoryProxyFactory(),
         private readonly ProxyFailureFactory $proxyFailureFactory = new FactoryProxyFailureFactory(),
         private readonly ServiceValidateFactory $serviceValidateFactory = new FactoryServiceValidateFactory()
-    ) {
-    }
+    ) {}
 
     public function fromResponse(ResponseInterface $response): CasResponseInterface
     {

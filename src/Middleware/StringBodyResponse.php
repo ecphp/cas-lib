@@ -21,8 +21,7 @@ final class StringBodyResponse implements Plugin
 {
     public function __construct(
         private readonly Psr17Interface $psr17
-    ) {
-    }
+    ) {}
 
     public function handleRequest(RequestInterface $request, callable $next, callable $first): Promise
     {

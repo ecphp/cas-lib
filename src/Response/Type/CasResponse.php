@@ -20,8 +20,7 @@ abstract class CasResponse implements CasResponseInterface
 {
     public function __construct(
         private ResponseInterface $response
-    ) {
-    }
+    ) {}
 
     public function getBody(): StreamInterface
     {
