@@ -54,7 +54,7 @@ final class Uri
         $pairs = [];
 
         try {
-            $pairs = Query::createFromUri($uri)->pairs();
+            $pairs = Query::fromUri($uri)->pairs();
         } catch (Throwable $exception) {
             // Ignore the exception.
         }
