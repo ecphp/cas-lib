@@ -18,6 +18,8 @@ use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
+use function sprintf;
+
 final class CasHandlerException extends Exception implements CasExceptionInterface
 {
     public static function authenticationFailure(AuthenticationFailure $response): self

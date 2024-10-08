@@ -22,6 +22,7 @@ use Psr\Http\Message\UriInterface;
 
 use function array_key_exists;
 use function is_string;
+use function sprintf;
 
 abstract class Handler
 {

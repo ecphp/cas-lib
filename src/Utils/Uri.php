@@ -54,7 +54,7 @@ final class Uri
         $pairs = [];
 
         try {
-            $pairs = Query::createFromUri($uri)->pairs();
+            $pairs = Query::fromUri($uri)->pairs();
         } catch (Throwable $exception) {
             // Ignore the exception.
         }
@@ -69,7 +69,7 @@ final class Uri
     }
 
     /**
-     * Check wether an URI has the requested parameters.
+     * Check whether an URI has the requested parameters.
      *
      * @param UriInterface $uri
      *   The URI.
