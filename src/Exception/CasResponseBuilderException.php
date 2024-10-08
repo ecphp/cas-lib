@@ -13,6 +13,8 @@ namespace EcPhp\CasLib\Exception;
 
 use Exception;
 
+use function sprintf;
+
 final class CasResponseBuilderException extends Exception implements CasExceptionInterface
 {
     public static function invalidResponseType(): self

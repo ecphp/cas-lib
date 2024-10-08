@@ -14,6 +14,8 @@ namespace EcPhp\CasLib\Exception;
 use Exception;
 use Throwable;
 
+use function sprintf;
+
 final class CasException extends Exception implements CasExceptionInterface
 {
     public static function emptyResponseBodyFailure(): self

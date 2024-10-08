@@ -69,7 +69,7 @@ final class Uri
     }
 
     /**
-     * Check wether an URI has the requested parameters.
+     * Check whether an URI has the requested parameters.
      *
      * @param UriInterface $uri
      *   The URI.

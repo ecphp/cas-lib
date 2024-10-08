@@ -39,17 +39,17 @@ use Symfony\Component\HttpClient\Psr18Client;
 class CasSpec extends ObjectBehavior
 {
     /**
-     * @var \Psr\Cache\CacheItemPoolInterface
+     * @var CacheItemPoolInterface
      */
     protected $cache;
 
     /**
-     * @var \Psr\Cache\CacheItemInterface
+     * @var CacheItemInterface
      */
     protected $cacheItem;
 
     /**
-     * @param \PhpSpec\Wrapper\Collaborator|\Psr\Cache\CacheItemPoolInterface $cache
+     * @param \PhpSpec\Wrapper\Collaborator|CacheItemPoolInterface $cache
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
@@ -345,7 +345,7 @@ class CasSpec extends ObjectBehavior
             'base_url' => '',
             'protocol' => [
                 'serviceValidate' => [
-                    'path' => '\?&!@# // \\ http:// foo bar',
+                    'path' => '\?&!@# // \ http:// foo bar',
                     'default_parameters' => [
                         'format' => 'XML',
                     ],
