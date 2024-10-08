@@ -5,7 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.0](https://github.com/ecphp/cas-lib/compare/2.0.6...3.0.0)
+## [3.0.1](https://github.com/ecphp/cas-lib/compare/3.0.0...3.0.1)
+
+### Merged
+
+- fix, chore: maintenance [`#56`](https://github.com/ecphp/cas-lib/pull/56)
+- chore(deps): Bump actions/checkout from 3 to 4 [`#50`](https://github.com/ecphp/cas-lib/pull/50)
+- chore(deps): Bump cachix/install-nix-action from 21 to 25 [`#54`](https://github.com/ecphp/cas-lib/pull/54)
+- chore(deps): Bump ramsey/composer-install from 2 to 3 [`#55`](https://github.com/ecphp/cas-lib/pull/55)
+- chore(deps): Update league/uri-components requirement || ^7 [`#49`](https://github.com/ecphp/cas-lib/pull/49)
+
+### Commits
+
+- chore: update default PHP version for development [`2410129`](https://github.com/ecphp/cas-lib/commit/24101297c6d806c1a73276326bd66f7b113c804b)
+- chore: autofix code style [`5f37f7a`](https://github.com/ecphp/cas-lib/commit/5f37f7afffbf6ffca214bb23a5bbbe19a36a8320)
+- chore: update documentation [`daa0e9e`](https://github.com/ecphp/cas-lib/commit/daa0e9ec86f4da951c41033a4a5cec5c3b50a289)
+- chore: add `.readthedocs.yml` config [`334da00`](https://github.com/ecphp/cas-lib/commit/334da00df78776746801b8dedc0840f3ba282b09)
+- chore: remove `ext-json` from `require-dev` [`dd2c87b`](https://github.com/ecphp/cas-lib/commit/dd2c87b699edcbdecbda8a48d87573a28e1f6e85)
+
+## [3.0.0](https://github.com/ecphp/cas-lib/compare/2.0.6...3.0.0) - 2023-05-30
 
 ### Merged
 
@@ -14,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Commits
 
 - **Breaking change:** refactor: replace `Properties::all()` with `Properties::jsonSerialize()`. [`7f58bb1`](https://github.com/ecphp/cas-lib/commit/7f58bb1e2ec237e9e2b3cdabd4c30f8deed6b957)
+- docs: update CHANGELOG [`f3edcf3`](https://github.com/ecphp/cas-lib/commit/f3edcf3ff6e9f31aae177026ec9c2a6dc31da482)
 - ci: bump versions [`01242f1`](https://github.com/ecphp/cas-lib/commit/01242f152e1b1e0f89bfe56ea63067b25a74e3a3)
 - chore: bump `infection/infection` [`64df3ab`](https://github.com/ecphp/cas-lib/commit/64df3abd54a734efe8a036190a3429220ce5e2c7)
 - refactor: `Properties` are not readonly [`018e32f`](https://github.com/ecphp/cas-lib/commit/018e32f69e18dab9d6f928632bf0294e117db154)
