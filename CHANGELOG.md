@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.1](https://github.com/ecphp/cas-lib/compare/3.0.0...3.0.1)
+## [3.0.2](https://github.com/ecphp/cas-lib/compare/3.0.1...3.0.2)
+
+### Commits
+
+- chore: update veewee/xml version constraint [`f94cf63`](https://github.com/ecphp/cas-lib/commit/f94cf63de171c72dc9ad79e0d8ca42e6094c83c2)
+
+## [3.0.1](https://github.com/ecphp/cas-lib/compare/3.0.0...3.0.1) - 2024-10-08
 
 ### Merged
 
@@ -17,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- chore: update changelog [`c22ba25`](https://github.com/ecphp/cas-lib/commit/c22ba25cb951e515545df1344ef6657d61e7800b)
 - chore: update default PHP version for development [`2410129`](https://github.com/ecphp/cas-lib/commit/24101297c6d806c1a73276326bd66f7b113c804b)
 - chore: autofix code style [`5f37f7a`](https://github.com/ecphp/cas-lib/commit/5f37f7afffbf6ffca214bb23a5bbbe19a36a8320)
 - chore: update documentation [`daa0e9e`](https://github.com/ecphp/cas-lib/commit/daa0e9ec86f4da951c41033a4a5cec5c3b50a289)
