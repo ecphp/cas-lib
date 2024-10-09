@@ -41,7 +41,7 @@
         "symfony/cache": "^5.4 || ^6",
         "symfony/http-client": "^5.4 || ^6",
         "symfony/var-dumper": "^6.2",
-        "veewee/xml": "^2.6"
+        "veewee/xml": "^2.6 || ^3"
     },
     "provide": {
         "psr/http-server-handler-implementation": "^1.0"
