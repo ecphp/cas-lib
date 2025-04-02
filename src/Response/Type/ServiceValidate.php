@@ -27,9 +27,9 @@ final class ServiceValidate extends CasResponse implements ServiceValidateInterf
     {
         $hasProxy = isset($this->toArray()['serviceResponse']['authenticationSuccess']['proxies']);
 
-        return true === $hasProxy ?
-            $this->toArray()['serviceResponse']['authenticationSuccess']['proxies'] :
-            [];
+        return true === $hasProxy
+            ? $this->toArray()['serviceResponse']['authenticationSuccess']['proxies']
+            : [];
     }
 
     public function getProxyGrantingTicket(): string
